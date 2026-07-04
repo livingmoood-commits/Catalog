@@ -14,7 +14,7 @@
   :root {
     --clr-bg: #F3EFEA;          /* الخلفية الكريمي المطلوبة */
     --clr-surface: #FFFFFF;
-    --clr-ink: #1C1712;         /* أسود دافئ للنصوص البار العلوي */
+    --clr-ink: #1C1712;         /* أسود دافئ للنصوص والبار العلوي */
     --clr-ink-70: #4A423A;
     --clr-gold: #B08D57;        /* الذهبي الأساسي */
     --clr-gold-light: #D9C6A3;
@@ -373,6 +373,49 @@
   }
 
   .footer-note { font-size: 12.5px; color: #9C8F7D; }
+
+  /* ============================================
+     Lightbox — tap a product photo to view it larger
+     ============================================ */
+  .product-media img { cursor: zoom-in; }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(28,23,18,0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .lightbox.open { display: flex; }
+
+  .lightbox img {
+    max-width: 100%;
+    max-height: 90vh;
+    width: auto;
+    object-fit: contain;
+    border-radius: 2px;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    color: #F3EFEA;
+    border: none;
+    font-size: 22px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 </style>
 </head>
 <body>
@@ -392,8 +435,7 @@
       </button>
 
       <div class="nav-links">
-        <a href="#categories">categories</a>
-        <a href="#new-arrivals">وصل حديثًا</a>
+        <a href="#categories">الأقسام</a>
         <a href="#products">الكتالوج</a>
       </div>
 
@@ -411,22 +453,10 @@
 
   <section id="categories">
     <div class="wrap">
-      <h2 class="section-title">categories </h2>
+      <h2 class="section-title">أقسام</h2>
       <div class="section-rule"></div>
       <div class="category-rail" id="category-rail">
-        <p class="state-msg">categories...</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="new-arrivals">
-    <div class="wrap">
-      <div class="banner">
-        <div>
-          <div class="banner-eyebrow">مجموعة جديدة</div>
-          <h2 class="banner-title">وصل حديثًا</h2>
-          <a href="#products" class="banner-cta">تصفّح الكتالوج</a>
-        </div>
+        <p class="state-msg">جارِ تحميل الأقسام...</p>
       </div>
     </div>
   </section>
@@ -443,6 +473,12 @@
       <div class="footer-note">© 2026 جميع الحقوق محفوظة</div>
     </div>
   </footer>
+
+  <!-- ===================== Lightbox (تكبير الصورة عند الدوس) ===================== -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close" aria-label="إغلاق">✕</button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -516,7 +552,7 @@
       await loadCategoryRail(categories);
 
       if (categories.length === 0) {
-        container.innerHTML = `<p class="state-msg">Don't Found categories.</p>`;
+        container.innerHTML = `<p class="state-msg">لا توجد أقسام بعد.</p>`;
         return;
       }
 
@@ -553,6 +589,37 @@
 
     const headerCallLink = document.getElementById("header-call-link");
     if (headerCallLink) headerCallLink.href = buildCallLink();
+
+    // ============================================
+    // Lightbox: تكبير صورة المنتج عند الدوس عليها
+    // ============================================
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxClose = document.getElementById("lightbox-close");
+
+    function openLightbox(src, alt) {
+      lightboxImg.src = src;
+      lightboxImg.alt = alt || "";
+      lightbox.classList.add("open");
+    }
+    function closeLightbox() {
+      lightbox.classList.remove("open");
+      lightboxImg.src = "";
+    }
+
+    // event delegation: يشتغل حتى للصور اللي بتتضاف ديناميكيًا بعد التحميل
+    document.addEventListener("click", (e) => {
+      const img = e.target.closest(".product-media img");
+      if (img) openLightbox(img.src, img.alt);
+    });
+
+    lightboxClose.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox(); // قفل عند الدوس بره الصورة
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
+    });
   </script>
 </body>
 </html>
