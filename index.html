@@ -392,7 +392,7 @@
       </button>
 
       <div class="nav-links">
-        <a href="#categories">الأقسام</a>
+        <a href="#categories">categories</a>
         <a href="#new-arrivals">وصل حديثًا</a>
         <a href="#products">الكتالوج</a>
       </div>
@@ -411,10 +411,10 @@
 
   <section id="categories">
     <div class="wrap">
-      <h2 class="section-title">أقسام </h2>
+      <h2 class="section-title">categories </h2>
       <div class="section-rule"></div>
       <div class="category-rail" id="category-rail">
-        <p class="state-msg">جارِ تحميل الأقسام...</p>
+        <p class="state-msg">categories...</p>
       </div>
     </div>
   </section>
@@ -516,7 +516,7 @@
       await loadCategoryRail(categories);
 
       if (categories.length === 0) {
-        container.innerHTML = `<p class="state-msg">لا توجد أقسام بعد.</p>`;
+        container.innerHTML = `<p class="state-msg">Don't Found categories.</p>`;
         return;
       }
 
