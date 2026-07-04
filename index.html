@@ -219,9 +219,82 @@
 
   .floating-quote .accent { color: var(--clr-gold); }
 
+  /* Sticky-note look — لزقة بشريط لاصق وميلان */
+  .floating-quote.sticky {
+    position: relative;
+    background: var(--clr-surface);
+    border: 1px solid rgba(28,23,18,0.06);
+    border-radius: 3px;
+    padding: 20px 26px;
+    box-shadow: 0 16px 30px rgba(28,23,18,0.14), 0 2px 4px rgba(28,23,18,0.06);
+  }
+
+  .floating-quote.sticky::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-3deg);
+    width: 68px;
+    height: 22px;
+    background: rgba(199,164,110,0.35);
+    border: 1px solid rgba(199,164,110,0.45);
+    box-shadow: 0 2px 4px rgba(28,23,18,0.08);
+  }
+
   .rot-1 { --pop-rot: -3deg; }
   .rot-2 { --pop-rot: 2.5deg; }
   .rot-3 { --pop-rot: -2deg; }
+
+  /* Featured quote — نسخة مستقيمة وأنيقة، من غير ميل */
+  .floating-quote.featured {
+    position: relative;
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-gold-light);
+    border-radius: 14px;
+    padding: 30px 44px;
+    max-width: 480px;
+    box-shadow: 0 20px 40px rgba(28,23,18,0.10), 0 2px 6px rgba(28,23,18,0.05);
+    font-family: var(--font-elegant);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(17px, 2.2vw, 22px);
+    line-height: 1.55;
+  }
+
+  .floating-quote.featured::before,
+  .floating-quote.featured::after {
+    content: "\201C";
+    position: absolute;
+    font-family: Georgia, serif;
+    font-style: normal;
+    font-size: 54px;
+    line-height: 1;
+    color: var(--clr-gold-light);
+    opacity: 0.8;
+  }
+
+  .floating-quote.featured::before {
+    top: 6px;
+    left: 18px;
+  }
+
+  .floating-quote.featured::after {
+    content: "\201D";
+    bottom: -6px;
+    right: 18px;
+  }
+
+  @media (max-width: 700px) {
+    .floating-quote.featured {
+      max-width: 300px;
+      padding: 26px 30px;
+    }
+    .floating-quote.featured::before,
+    .floating-quote.featured::after {
+      font-size: 40px;
+    }
+  }
 
   @media (max-width: 700px) {
     .floating-quote-row.align-left,
@@ -1003,7 +1076,7 @@
 
   <!-- جملة عائمة 1 — غيّر المحاذاة (align-left/right/center) والميل (rot-1/2/3) زي ما تحب -->
   <div class="floating-quote-row align-left">
-    <div class="floating-quote reveal-pop rot-1">"Every welcome deserves <span class="accent">elegance</span>."</div>
+    <div class="floating-quote featured reveal-pop rot-1">"Every welcome deserves <span class="accent">elegance</span>."</div>
   </div>
 
   <!-- ====================================================================
@@ -1033,7 +1106,7 @@
 
   <!-- جملة عائمة 2 -->
   <div class="floating-quote-row align-right">
-    <div class="floating-quote reveal-pop rot-2">"Where <span class="accent">light</span> lives."</div>
+    <div class="floating-quote featured reveal-pop rot-2">"Where <span class="accent">light</span> lives."</div>
   </div>
 
   <div class="section-separator reveal">
@@ -1090,7 +1163,7 @@
 
   <!-- جملة عائمة 3 -->
   <div class="floating-quote-row align-center">
-    <div class="floating-quote reveal-pop rot-3">"Every detail, designed to be <span class="accent">lived in</span>."</div>
+    <div class="floating-quote featured reveal-pop rot-3">Every detail, designed to be <span class="accent">lived in</span>.</div>
   </div>
 
   <footer class="site-footer">
