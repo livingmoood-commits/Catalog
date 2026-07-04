@@ -534,7 +534,49 @@
     border: 2px solid var(--clr-gold-light);
     transition: transform .25s ease, border-color .25s ease;
   }
+@media (max-width: 600px) {
+  .category-rail {
+    display: flex;
+    overflow-x: auto;
+    gap: 14px;
+    padding: 10px 20px 20px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
 
+  .category-item {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    width: 90px;
+  }
+
+  .category-circle {
+    width: 90px;
+    height: 90px;
+  }
+
+  .category-item span,
+  .category-item p {
+    font-size: 12px;
+  }
+
+  /* تلميح بصري إن في سكرول: تعتيم بسيط على الحافة اليمين */
+  .category-rail::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 100%;
+    background: linear-gradient(to left, rgba(243,239,234,1), rgba(243,239,234,0));
+    pointer-events: none;
+  }
+
+  .categories-section,
+  .category-section {
+    position: relative;
+  }
+}
   .category-item:hover .category-circle {
     transform: translateY(-4px);
     border-color: var(--clr-gold);
