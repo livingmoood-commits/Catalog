@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Living Mood — Interior Design & Furniture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================
+     Design tokens — Living Mood identity
+     ============================================ */
+  :root {
+    --clr-bg: #F3EFEA;          /* الخلفية الكريمي المطلوبة */
+    --clr-surface: #FFFFFF;
+    --clr-ink: #1C1712;         /* أسود دافئ للنصوص والبار العلوي */
+    --clr-ink-70: #4A423A;
+    --clr-gold: #B08D57;        /* الذهبي الأساسي */
+    --clr-gold-light: #D9C6A3;
+    --clr-line: #E3DCD0;
+
+    --font-display: "Playfair Display", Georgia, serif;
+    --font-elegant: "Cormorant Garamond", Georgia, serif;
+    --font-body: "Inter", -apple-system, "Segoe UI", sans-serif;
+
+    --container: 1240px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--clr-bg);
+    color: var(--clr-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  button { font-family: inherit; cursor: pointer; }
+
+  .wrap {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ============================================
+     Top strip — "LIVING MOOD — INTERIOR EXCELLENCE"
+     ============================================ */
+  .top-strip {
+    background: var(--clr-ink);
+    color: var(--clr-gold-light);
+    text-align: center;
+    font-family: var(--font-elegant);
+    font-size: 14px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    padding: 10px 12px;
+  }
+
+  /* ============================================
+     Header / hero logo block
+     ============================================ */
+  .brand-hero {
+    text-align: center;
+    padding: 64px 20px 40px;
+  }
+
+  .brand-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 7vw, 76px);
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+
+  .brand-hero h1 .accent { color: var(--clr-gold); }
+
+  .brand-hero .subtitle {
+    font-family: var(--font-elegant);
+    font-size: 15px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--clr-ink-70);
+    margin-top: 10px;
+  }
+
+  .brand-divider {
+    width: 70px;
+    height: 2px;
+    background: var(--clr-gold);
+    margin: 24px auto 0;
+  }
+
+  /* ============================================
+     Sticky nav bar (search / call)
+     ============================================ */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--clr-surface);
+    border-bottom: 1px solid var(--clr-line);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 28px;
+    max-width: var(--container);
+    margin: 0 auto;
+    gap: 20px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--clr-ink-70);
+  }
+
+  .nav-links a:hover { color: var(--clr-gold); }
+
+  .header-call-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--clr-ink);
+    color: var(--clr-gold-light);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 10px 20px;
+    border-radius: 2px;
+    white-space: nowrap;
+    transition: opacity .2s ease;
+  }
+
+  .header-call-btn:hover { opacity: .85; }
+
+  .icon-btn {
+    width: 20px;
+    height: 20px;
+    background: none;
+    border: none;
+    color: var(--clr-ink);
+    padding: 0;
+  }
+  .icon-btn svg { width: 100%; height: 100%; }
+
+  .menu-toggle { display: none; background: none; border: none; color: var(--clr-ink); }
+
+  @media (max-width: 860px) {
+    .nav-links { display: none; }
+    .menu-toggle { display: block; }
+  }
+
+  /* ============================================
+     Section title pattern
+     ============================================ */
+  section { padding: 56px 0; }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 600;
+    text-align: center;
+    margin: 0 0 8px;
+  }
+
+  .section-rule {
+    width: 60px;
+    height: 2px;
+    margin: 0 auto 40px;
+    background: var(--clr-gold);
+  }
+
+  .section-rule.small { width: 40px; margin: 0 0 22px; }
+
+  /* ============================================
+     Category rail
+     ============================================ */
+  .category-rail {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .category-rail {
+      grid-auto-flow: column;
+      grid-auto-columns: 120px;
+      grid-template-columns: none;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scroll-snap-type: x mandatory;
+    }
+    .category-item { scroll-snap-align: start; }
+  }
+
+  .category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .category-circle {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--clr-gold-light);
+    transition: transform .25s ease, border-color .25s ease;
+  }
+
+  .category-item:hover .category-circle {
+    transform: translateY(-4px);
+    border-color: var(--clr-gold);
+  }
+
+  .category-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+  .category-label {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* ============================================
+     Banner
+     ============================================ */
+  .banner {
+    position: relative;
+    overflow: hidden;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--clr-ink);
+    color: #F3EFEA;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .banner-eyebrow {
+    font-family: var(--font-elegant);
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--clr-gold-light);
+    margin-bottom: 14px;
+  }
+
+  .banner-title {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 5.5vw, 60px);
+    font-weight: 600;
+    margin: 0 0 22px;
+  }
+
+  .banner-cta {
+    display: inline-block;
+    background: var(--clr-gold);
+    color: var(--clr-ink);
+    padding: 13px 32px;
+    border-radius: 2px;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    transition: opacity .2s ease;
+  }
+  .banner-cta:hover { opacity: .85; }
+
+  /* ============================================
+     Catalog sections & product cards
+     ============================================ */
+  .catalog-section {
+    margin-bottom: 56px;
+    scroll-margin-top: 80px;
+  }
+
+  .catalog-section-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 980px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .product-grid { grid-template-columns: 1fr 1fr; gap: 14px; } }
+
+  .product-card {
+    background: var(--clr-surface);
+    overflow: hidden;
+    border: 1px solid var(--clr-line);
+    transition: box-shadow .25s ease, transform .25s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-card:hover {
+    box-shadow: 0 14px 30px rgba(28,23,18,0.1);
+    transform: translateY(-3px);
+  }
+
+  .product-media { aspect-ratio: 4 / 3; background: var(--clr-line); }
+  .product-media img { width: 100%; height: 100%; object-fit: cover; }
+
+  .product-info {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .product-name { font-size: 15px; font-weight: 600; line-height: 1.35; }
+
+  .contact-actions { display: flex; gap: 8px; margin-top: auto; }
+
+  .contact-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 9px 10px;
+    border-radius: 2px;
+    transition: opacity .2s ease;
+  }
+  .contact-btn:hover { opacity: .85; }
+  .contact-btn.whatsapp { background: #25D366; color: #fff; }
+  .contact-btn.call { background: var(--clr-ink); color: var(--clr-gold-light); }
+
+  .state-msg { text-align: center; color: var(--clr-ink-70); padding: 30px 0; grid-column: 1 / -1; }
+
+  /* ============================================
+     Footer
+     ============================================ */
+  .site-footer {
+    background: var(--clr-ink);
+    color: var(--clr-gold-light);
+    padding: 44px 0 22px;
+    margin-top: 30px;
+  }
+
+  .site-footer .wrap {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .footer-brand {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .footer-note { font-size: 12.5px; color: #9C8F7D; }
+</style>
+</head>
+<body>
+
+  <div class="top-strip">Living Mood — Interior Excellence</div>
+
+  <div class="brand-hero">
+    <h1>Living <span class="accent">Mood</span></h1>
+    <div class="subtitle">Interior Design &amp; Furniture</div>
+    <div class="brand-divider"></div>
+  </div>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <button class="menu-toggle" aria-label="فتح القائمة">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+
+      <div class="nav-links">
+        <a href="#categories">الأقسام</a>
+        <a href="#new-arrivals">وصل حديثًا</a>
+        <a href="#products">الكتالوج</a>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:20px;">
+        <button class="icon-btn" aria-label="بحث">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <a class="header-call-btn" id="header-call-link" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          اتصل بنا
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <section id="categories">
+    <div class="wrap">
+      <h2 class="section-title">أقسام مميزة</h2>
+      <div class="section-rule"></div>
+      <div class="category-rail" id="category-rail">
+        <p class="state-msg">جارِ تحميل الأقسام...</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="new-arrivals">
+    <div class="wrap">
+      <div class="banner">
+        <div>
+          <div class="banner-eyebrow">مجموعة جديدة</div>
+          <h2 class="banner-title">وصل حديثًا</h2>
+          <a href="#products" class="banner-cta">تصفّح الكتالوج</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="products">
+    <div class="wrap" id="catalog-sections">
+      <p class="state-msg">جارِ تحميل الكتالوج...</p>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-brand">Living <span style="color:var(--clr-gold)">Mood</span></div>
+      <div class="footer-note">© 2026 جميع الحقوق محفوظة</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ============================================
+    // ⚙️ إعدادات — عدّل القيم دي بس
+    // ============================================
+    const SUPABASE_URL = "https://ppiokabsxhklamhlrzzw.supabase.co";   // من Project Settings > API
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwaW9rYWJzeGhrbGFtaGxyenp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4Nzc3MzAsImV4cCI6MjA5ODQ1MzczMH0.6yF7rh-zgR39vDwcM9TtcHSAMk4otLD-jKsqlVrj-FA";     // من نفس الصفحة
+
+    const CONTACT_PHONE = "01000351597";       // رقم الاتصال المباشر
+    const CONTACT_WHATSAPP = "201000351597";   // نفس الرقم بكود الدولة (20 لمصر)، بدون + أو صفر البداية
+
+    // ============================================
+    // تهيئة Supabase
+    // ============================================
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // بيانات تجريبية تظهر لو لسه مفيش بيانات حقيقية متحطة
+    const DEMO_CATEGORIES = [
+      { id: "demo-1", name: "أنتريهات", image_url: "https://placehold.co/300x300/E3DCD0/1C1712?text=%D8%A3%D9%86%D8%AA%D8%B1%D9%8A%D9%87" },
+      { id: "demo-2", name: "غرف نوم",  image_url: "https://placehold.co/300x300/E3DCD0/1C1712?text=%D8%BA%D8%B1%D9%81+%D9%86%D9%88%D9%85" },
+      { id: "demo-3", name: "طاولات",   image_url: "https://placehold.co/300x300/E3DCD0/1C1712?text=%D8%B7%D8%A7%D9%88%D9%84%D8%A7%D8%AA" },
+    ];
+
+    const DEMO_PRODUCTS = [
+      { name: "تصميم 1", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=%D8%B5%D9%88%D8%B1%D8%A9", category_id: "demo-1" },
+      { name: "تصميم 2", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=%D8%B5%D9%88%D8%B1%D8%A9", category_id: "demo-1" },
+      { name: "تصميم 3", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=%D8%B5%D9%88%D8%B1%D8%A9", category_id: "demo-2" },
+      { name: "تصميم 4", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=%D8%B5%D9%88%D8%B1%D8%A9", category_id: "demo-3" },
+    ];
+
+    function buildWhatsappLink(productName) {
+      const msg = encodeURIComponent(`مرحبًا، عايز أستفسر عن: ${productName}`);
+      return `https://wa.me/${CONTACT_WHATSAPP}?text=${msg}`;
+    }
+    function buildCallLink() { return `tel:${CONTACT_PHONE}`; }
+
+    async function loadCategoryRail(categories) {
+      const rail = document.getElementById("category-rail");
+      rail.innerHTML = categories.map(cat => `
+        <a class="category-item" href="#cat-${cat.id}">
+          <span class="category-circle">
+            <img src="${cat.image_url}" alt="${cat.name}" loading="lazy">
+          </span>
+          <span class="category-label">${cat.name}</span>
+        </a>
+      `).join("");
+    }
+
+    async function loadCatalog() {
+      const container = document.getElementById("catalog-sections");
+      let categories = DEMO_CATEGORIES;
+      let products = DEMO_PRODUCTS;
+
+      try {
+        const { data: catData, error: catError } = await supabaseClient
+          .from("categories")
+          .select("id, name, image_url")
+          .order("sort_order", { ascending: true });
+        if (!catError && catData && catData.length > 0) categories = catData;
+
+        const { data: prodData, error: prodError } = await supabaseClient
+          .from("products")
+          .select("name, image_url, category_id")
+          .order("created_at", { ascending: false });
+        if (!prodError && prodData) products = prodData;
+      } catch (e) {
+        console.warn("تعذر الاتصال بـ Supabase، هيتعرض بيانات تجريبية:", e);
+      }
+
+      await loadCategoryRail(categories);
+
+      if (categories.length === 0) {
+        container.innerHTML = `<p class="state-msg">لا توجد أقسام بعد.</p>`;
+        return;
+      }
+
+      container.innerHTML = categories.map(cat => {
+        const items = products.filter(p => p.category_id === cat.id);
+        const itemsHtml = items.length > 0
+          ? items.map(p => `
+              <div class="product-card">
+                <div class="product-media">
+                  <img src="${p.image_url}" alt="${p.name}" loading="lazy">
+                </div>
+                <div class="product-info">
+                  <div class="product-name">${p.name}</div>
+                  <div class="contact-actions">
+                    <a class="contact-btn whatsapp" href="${buildWhatsappLink(p.name)}" target="_blank" rel="noopener">واتساب</a>
+                    <a class="contact-btn call" href="${buildCallLink()}">اتصال</a>
+                  </div>
+                </div>
+              </div>
+            `).join("")
+          : `<p class="state-msg">لسه مفيش صور مضافة في القسم ده.</p>`;
+
+        return `
+          <div class="catalog-section" id="cat-${cat.id}">
+            <h3 class="catalog-section-title">${cat.name}</h3>
+            <div class="section-rule small"></div>
+            <div class="product-grid">${itemsHtml}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    loadCatalog();
+
+    const headerCallLink = document.getElementById("header-call-link");
+    if (headerCallLink) headerCallLink.href = buildCallLink();
+  </script>
+</body>
+</html>
