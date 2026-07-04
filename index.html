@@ -51,9 +51,28 @@
      Header / hero logo block
      ============================================ */
   .brand-hero {
+    position: relative;
     text-align: center;
-    padding: 64px 20px 40px;
+    padding: 76px 20px 52px;
+    background:
+      radial-gradient(ellipse 55% 90% at 50% 35%, rgba(176,141,87,0.14), transparent 70%),
+      linear-gradient(180deg, rgba(176,141,87,0.05), transparent 60%);
+    overflow: hidden;
   }
+
+  .brand-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(176,141,87,0.35) 1px, transparent 1.5px);
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(ellipse 50% 80% at 50% 40%, black, transparent 75%);
+    mask-image: radial-gradient(ellipse 50% 80% at 50% 40%, black, transparent 75%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .brand-hero > * { position: relative; z-index: 1; }
 
   .brand-hero h1 {
     font-family: var(--font-display);
@@ -335,21 +354,27 @@
      Category rail
      ============================================ */
   .category-rail {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 32px;
   }
 
+  .category-item { width: 168px; }
+
   @media (max-width: 900px) {
     .category-rail {
-      grid-auto-flow: column;
-      grid-auto-columns: 150px;
-      grid-template-columns: none;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
       overflow-x: auto;
       padding-bottom: 8px;
       scroll-snap-type: x mandatory;
     }
-    .category-item { scroll-snap-align: start; }
+    .category-item {
+      width: 150px;
+      flex: 0 0 150px;
+      scroll-snap-align: start;
+    }
   }
 
   .category-item {
@@ -660,7 +685,7 @@
 
   <section id="categories">
     <div class="wrap">
-      <h2 class="section-title">Featured Categories</h2>
+      <h2 class="section-title">Categories</h2>
       <div class="section-rule"></div>
       <div class="category-rail" id="category-rail">
         <p class="state-msg">Loading categories...</p>
