@@ -151,6 +151,43 @@
   .banner-cta:hover { opacity: .85; }
 
   /* ============================================
+     Brand statement strip — جمل مستوحاة من الإنستجرام
+     غيّر النصوص من جوه الـ HTML وسيبك من الـ CSS دي
+     ============================================ */
+  .statement-section {
+    background: var(--clr-surface);
+    border-bottom: 1px solid var(--clr-line);
+  }
+
+  .statement-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .statement-item {
+    padding: 70px 24px;
+    text-align: center;
+    border-top: 1px solid var(--clr-line);
+  }
+
+  .statement-item:first-child { border-top: none; }
+
+  .statement-quote {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 3.6vw, 36px);
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 0;
+    color: var(--clr-ink);
+  }
+
+  .statement-quote.ar {
+    line-height: 2;
+  }
+
+  .statement-quote .accent { color: var(--clr-gold); }
+
+  /* ============================================
      Sticky nav bar (search / call)
      ============================================ */
   .site-nav {
@@ -704,6 +741,31 @@
       <a href="#products" class="banner-cta">Explore the Catalog</a>
     </div>
   </div>
+
+  <!-- ====================================================================
+       جمل العلامة التجارية — مستوحاة من الكابشنز اللي إنتوا بتنزلوها
+       على الإنستجرام. عايز تغيّر الجمل أو تزود واحدة؟ عدّل الـ <p> اللي
+       جوه كل .statement-item، أو ضيف .statement-item جديد وعدّل رقم
+       الأعمدة في grid-template-columns لو زودت العدد.
+       ==================================================================== -->
+  <section class="statement-section">
+    <div class="wrap">
+      <div class="statement-grid">
+        <div class="statement-item reveal">
+          <p class="statement-quote">"Every welcome deserves <span class="accent">elegance</span>."</p>
+        </div>
+        <div class="statement-item reveal">
+          <p class="statement-quote">"Every detail, designed to be <span class="accent">lived in</span>."</p>
+        </div>
+        <div class="statement-item reveal">
+          <p class="statement-quote">"Where <span class="accent">light</span> lives."</p>
+        </div>
+        <div class="statement-item reveal">
+          <p class="statement-quote ar" dir="rtl">"جودة خشبنا <span class="accent">لا تُضاهى</span>، وسعرنا <span class="accent">لا يُنافَس</span>."</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <section id="categories">
     <div class="wrap">
