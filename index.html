@@ -140,9 +140,48 @@
     border-radius: 2px;
     white-space: nowrap;
     transition: opacity .2s ease;
+    border: none;
   }
 
   .header-call-btn:hover { opacity: .85; }
+
+  .contact-dropdown { position: relative; }
+
+  .contact-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-line);
+    border-radius: 4px;
+    box-shadow: 0 14px 30px rgba(28,23,18,0.14);
+    min-width: 190px;
+    padding: 6px;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 60;
+  }
+
+  .contact-dropdown-menu.open { display: flex; }
+
+  .contact-dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 3px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--clr-ink);
+  }
+
+  .contact-dropdown-menu a svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+  .contact-dropdown-menu a:hover { background: var(--clr-bg); }
+
+  .contact-dropdown-menu a.wa { color: #1f9c46; }
+  .contact-dropdown-menu a.call { color: var(--clr-ink); }
 
   .icon-btn {
     width: 20px;
@@ -153,6 +192,22 @@
     padding: 0;
   }
   .icon-btn svg { width: 100%; height: 100%; }
+
+  .nav-instagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .nav-instagram svg { width: 20px; height: 20px; }
+
+  .nav-instagram span {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--clr-ink-70);
+    letter-spacing: 0.01em;
+  }
 
   .menu-toggle { display: none; background: none; border: none; color: var(--clr-ink); }
 
@@ -354,16 +409,16 @@
   .site-footer {
     background: var(--clr-ink);
     color: var(--clr-gold-light);
-    padding: 44px 0 22px;
+    padding: 44px 0 26px;
     margin-top: 30px;
   }
 
   .site-footer .wrap {
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 20px;
+    flex-direction: column;
     align-items: center;
+    gap: 18px;
+    text-align: center;
   }
 
   .footer-brand {
@@ -372,10 +427,37 @@
     font-weight: 600;
   }
 
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .footer-ig {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--clr-gold-light);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .footer-phone {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--clr-gold-light);
+    font-size: 14px;
+    font-weight: 600;
+    direction: ltr;
+  }
+
   .footer-note { font-size: 12.5px; color: #9C8F7D; }
 
   /* ============================================
-     Lightbox — tap a product photo to view it larger
+     Lightbox — تكبير الصورة عند الدوس
      ============================================ */
   .product-media img { cursor: zoom-in; }
 
@@ -440,23 +522,34 @@
       </div>
 
       <div style="display:flex; align-items:center; gap:20px;">
-        <button class="icon-btn" aria-label="بحث">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        </button>
-        <a class="icon-btn" href="https://www.instagram.com/livingmoood/" target="_blank" rel="noopener" aria-label="إنستجرام">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        <a class="nav-instagram" href="https://www.instagram.com/livingmoood/" target="_blank" rel="noopener" aria-label="إنستجرام">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#igGradientNav)" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          <span>livingmoood@</span>
         </a>
-        <a class="header-call-btn" id="header-call-link" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          اتصل بنا
-        </a>
+
+        <div class="contact-dropdown">
+          <button class="header-call-btn" id="header-call-toggle" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            اتصل بنا
+          </button>
+          <div class="contact-dropdown-menu" id="header-call-menu">
+            <a class="call" id="header-call-link" href="#">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              اتصال مباشر
+            </a>
+            <a class="wa" id="header-wa-link" href="#" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.85L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 18.13c-1.47 0-2.91-.4-4.16-1.14l-.3-.18-3.17.83.85-3.09-.19-.32a8.18 8.18 0 0 1-1.25-4.32c0-4.53 3.69-8.22 8.23-8.22 2.2 0 4.26.86 5.82 2.42a8.17 8.17 0 0 1 2.41 5.81c0 4.53-3.69 8.21-8.24 8.21zm4.51-6.16c-.25-.12-1.46-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.8-.78.97-.15.16-.29.18-.54.06-.25-.13-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.16-.25.25-.41.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.14-.01-.31-.01-.47-.01-.16 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.16 1.75 2.68 4.25 3.75.59.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.46-.6 1.67-1.17.2-.58.2-1.07.14-1.17-.06-.11-.22-.17-.47-.29z"/></svg>
+              واتساب
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
 
   <section id="categories">
     <div class="wrap">
-      <h2 class="section-title">أقسام </h2>
+      <h2 class="section-title">أقسام</h2>
       <div class="section-rule"></div>
       <div class="category-rail" id="category-rail">
         <p class="state-msg">جارِ تحميل الأقسام...</p>
@@ -473,13 +566,37 @@
   <footer class="site-footer">
     <div class="wrap">
       <div class="footer-brand">Living <span style="color:var(--clr-gold)">Mood</span></div>
-      <a href="https://www.instagram.com/livingmoood/" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:8px; color:var(--clr-gold-light); font-size:14px; font-weight:600;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        livingmoood@
-      </a>
+      <div class="footer-links">
+        <a class="footer-ig" href="https://www.instagram.com/livingmoood/" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#igGradientFooter)" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          livingmoood@
+        </a>
+        <a class="footer-phone" id="footer-call-link" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span id="footer-call-text"></span>
+        </a>
+      </div>
       <div class="footer-note">© 2026 جميع الحقوق محفوظة</div>
     </div>
   </footer>
+
+  <!-- تعريف تدرّج ألوان إنستجرام (يُستخدم في أيقونتي الهيدر والفوتر) -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="igGradientNav" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#FFDD55"/>
+        <stop offset="35%" stop-color="#E1306C"/>
+        <stop offset="70%" stop-color="#C13584"/>
+        <stop offset="100%" stop-color="#5851DB"/>
+      </linearGradient>
+      <linearGradient id="igGradientFooter" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#FFDD55"/>
+        <stop offset="35%" stop-color="#E1306C"/>
+        <stop offset="70%" stop-color="#C13584"/>
+        <stop offset="100%" stop-color="#5851DB"/>
+      </linearGradient>
+    </defs>
+  </svg>
 
   <!-- ===================== Lightbox (تكبير الصورة عند الدوس) ===================== -->
   <div class="lightbox" id="lightbox">
@@ -522,6 +639,10 @@
       return `https://wa.me/${CONTACT_WHATSAPP}?text=${msg}`;
     }
     function buildCallLink() { return `tel:${CONTACT_PHONE}`; }
+    function buildGeneralWhatsappLink() {
+      const msg = encodeURIComponent("مرحبًا، عايز أستفسر عندكم");
+      return `https://wa.me/${CONTACT_WHATSAPP}?text=${msg}`;
+    }
 
     async function loadCategoryRail(categories) {
       const rail = document.getElementById("category-rail");
@@ -594,8 +715,34 @@
 
     loadCatalog();
 
+    // ============================================
+    // روابط الاتصال / واتساب (الهيدر + الفوتر)
+    // ============================================
     const headerCallLink = document.getElementById("header-call-link");
     if (headerCallLink) headerCallLink.href = buildCallLink();
+
+    const headerWaLink = document.getElementById("header-wa-link");
+    if (headerWaLink) headerWaLink.href = buildGeneralWhatsappLink();
+
+    const footerCallLink = document.getElementById("footer-call-link");
+    const footerCallText = document.getElementById("footer-call-text");
+    if (footerCallLink) footerCallLink.href = buildCallLink();
+    if (footerCallText) footerCallText.textContent = CONTACT_PHONE;
+
+    // زر "اتصل بنا" في الهيدر: يفتح قائمة (اتصال / واتساب) بدل ما يتصل على طول
+    const headerCallToggle = document.getElementById("header-call-toggle");
+    const headerCallMenu = document.getElementById("header-call-menu");
+
+    headerCallToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      headerCallMenu.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".contact-dropdown")) {
+        headerCallMenu.classList.remove("open");
+      }
+    });
 
     // ============================================
     // Lightbox: تكبير صورة المنتج عند الدوس عليها
