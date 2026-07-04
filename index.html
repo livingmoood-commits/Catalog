@@ -798,6 +798,59 @@
     justify-content: center;
   }
 </style>
+    /* ============================================
+     Smooth global feel — انيميشن على كل حاجة
+     ============================================ */
+  body { animation: pageFadeIn .8s ease both; }
+  @keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .category-item, .product-card, .team-card, .engineer-card,
+  .floating-quote, .banner-cta, .contact-btn, .header-call-btn {
+    transition: transform .35s cubic-bezier(.22,.61,.36,1), box-shadow .35s ease;
+    will-change: transform;
+  }
+
+  .product-card:hover { transform: translateY(-6px) scale(1.015); box-shadow: 0 14px 30px rgba(28,23,18,0.1); }
+  .category-item:hover .category-circle { transform: translateY(-4px) scale(1.03); }
+
+  .team-card img, .engineer-media img { transition: transform .6s cubic-bezier(.22,.61,.36,1); }
+  .team-card:hover img, .engineer-media:hover img { transform: scale(1.06); }
+
+  .banner-cta, .contact-btn, .header-call-btn { transition: transform .3s ease, opacity .3s ease; }
+  .banner-cta:hover, .contact-btn:hover, .header-call-btn:hover { transform: translateY(-2px); }
+
+  .nav-links a { position: relative; }
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: -4px;
+    width: 0; height: 1.5px;
+    background: var(--clr-gold);
+    transition: width .35s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+
+  .reveal {
+    transition: opacity .9s cubic-bezier(.22,.61,.36,1), transform .9s cubic-bezier(.22,.61,.36,1);
+  }
+  .reveal-pop {
+    transition: opacity .7s ease, transform .8s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  .product-grid .reveal:nth-child(1) { transition-delay: 0s; }
+  .product-grid .reveal:nth-child(2) { transition-delay: .08s; }
+  .product-grid .reveal:nth-child(3) { transition-delay: .16s; }
+  .product-grid .reveal:nth-child(4) { transition-delay: .24s; }
+
+  .category-rail .reveal:nth-child(1) { transition-delay: 0s; }
+  .category-rail .reveal:nth-child(2) { transition-delay: .08s; }
+  .category-rail .reveal:nth-child(3) { transition-delay: .16s; }
+  .category-rail .reveal:nth-child(4) { transition-delay: .24s; }
+  .category-rail .reveal:nth-child(5) { transition-delay: .32s; }
+</style>
 </head>
 <body>
 
@@ -1279,6 +1332,51 @@
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeLightbox();
     });
+  </script>
+  // ============================================
+    // Smooth scroll مخصص (بطيء وناعم زي هارفارد)
+    // بيشتغل على أي رابط داخلي (#) في الموقع كله تلقائيًا
+    // ============================================
+    function smoothScrollTo(targetY, duration = 900) {
+      const startY = window.scrollY;
+      const diff = targetY - startY;
+      let startTime = null;
+
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        window.scrollTo(0, startY + diff * easeInOutCubic(progress));
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    document.addEventListener("click", (e) => {
+      const link = e.target.closest('a[href^="#"]');
+      if (!link) return;
+      const id = link.getAttribute("href");
+      if (id.length <= 1) return;
+      const target = document.querySelector(id);
+      if (!target) return;
+
+      e.preventDefault();
+      const headerOffset = 78;
+      const targetY = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+      smoothScrollTo(targetY, 900);
+
+      if (mobileMenu.classList.contains("open")) mobileMenu.classList.remove("open");
+    });
+
+    const teamGridEl2 = document.getElementById("team-grid");
+    const engGridEl2 = document.getElementById("engineer-grid");
+    if (teamGridEl2) teamGridEl2.querySelectorAll(".team-card").forEach(c => c.classList.add("reveal"));
+    if (engGridEl2) engGridEl2.querySelectorAll(".engineer-card").forEach(c => c.classList.add("reveal"));
+    initReveal();
   </script>
 </body>
 </html>
