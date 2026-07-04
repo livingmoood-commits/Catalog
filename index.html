@@ -922,6 +922,46 @@
     font-size: 13px;
   }
 }
+  /* ============================================
+   Our Team / Engineering — Mobile view
+   ============================================ */
+@media (max-width: 600px) {
+  .team-grid,
+  .engineer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .team-card,
+  .engineer-media {
+    border-width: 1px;
+  }
+
+  .engineer-name {
+    font-size: 11px;
+  }
+
+  .engineer-role {
+    font-size: 10px;
+  }
+
+  .team-intro {
+    font-size: 13.5px;
+    padding: 0 10px;
+  }
+
+  .team-intro-sub {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .team-grid,
+  .engineer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+}
 </style>
 </head>
 <body>
