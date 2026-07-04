@@ -155,7 +155,7 @@
      غيّر النصوص من جوه الـ HTML وسيبك من الـ CSS دي
      ============================================ */
   .statement-section {
-    background: var(--clr-surface);
+    background: var(--clr-bg);
     border-bottom: 1px solid var(--clr-line);
   }
 
@@ -186,6 +186,60 @@
   }
 
   .statement-quote .accent { color: var(--clr-gold); }
+
+  /* ============================================
+     Floating pop quotes — الجمل المرمية حوالين الموقع
+     كل واحدة عندها كلاس محاذاة (align-left/right/center)
+     وكلاس ميل خفيف (rot-1/2/3) عشان تحس إنهم "متلقيين" مش مصفوفين
+     ============================================ */
+  .floating-quote-row {
+    padding: 8px 24px;
+    max-width: var(--container);
+    margin: 0 auto;
+  }
+
+  .floating-quote-row.align-left { text-align: left; }
+  .floating-quote-row.align-right { text-align: right; }
+  .floating-quote-row.align-center { text-align: center; }
+
+  .floating-quote {
+    display: inline-block;
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-gold-light);
+    border-radius: 6px;
+    padding: 18px 28px;
+    box-shadow: 0 14px 28px rgba(28,23,18,0.09);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(15px, 1.9vw, 19px);
+    color: var(--clr-ink);
+    max-width: 360px;
+    line-height: 1.4;
+  }
+
+  .floating-quote .accent { color: var(--clr-gold); }
+
+  .rot-1 { --pop-rot: -3deg; }
+  .rot-2 { --pop-rot: 2.5deg; }
+  .rot-3 { --pop-rot: -2deg; }
+
+  @media (max-width: 700px) {
+    .floating-quote-row.align-left,
+    .floating-quote-row.align-right { text-align: center; }
+    .floating-quote { max-width: 280px; }
+  }
+
+  /* حركة "البوب" لما الجملة تدخل الشاشة وإنت بتعمل سكرول */
+  .reveal-pop {
+    opacity: 0;
+    transform: scale(0.75) rotate(var(--pop-rot, 0deg));
+    transition: opacity .5s ease, transform .55s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  .reveal-pop.visible {
+    opacity: 1;
+    transform: scale(1) rotate(var(--pop-rot, 0deg));
+  }
 
   /* ============================================
      Sticky nav bar (search / call)
@@ -742,26 +796,20 @@
     </div>
   </div>
 
+  <!-- جملة عائمة 1 — غيّر المحاذاة (align-left/right/center) والميل (rot-1/2/3) زي ما تحب -->
+  <div class="floating-quote-row align-left">
+    <div class="floating-quote reveal-pop rot-1">"Every welcome deserves <span class="accent">elegance</span>."</div>
+  </div>
+
   <!-- ====================================================================
-       جمل العلامة التجارية — مستوحاة من الكابشنز اللي إنتوا بتنزلوها
-       على الإنستجرام. عايز تغيّر الجمل أو تزود واحدة؟ عدّل الـ <p> اللي
-       جوه كل .statement-item، أو ضيف .statement-item جديد وعدّل رقم
-       الأعمدة في grid-template-columns لو زودت العدد.
+       جملة العلامة التجارية بالعربي — الخلفية بقت زي باقي الموقع
+       عايز تغيّرها؟ عدّل الـ <p> اللي جوه .statement-item
        ==================================================================== -->
   <section class="statement-section">
     <div class="wrap">
       <div class="statement-grid">
         <div class="statement-item reveal">
-          <p class="statement-quote">"Every welcome deserves <span class="accent">elegance</span>."</p>
-        </div>
-        <div class="statement-item reveal">
-          <p class="statement-quote">"Every detail, designed to be <span class="accent">lived in</span>."</p>
-        </div>
-        <div class="statement-item reveal">
-          <p class="statement-quote">"Where <span class="accent">light</span> lives."</p>
-        </div>
-        <div class="statement-item reveal">
-          <p class="statement-quote ar" dir="rtl">"جودة خشبنا <span class="accent">لا تُضاهى</span>، وسعرنا <span class="accent">لا يُنافَس</span>."</p>
+          <p class="statement-quote ar" dir="rtl">"جودة خشبنا <span class="accent">لا تُضاهى</span>، وتصنيعنا <span class="accent">فاخر</span>، وسعرنا <span class="accent">لا يُنافَس</span>."</p>
         </div>
       </div>
     </div>
@@ -777,6 +825,11 @@
     </div>
   </section>
 
+  <!-- جملة عائمة 2 -->
+  <div class="floating-quote-row align-right">
+    <div class="floating-quote reveal-pop rot-2">"Where <span class="accent">light</span> lives."</div>
+  </div>
+
   <div class="section-separator reveal">
     <span class="section-separator-line"></span>
     <span class="section-separator-label">Catalog</span>
@@ -788,6 +841,11 @@
       <p class="state-msg">Loading catalog...</p>
     </div>
   </section>
+
+  <!-- جملة عائمة 3 -->
+  <div class="floating-quote-row align-center">
+    <div class="floating-quote reveal-pop rot-3">"Every detail, designed to be <span class="accent">lived in</span>."</div>
+  </div>
 
   <footer class="site-footer">
     <div class="wrap">
@@ -951,7 +1009,7 @@
     // Fade-in-on-scroll for elements with the .reveal class
     // ============================================
     function initReveal() {
-      const items = document.querySelectorAll(".reveal:not(.visible)");
+      const items = document.querySelectorAll(".reveal:not(.visible), .reveal-pop:not(.visible)");
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
