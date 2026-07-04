@@ -12,9 +12,9 @@
      Design tokens — Living Mood identity
      ============================================ */
   :root {
-    --clr-bg: #F3EFEA;          /* الخلفية الكريمي   المطلوبة */
+    --clr-bg: #F3EFEA;          /* الخلفية الكريمي المطلوبة */
     --clr-surface: #FFFFFF;
-    --clr-ink: #1C1712;         /* أسود دافئ للنصوص البار العلوي */
+    --clr-ink: #1C1712;         /* أسود دافئ للنصوص والبار العلوي */
     --clr-ink-70: #4A423A;
     --clr-gold: #B08D57;        /* الذهبي الأساسي */
     --clr-gold-light: #D9C6A3;
@@ -612,6 +612,15 @@
     line-height: 1.8;
   }
 
+  .team-intro-sub {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--font-elegant);
+    font-size: 17px;
+    font-style: italic;
+    color: var(--clr-gold);
+  }
+
   .team-grid,
   .engineer-grid {
     display: grid;
@@ -935,7 +944,8 @@
       <h2 class="section-title">Our Team</h2>
       <div class="section-rule"></div>
       <p class="team-intro">
-        فريق Living Mood بيشتغل من أول التصميم للتصنيع والتركيب، عشان كل قطعة أثاث تخرج بجودة وتفاصيل مظبوطة، وتوصل بالشكل والمود اللي اتحلم بيه.
+        فريق واحد، بيحوّل كل تفصيلة صغيرة لقطعة أثاث تستحق تكون في بيتك.
+        <span class="team-intro-sub">الصور دي مش مجرد لحظات شغل... دي حكاية كل قطعة أثاث قبل ما توصلك.</span>
       </p>
       <div class="team-grid" id="team-grid">
         <p class="state-msg">Loading team...</p>
