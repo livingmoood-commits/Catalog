@@ -899,6 +899,29 @@
   .category-rail .reveal:nth-child(3) { transition-delay: .16s; }
   .category-rail .reveal:nth-child(4) { transition-delay: .24s; }
   .category-rail .reveal:nth-child(5) { transition-delay: .32s; }
+  @media (max-width: 600px) {
+  .team-grid,
+  .engineer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 0 16px;
+  }
+
+  .team-card img,
+  .engineer-media img,
+  .team-card,
+  .engineer-media {
+    height: 140px;
+    object-fit: cover;
+  }
+
+  .team-card h4,
+  .engineer-card h4,
+  .team-card p,
+  .engineer-card p {
+    font-size: 13px;
+  }
+}
 </style>
 </head>
 <body>
