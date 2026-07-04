@@ -838,7 +838,13 @@
     transition: opacity .9s cubic-bezier(.22,.61,.36,1), transform .9s cubic-bezier(.22,.61,.36,1);
   }
   .reveal-pop {
+    opacity: 0;
+    transform: scale(.85) translateY(20px);
     transition: opacity .7s ease, transform .8s cubic-bezier(.34,1.56,.64,1);
+  }
+  .reveal-pop.in-view {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 
   .product-grid .reveal:nth-child(1) { transition-delay: 0s; }
@@ -1377,7 +1383,29 @@
     const engGridEl2 = document.getElementById("engineer-grid");
     if (teamGridEl2) teamGridEl2.querySelectorAll(".team-card").forEach(c => c.classList.add("reveal"));
     if (engGridEl2) engGridEl2.querySelectorAll(".engineer-card").forEach(c => c.classList.add("reveal"));
-    initReveal();
+   initReveal();
+
+    // ============================================
+    // Scroll Pop Animation — العناصر تعمل "بوب" وهي داخلة الشاشة
+    // ============================================
+    function initPopReveal() {
+      const popObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            popObserver.unobserve(entry.target); // يتحرك مرة واحدة بس
+          }
+        });
+      }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+
+      document.querySelectorAll(".reveal-pop").forEach(el => popObserver.observe(el));
+    }
+
+    // نضيف كلاس reveal-pop لكل الكروت اللي عايزينها تعمل بوب
+    document.querySelectorAll(".product-card, .category-item, .team-card, .engineer-card")
+      .forEach(el => el.classList.add("reveal-pop"));
+
+    initPopReveal();
   </script>
 </body>
 </html>
