@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -290,6 +290,48 @@
   .section-rule.small { width: 40px; margin: 0 0 22px; }
 
   /* ============================================
+     Section separator — "Catalog" divider
+     ============================================ */
+  .section-separator {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  .section-separator-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--clr-gold-light), transparent);
+  }
+
+  .section-separator-label {
+    font-family: var(--font-elegant);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--clr-gold);
+    white-space: nowrap;
+  }
+
+  /* ============================================
+     Fade-in-on-scroll reveal
+     ============================================ */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ============================================
      Category rail
      ============================================ */
   .category-rail {
@@ -556,20 +598,20 @@
   <nav class="site-nav">
     <div class="nav-inner">
       <div class="nav-left">
-        <button class="menu-toggle" id="menu-toggle" aria-label="فتح القائمة" type="button">
+        <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" type="button">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
 
         <div class="nav-links">
-          <a href="#categories">الأقسام</a>
-          <a href="#products">الكتالوج</a>
+          <a href="#categories">Categories</a>
+          <a href="#products">Catalog</a>
         </div>
       </div>
 
       <a href="#top" class="nav-brand">Living <span class="accent">Mood</span></a>
 
       <div class="nav-right">
-        <a class="nav-instagram" href="https://www.instagram.com/livingmoood/" target="_blank" rel="noopener" aria-label="إنستجرام">
+        <a class="nav-instagram" href="https://www.instagram.com/livingmoood/" target="_blank" rel="noopener" aria-label="Instagram">
           <svg viewBox="0 0 24 24" fill="none" stroke="url(#igGradientNav)" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
           <span>livingmoood@</span>
         </a>
@@ -577,31 +619,31 @@
         <div class="contact-dropdown">
           <button class="header-call-btn" id="header-call-toggle" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            اتصل بنا
+            Contact Us
           </button>
           <div class="contact-dropdown-menu" id="header-call-menu">
             <a class="call" id="header-call-link" href="#">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              اتصال مباشر
+              Call Now
             </a>
             <a class="wa" id="header-wa-link" href="#" target="_blank" rel="noopener">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.85L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 18.13c-1.47 0-2.91-.4-4.16-1.14l-.3-.18-3.17.83.85-3.09-.19-.32a8.18 8.18 0 0 1-1.25-4.32c0-4.53 3.69-8.22 8.23-8.22 2.2 0 4.26.86 5.82 2.42a8.17 8.17 0 0 1 2.41 5.81c0 4.53-3.69 8.21-8.24 8.21zm4.51-6.16c-.25-.12-1.46-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.8-.78.97-.15.16-.29.18-.54.06-.25-.13-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.16-.25.25-.41.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.14-.01-.31-.01-.47-.01-.16 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.16 1.75 2.68 4.25 3.75.59.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.46-.6 1.67-1.17.2-.58.2-1.07.14-1.17-.06-.11-.22-.17-.47-.29z"/></svg>
-              واتساب
+              WhatsApp
             </a>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- قائمة الموبايل: بتظهر لما تدوس على الهامبرجر -->
+    <!-- Mobile menu: shown when the hamburger is tapped -->
     <div class="mobile-menu" id="mobile-menu">
       <a href="#categories">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        الأقسام
+        Categories
       </a>
       <a href="#products">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg>
-        الكتالوج
+        Catalog
       </a>
       <a href="https://www.instagram.com/livingmoood/" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="url(#igGradientMobile)" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
@@ -618,17 +660,23 @@
 
   <section id="categories">
     <div class="wrap">
-      <h2 class="section-title">أقسام مميزة</h2>
+      <h2 class="section-title">Featured Categories</h2>
       <div class="section-rule"></div>
       <div class="category-rail" id="category-rail">
-        <p class="state-msg">جارِ تحميل الأقسام...</p>
+        <p class="state-msg">Loading categories...</p>
       </div>
     </div>
   </section>
 
+  <div class="section-separator reveal">
+    <span class="section-separator-line"></span>
+    <span class="section-separator-label">Catalog</span>
+    <span class="section-separator-line"></span>
+  </div>
+
   <section id="products">
     <div class="wrap" id="catalog-sections">
-      <p class="state-msg">جارِ تحميل الكتالوج...</p>
+      <p class="state-msg">Loading catalog...</p>
     </div>
   </section>
 
@@ -645,7 +693,7 @@
           <span id="footer-call-text"></span>
         </a>
       </div>
-      <div class="footer-note">© 2026 جميع الحقوق محفوظة</div>
+      <div class="footer-note">© 2026 All rights reserved</div>
     </div>
   </footer>
 
@@ -675,7 +723,7 @@
 
   <!-- ===================== Lightbox (تكبير الصورة عند الدوس) ===================== -->
   <div class="lightbox" id="lightbox">
-    <button class="lightbox-close" id="lightbox-close" aria-label="إغلاق">✕</button>
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
     <img id="lightbox-img" src="" alt="">
   </div>
 
@@ -697,32 +745,32 @@
 
     // بيانات تجريبية تظهر لو لسه مفيش بيانات حقيقية متحطة
     const DEMO_CATEGORIES = [
-      { id: "demo-1", name: "أنتريهات", image_url: "https://placehold.co/300x300/E3DCD0/1C1712?text=%D8%A3%D9%86%D8%AA%D8%B1%D9%8A%D9%87" },
-      { id: "demo-2", name: "غرف نوم",  image_url: "https://placehold.co/300x300/E3DCD0/1C1712?text=%D8%BA%D8%B1%D9%81+%D9%86%D9%88%D9%85" },
-      { id: "demo-3", name: "طاولات",   image_url: "https://placehold.co/300x300/E3DCD0/1C1712?text=%D8%B7%D8%A7%D9%88%D9%84%D8%A7%D8%AA" },
+      { id: "demo-1", name: "Living Room Sets", image_url: "https://placehold.co/300x300/E3DCD0/1C1712?text=Living+Room" },
+      { id: "demo-2", name: "Bedrooms",  image_url: "https://placehold.co/300x300/E3DCD0/1C1712?text=Bedrooms" },
+      { id: "demo-3", name: "Tables",   image_url: "https://placehold.co/300x300/E3DCD0/1C1712?text=Tables" },
     ];
 
     const DEMO_PRODUCTS = [
-      { name: "تصميم 1", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=%D8%B5%D9%88%D8%B1%D8%A9", category_id: "demo-1" },
-      { name: "تصميم 2", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=%D8%B5%D9%88%D8%B1%D8%A9", category_id: "demo-1" },
-      { name: "تصميم 3", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=%D8%B5%D9%88%D8%B1%D8%A9", category_id: "demo-2" },
-      { name: "تصميم 4", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=%D8%B5%D9%88%D8%B1%D8%A9", category_id: "demo-3" },
+      { name: "Design 1", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=Design+1", category_id: "demo-1" },
+      { name: "Design 2", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=Design+2", category_id: "demo-1" },
+      { name: "Design 3", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=Design+3", category_id: "demo-2" },
+      { name: "Design 4", image_url: "https://placehold.co/500x375/E3DCD0/1C1712?text=Design+4", category_id: "demo-3" },
     ];
 
     function buildWhatsappLink(productName) {
-      const msg = encodeURIComponent(`مرحبًا، عايز أستفسر عن: ${productName}`);
+      const msg = encodeURIComponent(`Hello, I would like to ask about: ${productName}`);
       return `https://wa.me/${CONTACT_WHATSAPP}?text=${msg}`;
     }
     function buildCallLink() { return `tel:${CONTACT_PHONE}`; }
     function buildGeneralWhatsappLink() {
-      const msg = encodeURIComponent("مرحبًا، عايز أستفسر عندكم");
+      const msg = encodeURIComponent("Hello, I would like to ask about your products");
       return `https://wa.me/${CONTACT_WHATSAPP}?text=${msg}`;
     }
 
     async function loadCategoryRail(categories) {
       const rail = document.getElementById("category-rail");
       rail.innerHTML = categories.map(cat => `
-        <a class="category-item" href="#cat-${cat.id}">
+        <a class="category-item reveal" href="#cat-${cat.id}">
           <span class="category-circle">
             <img src="${cat.image_url}" alt="${cat.name}" loading="lazy">
           </span>
@@ -749,13 +797,13 @@
           .order("created_at", { ascending: false });
         if (!prodError && prodData) products = prodData;
       } catch (e) {
-        console.warn("تعذر الاتصال بـ Supabase، هيتعرض بيانات تجريبية:", e);
+        console.warn("Could not connect to Supabase, showing demo data:", e);
       }
 
       await loadCategoryRail(categories);
 
       if (categories.length === 0) {
-        container.innerHTML = `<p class="state-msg">لا توجد أقسام بعد.</p>`;
+        container.innerHTML = `<p class="state-msg">No categories yet.</p>`;
         return;
       }
 
@@ -763,20 +811,20 @@
         const items = products.filter(p => p.category_id === cat.id);
         const itemsHtml = items.length > 0
           ? items.map(p => `
-              <div class="product-card">
+              <div class="product-card reveal">
                 <div class="product-media">
                   <img src="${p.image_url}" alt="${p.name}" loading="lazy">
                 </div>
                 <div class="product-info">
                   <div class="product-name">${p.name}</div>
                   <div class="contact-actions">
-                    <a class="contact-btn whatsapp" href="${buildWhatsappLink(p.name)}" target="_blank" rel="noopener">واتساب</a>
-                    <a class="contact-btn call" href="${buildCallLink()}">اتصال</a>
+                    <a class="contact-btn whatsapp" href="${buildWhatsappLink(p.name)}" target="_blank" rel="noopener">WhatsApp</a>
+                    <a class="contact-btn call" href="${buildCallLink()}">Call</a>
                   </div>
                 </div>
               </div>
             `).join("")
-          : `<p class="state-msg">لسه مفيش صور مضافة في القسم ده.</p>`;
+          : `<p class="state-msg">No items added in this category yet.</p>`;
 
         return `
           <div class="catalog-section" id="cat-${cat.id}">
@@ -788,7 +836,23 @@
       }).join("");
     }
 
-    loadCatalog();
+    loadCatalog().then(initReveal);
+
+    // ============================================
+    // Fade-in-on-scroll for elements with the .reveal class
+    // ============================================
+    function initReveal() {
+      const items = document.querySelectorAll(".reveal:not(.visible)");
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+      items.forEach((el) => observer.observe(el));
+    }
 
     // ============================================
     // روابط الاتصال / واتساب (الهيدر + الفوتر)
