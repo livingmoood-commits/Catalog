@@ -599,6 +599,82 @@
 
   .product-name { font-size: 15px; font-weight: 600; line-height: 1.35; }
 
+  /* ============================================
+     Our Team — سكشن ثابت (static)، صور مربعة بس من غير أي تفاعل
+     مفيهاش hover ولا zoom ولا lightbox خالص
+     ============================================ */
+  .team-intro {
+    max-width: 720px;
+    margin: 0 auto 40px;
+    text-align: center;
+    color: var(--clr-ink-70);
+    font-size: 15.5px;
+    line-height: 1.8;
+  }
+
+  .team-grid,
+  .engineer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .team-grid, .engineer-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .team-grid, .engineer-grid { grid-template-columns: 1fr; }
+  }
+
+  .team-card {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border: 1px solid var(--clr-line);
+    background: var(--clr-line);
+  }
+
+  .team-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: default;         /* مفيش إيد ولا إشارة إنها قابلة للدوس */
+    pointer-events: none;    /* تمنع أي كليك عليها خالص، تبقى ثابتة 100% */
+  }
+
+  /* ============================================
+     Engineering — نفس فكرة الكروت المربعة + اسم تحت كل صورة
+     ============================================ */
+  .engineer-card { text-align: center; }
+
+  .engineer-media {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border: 1px solid var(--clr-line);
+    background: var(--clr-line);
+    margin-bottom: 12px;
+  }
+
+  .engineer-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .engineer-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--clr-ink);
+  }
+
+  .engineer-role {
+    font-size: 12.5px;
+    color: var(--clr-ink-70);
+    margin-top: 2px;
+  }
+
   .contact-actions { display: flex; gap: 8px; margin-top: auto; }
 
   .contact-btn {
@@ -815,6 +891,7 @@
     </div>
   </section>
 
+  <!-- Categories فوق كل حاجة زي ما اتطلب -->
   <section id="categories">
     <div class="wrap">
       <h2 class="section-title">Categories</h2>
@@ -839,6 +916,82 @@
   <section id="products">
     <div class="wrap" id="catalog-sections">
       <p class="state-msg">Loading catalog...</p>
+    </div>
+  </section>
+
+  <div class="section-separator reveal">
+    <span class="section-separator-line"></span>
+    <span class="section-separator-label">Our Team</span>
+    <span class="section-separator-line"></span>
+  </div>
+
+  <!-- ====================================================================
+       Our Team — سكشن ثابت، عايز تغيّر الصور أو الاسم؟
+       غيّر الـ src بتاع كل <img> جوه .team-card بس، من غير ما تلمس حاجة تانية
+       الصور دي مش هتتكبر ولا يحصلها أي كليك، شغالة static 100%
+       ==================================================================== -->
+  <section id="team">
+    <div class="wrap">
+      <h2 class="section-title">Our Team</h2>
+      <div class="section-rule"></div>
+      <p class="team-intro">
+        فريق Living Mood بيشتغل من أول التصميم للتصنيع والتركيب، عشان كل قطعة أثاث تخرج بجودة وتفاصيل مظبوطة، وتوصل بالشكل والمود اللي اتحلم بيه.
+      </p>
+      <div class="team-grid">
+        <div class="team-card">
+          <img src="https://placehold.co/600x600/E3DCD0/1C1712?text=Team+1" alt="Team member 1">
+        </div>
+        <div class="team-card">
+          <img src="https://placehold.co/600x600/E3DCD0/1C1712?text=Team+2" alt="Team member 2">
+        </div>
+        <div class="team-card">
+          <img src="https://placehold.co/600x600/E3DCD0/1C1712?text=Team+3" alt="Team member 3">
+        </div>
+        <div class="team-card">
+          <img src="https://placehold.co/600x600/E3DCD0/1C1712?text=Team+4" alt="Team member 4">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       Engineering — نفس فكرة Our Team بس تحت كل صورة اسم (وممكن تضيف
+       دور/تخصص كمان لو عايز). غيّر الـ src والاسم في engineer-name فقط.
+       ==================================================================== -->
+  <section id="engineering">
+    <div class="wrap">
+      <h2 class="section-title">Engineering</h2>
+      <div class="section-rule"></div>
+      <div class="engineer-grid">
+        <div class="engineer-card">
+          <div class="engineer-media">
+            <img src="https://placehold.co/600x600/E3DCD0/1C1712?text=Eng+1" alt="Engineer 1">
+          </div>
+          <div class="engineer-name">اسم المهندس 1</div>
+          <div class="engineer-role">Site Engineer</div>
+        </div>
+        <div class="engineer-card">
+          <div class="engineer-media">
+            <img src="https://placehold.co/600x600/E3DCD0/1C1712?text=Eng+2" alt="Engineer 2">
+          </div>
+          <div class="engineer-name">اسم المهندس 2</div>
+          <div class="engineer-role">Site Engineer</div>
+        </div>
+        <div class="engineer-card">
+          <div class="engineer-media">
+            <img src="https://placehold.co/600x600/E3DCD0/1C1712?text=Eng+3" alt="Engineer 3">
+          </div>
+          <div class="engineer-name">اسم المهندس 3</div>
+          <div class="engineer-role">Site Engineer</div>
+        </div>
+        <div class="engineer-card">
+          <div class="engineer-media">
+            <img src="https://placehold.co/600x600/E3DCD0/1C1712?text=Eng+4" alt="Engineer 4">
+          </div>
+          <div class="engineer-name">اسم المهندس 4</div>
+          <div class="engineer-role">Site Engineer</div>
+        </div>
+      </div>
     </div>
   </section>
 
