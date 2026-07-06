@@ -1755,13 +1755,10 @@ document.addEventListener("click", (e) => {
         extra = product.extra_images.split(",").map(s => s.trim()).filter(Boolean);
       }
 
-      // الترتيب زي ما هو مكتوب بالظبط في extra_images
+// لو في extra_images: بتظهر هي بس بنفس ترتيبها، من غير ما تتضاف صورة الغلاف خالص
+      // وصورة الغلاف (image_url) بتظهر لوحدها بس في حالة إن مفيش extra_images خالص
       if (extra.length > 0) {
         detailImages = [...new Set(extra)];
-        // لو الصورة الأصلية (image_url) مش موجودة أصلاً جوه القائمة، تتضاف في الآخر بس
-        if (product.image_url && !detailImages.includes(product.image_url)) {
-          detailImages.push(product.image_url);
-        }
       } else {
         detailImages = product.image_url ? [product.image_url] : [];
       }
