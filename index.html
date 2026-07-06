@@ -1755,7 +1755,16 @@ document.addEventListener("click", (e) => {
         extra = product.extra_images.split(",").map(s => s.trim()).filter(Boolean);
       }
 
-      detailImages = [...new Set([product.image_url, ...extra].filter(Boolean))];
+      // الترتيب زي ما هو مكتوب بالظبط في extra_images
+      if (extra.length > 0) {
+        detailImages = [...new Set(extra)];
+        // لو الصورة الأصلية (image_url) مش موجودة أصلاً جوه القائمة، تتضاف في الآخر بس
+        if (product.image_url && !detailImages.includes(product.image_url)) {
+          detailImages.push(product.image_url);
+        }
+      } else {
+        detailImages = product.image_url ? [product.image_url] : [];
+      }
       detailIndex = 0;
 
       detailTitle.textContent = product.name || "";
