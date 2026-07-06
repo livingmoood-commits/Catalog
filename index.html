@@ -924,6 +924,8 @@
     background: var(--clr-bg);
     display: none;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding: 16px 28px;
   }
   .product-detail-overlay.open { display: block; }
@@ -1695,6 +1697,8 @@ const lightbox = document.getElementById("lightbox");
       });
     }
 
+let savedBodyScrollY = 0;
+
     function openProductDetail(product) {
       const extra = product.extra_images
         ? product.extra_images.split(",").map(s => s.trim()).filter(Boolean)
@@ -1711,12 +1715,25 @@ const lightbox = document.getElementById("lightbox");
         : "";
 
 renderDetailImage();
+
+      // نحفظ مكان السكرول قبل ما نفتح صفحة التفاصيل
+      savedBodyScrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${savedBodyScrollY}px`;
+      document.body.style.width = "100%";
+
       productDetail.classList.add("open");
       productDetail.scrollTop = 0;
     }
 
     function closeProductDetail() {
       productDetail.classList.remove("open");
+
+      // نرجع الصفحة لنفس المكان اللي كنا فيه
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      window.scrollTo(0, savedBodyScrollY);
     }
 
     detailPrev.addEventListener("click", () => {
