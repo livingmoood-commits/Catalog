@@ -1745,7 +1745,7 @@ document.addEventListener("click", (e) => {
         extra = product.extra_images.split(",").map(s => s.trim()).filter(Boolean);
       }
 
-      detailImages = [product.image_url, ...extra].filter(Boolean);
+      detailImages = [...new Set([product.image_url, ...extra].filter(Boolean))];
       detailIndex = 0;
 
       detailTitle.textContent = product.name || "";
