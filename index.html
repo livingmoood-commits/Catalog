@@ -1710,9 +1710,9 @@ const lightbox = document.getElementById("lightbox");
         ? detailImages.map((src, i) => `<img src="${src}" alt="${product.name} ${i + 1}" data-i="${i}">`).join("")
         : "";
 
-      renderDetailImage();
+renderDetailImage();
       productDetail.classList.add("open");
-      window.scrollTo(0, 0);
+      productDetail.scrollTop = 0;
     }
 
     function closeProductDetail() {
