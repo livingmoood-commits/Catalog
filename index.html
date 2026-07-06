@@ -925,7 +925,6 @@
     display: none;
     overflow-y: auto;
     overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
     padding: 16px 28px;
   }
   .product-detail-overlay.open { display: block; }
@@ -1626,37 +1625,6 @@ const lightbox = document.getElementById("lightbox");
     let galleryImages = [];
     let galleryIndex = 0;
 
-    // ============================================
-    // قفل/فتح سكرول الصفحة الأصلية لما أي أوفرلاي (lightbox أو تفاصيل المنتج) يفتح
-    // بيحافظ على مكان السكرول ويرجّعه صح لما نقفل الأوفرلاي
-    // ============================================
-    let savedBodyScrollY = 0;
-    let scrollLockCount = 0;
-
-    function lockPageScroll() {
-      if (scrollLockCount === 0) {
-        savedBodyScrollY = window.scrollY;
-        document.body.style.position = "fixed";
-        document.body.style.top = `-${savedBodyScrollY}px`;
-        document.body.style.left = "0";
-        document.body.style.right = "0";
-        document.body.style.width = "100%";
-      }
-      scrollLockCount++;
-    }
-
-    function unlockPageScroll() {
-      scrollLockCount = Math.max(0, scrollLockCount - 1);
-      if (scrollLockCount === 0) {
-        document.body.style.position = "";
-        document.body.style.top = "";
-        document.body.style.left = "";
-        document.body.style.right = "";
-        document.body.style.width = "";
-        window.scrollTo(0, savedBodyScrollY);
-      }
-    }
-
     function showGalleryImage() {
       lightboxImg.src = galleryImages[galleryIndex];
       const showArrows = galleryImages.length > 1;
@@ -1671,13 +1639,11 @@ const lightbox = document.getElementById("lightbox");
       lightboxImg.alt = alt || "";
       showGalleryImage();
       lightbox.classList.add("open");
-      lockPageScroll();
     }
     function closeLightbox() {
       lightbox.classList.remove("open");
       lightboxImg.src = "";
       galleryImages = [];
-      unlockPageScroll();
     }
     function showPrev() {
       if (galleryImages.length < 2) return;
@@ -1719,6 +1685,7 @@ const lightbox = document.getElementById("lightbox");
 
     let detailImages = [];
     let detailIndex = 0;
+    let lastScrollY = 0;
 
     function renderDetailImage() {
       detailMainImg.src = detailImages[detailIndex];
@@ -1729,6 +1696,8 @@ const lightbox = document.getElementById("lightbox");
         t.classList.toggle("active", i === detailIndex);
       });
     }
+
+let savedBodyScrollY = 0;
 
     function openProductDetail(product) {
       const extra = product.extra_images
@@ -1746,14 +1715,21 @@ const lightbox = document.getElementById("lightbox");
         : "";
 
 renderDetailImage();
+      lastScrollY = window.scrollY;
       productDetail.classList.add("open");
       productDetail.scrollTop = 0;
-      lockPageScroll();
     }
 
     function closeProductDetail() {
       productDetail.classList.remove("open");
-      unlockPageScroll();
+      window.scrollTo(0, lastScrollY);
+    }
+
+      // نرجع الصفحة لنفس المكان اللي كنا فيه
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      window.scrollTo(0, savedBodyScrollY);
     }
 
     detailPrev.addEventListener("click", () => {
