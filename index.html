@@ -1626,6 +1626,37 @@ const lightbox = document.getElementById("lightbox");
     let galleryImages = [];
     let galleryIndex = 0;
 
+    // ============================================
+    // قفل/فتح سكرول الصفحة الأصلية لما أي أوفرلاي (lightbox أو تفاصيل المنتج) يفتح
+    // بيحافظ على مكان السكرول ويرجّعه صح لما نقفل الأوفرلاي
+    // ============================================
+    let savedBodyScrollY = 0;
+    let scrollLockCount = 0;
+
+    function lockPageScroll() {
+      if (scrollLockCount === 0) {
+        savedBodyScrollY = window.scrollY;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${savedBodyScrollY}px`;
+        document.body.style.left = "0";
+        document.body.style.right = "0";
+        document.body.style.width = "100%";
+      }
+      scrollLockCount++;
+    }
+
+    function unlockPageScroll() {
+      scrollLockCount = Math.max(0, scrollLockCount - 1);
+      if (scrollLockCount === 0) {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+        window.scrollTo(0, savedBodyScrollY);
+      }
+    }
+
     function showGalleryImage() {
       lightboxImg.src = galleryImages[galleryIndex];
       const showArrows = galleryImages.length > 1;
@@ -1640,11 +1671,13 @@ const lightbox = document.getElementById("lightbox");
       lightboxImg.alt = alt || "";
       showGalleryImage();
       lightbox.classList.add("open");
+      lockPageScroll();
     }
     function closeLightbox() {
       lightbox.classList.remove("open");
       lightboxImg.src = "";
       galleryImages = [];
+      unlockPageScroll();
     }
     function showPrev() {
       if (galleryImages.length < 2) return;
@@ -1697,8 +1730,6 @@ const lightbox = document.getElementById("lightbox");
       });
     }
 
-let savedBodyScrollY = 0;
-
     function openProductDetail(product) {
       const extra = product.extra_images
         ? product.extra_images.split(",").map(s => s.trim()).filter(Boolean)
@@ -1715,25 +1746,14 @@ let savedBodyScrollY = 0;
         : "";
 
 renderDetailImage();
-
-      // نحفظ مكان السكرول قبل ما نفتح صفحة التفاصيل
-      savedBodyScrollY = window.scrollY;
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${savedBodyScrollY}px`;
-      document.body.style.width = "100%";
-
       productDetail.classList.add("open");
       productDetail.scrollTop = 0;
+      lockPageScroll();
     }
 
     function closeProductDetail() {
       productDetail.classList.remove("open");
-
-      // نرجع الصفحة لنفس المكان اللي كنا فيه
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      window.scrollTo(0, savedBodyScrollY);
+      unlockPageScroll();
     }
 
     detailPrev.addEventListener("click", () => {
