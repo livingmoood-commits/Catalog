@@ -1487,22 +1487,32 @@ let allProducts = [];
     // حفظ واسترجاع مكان آخر تمرير (scroll) في الصفحة
     // ============================================
     Promise.all([loadCatalog(), loadTeam()]).then(() => {
-      initReveal();
-      const savedScroll = localStorage.getItem("lm_scroll_position");
-      if (savedScroll) {
-        setTimeout(() => {
-          window.scrollTo(0, Number(savedScroll));
-        }, 150);
-      }
-    });
+  initReveal();
+  restoreScrollPosition();
+});
 
-    let scrollSaveTimer;
-    window.addEventListener("scroll", () => {
-      clearTimeout(scrollSaveTimer);
-      scrollSaveTimer = setTimeout(() => {
-        localStorage.setItem("lm_scroll_position", window.scrollY);
-      }, 200);
-    });
+// نحفظ آخر مكان قبل ما نسيب الصفحة (رفريش/تصفح) — أدق من timeout
+window.addEventListener("beforeunload", () => {
+  sessionStorage.setItem("lm_scroll_position", window.scrollY);
+});
+
+function restoreScrollPosition() {
+  const saved = sessionStorage.getItem("lm_scroll_position");
+  if (!saved) return;
+  const targetY = Number(saved);
+
+  // نستنى الصور تخلص تحميل عشان الارتفاع يستقر صح قبل ما نرجّع السكرول
+  let attempts = 0;
+  const tryRestore = () => {
+    attempts++;
+    window.scrollTo(0, targetY);
+    // لو لسه مش واصل (لسه الصفحة بتكبر بالصور) نجرب تاني
+    if (Math.abs(window.scrollY - targetY) > 5 && attempts < 15) {
+      requestAnimationFrame(() => setTimeout(tryRestore, 100));
+    }
+  };
+  tryRestore();
+}
 
     async function loadTeam() {
       const teamGrid = document.getElementById("team-grid");
