@@ -914,6 +914,93 @@
     justify-content: center;
   }
 
+  /* ============================================
+     Product Detail Page
+     ============================================ */
+  .product-detail-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--clr-bg);
+    display: none;
+    overflow-y: auto;
+    padding: 28px;
+  }
+  .product-detail-overlay.open { display: block; }
+
+  .product-detail-inner { max-width: 900px; margin: 0 auto; }
+
+  .product-detail-back {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--clr-ink);
+    cursor: pointer;
+    padding: 10px 0 24px;
+  }
+
+  .product-detail-main {
+    position: relative;
+    background: var(--clr-line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .product-detail-main img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .gallery-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(28,23,18,0.55);
+    color: #F3EFEA;
+    border: none;
+    font-size: 26px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .gallery-prev { left: 14px; }
+  .gallery-next { right: 14px; }
+  .gallery-arrow:hover { background: rgba(28,23,18,0.75); }
+
+  .product-detail-thumbs {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+  .product-detail-thumbs img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 2px;
+    cursor: pointer;
+    opacity: .6;
+    flex-shrink: 0;
+  }
+  .product-detail-thumbs img.active { opacity: 1; outline: 2px solid var(--clr-gold); }
+
+  .product-detail-info { margin-top: 28px; text-align: center; }
+  .product-detail-info h2 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--clr-ink);
+    margin: 0 0 18px;
+  }
+  .product-detail-info .contact-actions { display: flex; gap: 12px; justify-content: center; }
   .lightbox-prev, .lightbox-next {
     position: absolute;
     top: 50%;
@@ -1245,12 +1332,33 @@
   </svg>
 
   <!-- ===================== Lightbox (تكبير الصورة عند الدوس) ===================== -->
-<div class="lightbox" id="lightbox">
-    <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
-    <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous">‹</button>
+  <div class="lightbox" id="lightbox">
+      <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
+      <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous">‹</button>
     <img id="lightbox-img" src="" alt="">
     <button class="lightbox-next" id="lightbox-next" aria-label="Next">›</button>
     <div class="lightbox-counter" id="lightbox-counter"></div>
+  </div>
+  <!-- ===================== Product Detail Page (تفاصيل المنتج) ===================== -->
+  <div class="product-detail-overlay" id="product-detail">
+    <div class="product-detail-inner">
+      <button class="product-detail-back" id="product-detail-back">← Back</button>
+
+      <div class="product-detail-main">
+        <button class="gallery-arrow gallery-prev" id="detail-prev" aria-label="Previous">‹</button>
+        <img id="detail-main-img" src="" alt="">
+        <button class="gallery-arrow gallery-next" id="detail-next" aria-label="Next">›</button>
+      </div>
+      <div class="product-detail-thumbs" id="detail-thumbs"></div>
+
+      <div class="product-detail-info">
+        <h2 id="detail-title"></h2>
+        <div class="contact-actions">
+          <a class="contact-btn whatsapp" id="detail-whatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="contact-btn call" id="detail-call" href="#">Call</a>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1313,6 +1421,8 @@
       `).join("");
     }
 
+let allProducts = [];
+
     async function loadCatalog() {
       const container = document.getElementById("catalog-sections");
       let categories = DEMO_CATEGORIES;
@@ -1327,13 +1437,14 @@
 
         const { data: prodData, error: prodError } = await supabaseClient
           .from("products")
-          .select("name, image_url, category_id, extra_images")
+          .select("id, name, image_url, category_id, extra_images")
           .order("created_at", { ascending: false });
         if (!prodError && prodData) products = prodData;
       } catch (e) {
         console.warn("Could not connect to Supabase, showing demo data:", e);
       }
 
+      allProducts = products;
       await loadCategoryRail(categories);
 
       if (categories.length === 0) {
@@ -1345,9 +1456,9 @@
         const items = products.filter(p => p.category_id === cat.id);
         const itemsHtml = items.length > 0
           ? items.map(p => `
-              <div class="product-card reveal">
-<div class="product-media">
-                  <img src="${p.image_url}" alt="${p.name}" loading="lazy" data-gallery="${[p.image_url, ...(p.extra_images ? p.extra_images.split(',').map(s => s.trim()).filter(Boolean) : [])].join('|')}">
+<div class="product-card reveal" data-idx="${allProducts.indexOf(p)}">
+                <div class="product-media">
+                  <img src="${p.image_url}" alt="${p.name}" loading="lazy">
                 </div>
                 <div class="product-info">
                   <div class="product-name">${p.name}</div>
@@ -1526,19 +1637,90 @@ const lightbox = document.getElementById("lightbox");
       showGalleryImage();
     }
 
+   // فتح صفحة تفاصيل المنتج عند الدوس على أي حتة في الكارت غير أزرار WhatsApp/Call
     document.addEventListener("click", (e) => {
-      const img = e.target.closest(".product-media img");
-      if (img) {
-        const gallery = (img.dataset.gallery || img.src).split("|").filter(Boolean);
-        openLightbox(gallery, img.alt, 0);
-      }
+      const card = e.target.closest(".product-card");
+      if (!card) return;
+      if (e.target.closest(".contact-btn")) return;
+      const idx = card.dataset.idx;
+      const product = allProducts[idx];
+      if (product) openProductDetail(product);
     });
 
     lightboxClose.addEventListener("click", closeLightbox);
-    lightboxPrev.addEventListener("click", showPrev);
-    lightboxNext.addEventListener("click", showNext);
     lightbox.addEventListener("click", (e) => {
       if (e.target === lightbox) closeLightbox();
+    });
+
+    // ============================================
+    // Product Detail Page (صفحة تفاصيل المنتج)
+    // ============================================
+    const productDetail = document.getElementById("product-detail");
+    const detailMainImg = document.getElementById("detail-main-img");
+    const detailThumbs = document.getElementById("detail-thumbs");
+    const detailTitle = document.getElementById("detail-title");
+    const detailWhatsapp = document.getElementById("detail-whatsapp");
+    const detailCall = document.getElementById("detail-call");
+    const detailPrev = document.getElementById("detail-prev");
+    const detailNext = document.getElementById("detail-next");
+
+    let detailImages = [];
+    let detailIndex = 0;
+
+    function renderDetailImage() {
+      detailMainImg.src = detailImages[detailIndex];
+      const showArrows = detailImages.length > 1;
+      detailPrev.style.display = showArrows ? "flex" : "none";
+      detailNext.style.display = showArrows ? "flex" : "none";
+      detailThumbs.querySelectorAll("img").forEach((t, i) => {
+        t.classList.toggle("active", i === detailIndex);
+      });
+    }
+
+    function openProductDetail(product) {
+      const extra = product.extra_images
+        ? product.extra_images.split(",").map(s => s.trim()).filter(Boolean)
+        : [];
+      detailImages = [product.image_url, ...extra];
+      detailIndex = 0;
+
+      detailTitle.textContent = product.name;
+      detailWhatsapp.href = buildWhatsappLink(product.name);
+      detailCall.href = buildCallLink();
+
+      detailThumbs.innerHTML = detailImages.length > 1
+        ? detailImages.map((src, i) => `<img src="${src}" alt="${product.name} ${i + 1}" data-i="${i}">`).join("")
+        : "";
+
+      renderDetailImage();
+      productDetail.classList.add("open");
+      window.scrollTo(0, 0);
+    }
+
+    function closeProductDetail() {
+      productDetail.classList.remove("open");
+    }
+
+    detailPrev.addEventListener("click", () => {
+      detailIndex = (detailIndex - 1 + detailImages.length) % detailImages.length;
+      renderDetailImage();
+    });
+    detailNext.addEventListener("click", () => {
+      detailIndex = (detailIndex + 1) % detailImages.length;
+      renderDetailImage();
+    });
+    detailThumbs.addEventListener("click", (e) => {
+      const t = e.target.closest("img[data-i]");
+      if (!t) return;
+      detailIndex = Number(t.dataset.i);
+      renderDetailImage();
+    });
+    document.getElementById("product-detail-back").addEventListener("click", closeProductDetail);
+    document.addEventListener("keydown", (e) => {
+      if (!productDetail.classList.contains("open")) return;
+      if (e.key === "Escape") closeProductDetail();
+      if (e.key === "ArrowLeft") detailPrev.click();
+      if (e.key === "ArrowRight") detailNext.click();
     });
     document.addEventListener("keydown", (e) => {
       if (!lightbox.classList.contains("open")) return;
