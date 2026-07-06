@@ -799,7 +799,57 @@
     color: var(--clr-ink-70);
     margin-top: 2px;
   }
+/* ============================================
+     Videos section
+     ============================================ */
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
 
+  @media (max-width: 700px) {
+    .video-grid { grid-template-columns: 1fr; }
+  }
+
+  .video-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-line);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(28,23,18,0.06);
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+
+  .video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(28,23,18,0.1);
+  }
+
+  .video-wrapper {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--clr-ink);
+  }
+
+  .video-wrapper video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .video-info {
+    padding: 14px 18px;
+    text-align: center;
+  }
+
+  .video-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--clr-ink);
+  }
   .contact-actions { display: flex; gap: 8px; margin-top: auto; }
 
   .contact-btn {
@@ -1286,7 +1336,25 @@
       </div>
     </div>
   </section>
+<div class="section-separator reveal">
+    <span class="section-separator-line"></span>
+    <span class="section-separator-label">Videos</span>
+    <span class="section-separator-line"></span>
+  </div>
 
+  <!-- ====================================================================
+       Videos — بيتحمّل تلقائيًا من جدول team_members في Supabase
+       (type = 'video'). في عمود image_url حطّ رابط ملف الفيديو (mp4).
+       ==================================================================== -->
+  <section id="videos-section">
+    <div class="wrap">
+      <h2 class="section-title">Videos</h2>
+      <div class="section-rule"></div>
+      <div class="video-grid" id="video-grid">
+        <p class="state-msg">Loading videos...</p>
+      </div>
+    </div>
+  </section>
   <!-- جملة عائمة 3 -->
   <div class="floating-quote-row align-center">
     <div class="floating-quote featured reveal-pop rot-3">Every detail, designed to be <span class="accent">lived in</span>.</div>
@@ -1400,7 +1468,10 @@
     const DEMO_ENGINEERS = [
       { name: "اسم المهندس 1", role: "Site Engineer", image_url: "https://placehold.co/600x600/E3DCD0/1C1712?text=Eng+1", type: "engineer" },
     ];
-
+const DEMO_VIDEOS = [
+      { name: "Video 1", image_url: "https://www.w3schools.com/html/mov_bbb.mp4", type: "video" },
+      { name: "Video 2", image_url: "https://www.w3schools.com/html/mov_bbb.mp4", type: "video" },
+    ];
     function buildWhatsappLink(productName) {
       const msg = encodeURIComponent(`Hello, I would like to ask about: ${productName}`);
       return `https://wa.me/${CONTACT_WHATSAPP}?text=${msg}`;
@@ -1486,7 +1557,7 @@ let allProducts = [];
 // ============================================
     // حفظ واسترجاع مكان آخر تمرير (scroll) في الصفحة
     // ============================================
-    Promise.all([loadCatalog(), loadTeam()]).then(() => {
+    Promise.all([loadCatalog(), loadTeam(), loadVideos()]).then(() => {
   initReveal();
   restoreScrollPosition();
 });
@@ -1551,7 +1622,36 @@ function restoreScrollPosition() {
         </div>
       `).join("");
     }
+async function loadVideos() {
+      const videoGrid = document.getElementById("video-grid");
+      let members = [];
 
+      try {
+        const { data, error } = await supabaseClient
+          .from("team_members")
+          .select("name, role, image_url, type")
+          .order("sort_order", { ascending: true });
+        if (!error && data) members = data;
+      } catch (e) {
+        console.warn("Could not connect to Supabase for videos:", e);
+      }
+
+      const videos = members.filter(m => m.type === "video");
+      const videoSource = videos.length > 0 ? videos : DEMO_VIDEOS;
+
+      videoGrid.innerHTML = videoSource.map(v => `
+        <div class="video-card reveal">
+          <div class="video-wrapper">
+            <video controls preload="metadata" playsinline>
+              <source src="${v.image_url}" type="video/mp4">
+            </video>
+          </div>
+          <div class="video-info">
+            <div class="video-title">${v.name || ""}</div>
+          </div>
+        </div>
+      `).join("");
+    }
     // ============================================
     // Fade-in-on-scroll for elements with the .reveal class
     // ============================================
