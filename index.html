@@ -1691,13 +1691,18 @@ const lightbox = document.getElementById("lightbox");
     }
 
    // فتح صفحة تفاصيل المنتج عند الدوس على أي حتة في الكارت غير أزرار WhatsApp/Call
-    document.addEventListener("click", (e) => {
+document.addEventListener("click", (e) => {
       const card = e.target.closest(".product-card");
       if (!card) return;
       if (e.target.closest(".contact-btn")) return;
-      const idx = card.dataset.idx;
-      const product = allProducts[idx];
-      if (product) openProductDetail(product);
+      try {
+        const idx = card.dataset.idx;
+        const product = allProducts[idx];
+        if (product) openProductDetail(product);
+        else console.error("Product not found for idx:", idx, allProducts);
+      } catch (err) {
+        console.error("خطأ في فتح تفاصيل المنتج:", err);
+      }
     });
 
     lightboxClose.addEventListener("click", closeLightbox);
@@ -1731,26 +1736,34 @@ const lightbox = document.getElementById("lightbox");
     }
 
     function openProductDetail(product) {
-      const extra = product.extra_images
-        ? product.extra_images.split(",").map(s => s.trim()).filter(Boolean)
-        : [];
-      detailImages = [product.image_url, ...extra];
+      if (!product) { console.error("openProductDetail: product is undefined"); return; }
+
+      // يدعم extra_images سواء كانت نص بفواصل، أو Array، أو فاضية/null
+      let extra = [];
+      if (Array.isArray(product.extra_images)) {
+        extra = product.extra_images.filter(Boolean);
+      } else if (typeof product.extra_images === "string" && product.extra_images.trim() !== "") {
+        extra = product.extra_images.split(",").map(s => s.trim()).filter(Boolean);
+      }
+
+      detailImages = [product.image_url, ...extra].filter(Boolean);
       detailIndex = 0;
 
-      detailTitle.textContent = product.name;
-      detailWhatsapp.href = buildWhatsappLink(product.name);
+      detailTitle.textContent = product.name || "";
+      detailWhatsapp.href = buildWhatsappLink(product.name || "");
       detailCall.href = buildCallLink();
 
       detailThumbs.innerHTML = detailImages.length > 1
-        ? detailImages.map((src, i) => `<img src="${src}" alt="${product.name} ${i + 1}" data-i="${i}">`).join("")
+        ? detailImages.map((src, i) => `<img src="${src}" alt="${(product.name || '')} ${i + 1}" data-i="${i}">`).join("")
         : "";
 
-renderDetailImage();
+      // نفتح الأوفرلاي الأول عشان نضمن ظهوره حتى لو حصلت مشكلة بعد كده
       productDetail.classList.add("open");
       productDetail.scrollTop = 0;
       lockPageScroll();
-    }
 
+      renderDetailImage();
+    }
     function closeProductDetail() {
       productDetail.classList.remove("open");
       unlockPageScroll();
