@@ -1697,7 +1697,9 @@ const lightbox = document.getElementById("lightbox");
       });
     }
 
-function openProductDetail(product) {
+let savedBodyScrollY = 0;
+
+    function openProductDetail(product) {
       const extra = product.extra_images
         ? product.extra_images.split(",").map(s => s.trim()).filter(Boolean)
         : [];
