@@ -1481,8 +1481,26 @@ let allProducts = [];
       }).join("");
     }
 
-    loadCatalog().then(initReveal);
-    loadTeam().then(initReveal);
+// ============================================
+    // حفظ واسترجاع مكان آخر تمرير (scroll) في الصفحة
+    // ============================================
+    Promise.all([loadCatalog(), loadTeam()]).then(() => {
+      initReveal();
+      const savedScroll = localStorage.getItem("lm_scroll_position");
+      if (savedScroll) {
+        setTimeout(() => {
+          window.scrollTo(0, Number(savedScroll));
+        }, 150);
+      }
+    });
+
+    let scrollSaveTimer;
+    window.addEventListener("scroll", () => {
+      clearTimeout(scrollSaveTimer);
+      scrollSaveTimer = setTimeout(() => {
+        localStorage.setItem("lm_scroll_position", window.scrollY);
+      }, 200);
+    });
 
     async function loadTeam() {
       const teamGrid = document.getElementById("team-grid");
