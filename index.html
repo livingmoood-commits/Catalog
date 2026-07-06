@@ -1040,10 +1040,11 @@
      Smooth global feel — انيميشن على كل حاجة
      ============================================ */
 
-  body { animation: pageFadeIn .8s ease both; }
+  body { animation: pageFadeIn .8s ease forwards; }
   @keyframes pageFadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    0%   { opacity: 0; transform: translateY(12px); }
+    99%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 1; transform: none; }
   }
 
   .category-item, .product-card, .team-card, .engineer-card,
