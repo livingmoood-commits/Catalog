@@ -1738,7 +1738,6 @@ document.addEventListener("click", (e) => {
     function openProductDetail(product) {
       if (!product) { console.error("openProductDetail: product is undefined"); return; }
 
-      // يدعم extra_images سواء كانت نص بفواصل، أو Array، أو فاضية/null
       let extra = [];
       if (Array.isArray(product.extra_images)) {
         extra = product.extra_images.filter(Boolean);
@@ -1757,7 +1756,6 @@ document.addEventListener("click", (e) => {
         ? detailImages.map((src, i) => `<img src="${src}" alt="${(product.name || '')} ${i + 1}" data-i="${i}">`).join("")
         : "";
 
-      // نفتح الأوفرلاي الأول عشان نضمن ظهوره حتى لو حصلت مشكلة بعد كده
       productDetail.classList.add("open");
       productDetail.scrollTop = 0;
       lockPageScroll();
