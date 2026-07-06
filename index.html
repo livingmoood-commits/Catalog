@@ -1042,9 +1042,8 @@
 
   body { animation: pageFadeIn .8s ease forwards; }
   @keyframes pageFadeIn {
-    0%   { opacity: 0; transform: translateY(12px); }
-    99%  { opacity: 1; transform: translateY(0); }
-    100% { opacity: 1; transform: none; }
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 
   .category-item, .product-card, .team-card, .engineer-card,
