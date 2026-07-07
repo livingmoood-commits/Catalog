@@ -1618,12 +1618,12 @@ function restoreScrollPosition() {
     async function loadTeam() {
       const teamGrid = document.getElementById("team-grid");
       const engGrid = document.getElementById("engineer-grid");
-      let members = [];
+let members = [];
 
       try {
-const { data, error } = await supabaseClient
-          .from("portfolio_items")
-          .select("category, image_url, poster_url")
+        const { data, error } = await supabaseClient
+          .from("team_members")
+          .select("name, role, image_url, type")
           .order("sort_order", { ascending: true });
         if (!error && data) members = data;
       } catch (e) {
@@ -1691,13 +1691,15 @@ videosGrid.innerHTML = videoSource.map(v => `
       });
 
       // الدوس على أي فيديو: يشغّل بالصوت العادي مع أزرار التحكم (وباقي الفيديوهات تفضل شغالة صامتة)
-      videosGrid.addEventListener("click", (e) => {
+videosGrid.addEventListener("click", (e) => {
         const v = e.target.closest("video");
         if (!v) return;
         v.muted = false;
         v.controls = true;
         v.play().catch(() => {});
       });
+    }
+    // ============================================
     // ============================================
     // Fade-in-on-scroll for elements with the .reveal class
     // ============================================
