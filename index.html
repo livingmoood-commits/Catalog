@@ -1368,25 +1368,6 @@
       </div>
     </div>
   </section>
-<div class="section-separator reveal">
-    <span class="section-separator-line"></span>
-    <span class="section-separator-label">Videos</span>
-    <span class="section-separator-line"></span>
-  </div>
-
-  <!-- ====================================================================
-       Videos — بيتحمّل تلقائيًا من جدول team_members في Supabase
-       (type = 'video'). في عمود image_url حطّ رابط ملف الفيديو (mp4).
-       ==================================================================== -->
-  <section id="videos-section">
-    <div class="wrap">
-      <h2 class="section-title">Videos</h2>
-      <div class="section-rule"></div>
-      <div class="video-grid" id="video-grid">
-        <p class="state-msg">Loading videos...</p>
-      </div>
-    </div>
-  </section>
   <!-- جملة عائمة 3 -->
   <div class="floating-quote-row align-center">
     <div class="floating-quote featured reveal-pop rot-3">Every detail, designed to be <span class="accent">lived in</span>.</div>
@@ -1676,36 +1657,6 @@ engGrid.innerHTML = engSource.map(m => `
       videosGrid.innerHTML = videoSource.map(v => `
         <div class="video-card">
           <video src="${v.image_url}" controls playsinline></video>
-        </div>
-      `).join("");
-    }
-async function loadVideos() {
-      const videoGrid = document.getElementById("video-grid");
-      let members = [];
-
-      try {
-        const { data, error } = await supabaseClient
-          .from("team_members")
-          .select("name, role, image_url, type")
-          .order("sort_order", { ascending: true });
-        if (!error && data) members = data;
-      } catch (e) {
-        console.warn("Could not connect to Supabase for videos:", e);
-      }
-
-      const videos = members.filter(m => m.type === "video");
-      const videoSource = videos.length > 0 ? videos : DEMO_VIDEOS;
-
-      videoGrid.innerHTML = videoSource.map(v => `
-        <div class="video-card reveal">
-          <div class="video-wrapper">
-            <video controls preload="metadata" playsinline>
-              <source src="${v.image_url}" type="video/mp4">
-            </video>
-          </div>
-          <div class="video-info">
-            <div class="video-title">${v.name || ""}</div>
-          </div>
         </div>
       `).join("");
     }
