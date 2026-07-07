@@ -1617,13 +1617,13 @@ function restoreScrollPosition() {
 
     async function loadTeam() {
       const teamGrid = document.getElementById("team-grid");
-      const engGrid = document.getElementById("engineer-grid");
-let members = [];
+const engGrid = document.getElementById("engineer-grid");
+      let members = [];
 
       try {
         const { data, error } = await supabaseClient
-          .from("portfolio_items")
-          .select("type, image_url")
+          .from("team_members")
+          .select("name, role, image_url, type")
           .order("sort_order", { ascending: true });
         if (!error && data) members = data;
       } catch (e) {
@@ -1657,10 +1657,10 @@ engGrid.innerHTML = engSource.map(m => `
       const videosGrid = document.getElementById("videos-grid");
       let items = [];
 
-      try {
-const { data, error } = await supabaseClient
+     try {
+        const { data, error } = await supabaseClient
           .from("portfolio_items")
-          .select("category, image_url")
+          .select("type, image_url, poster_url")
           .order("sort_order", { ascending: true });
         if (!error && data) items = data;
       } catch (e) {
