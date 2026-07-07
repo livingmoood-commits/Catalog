@@ -1622,8 +1622,8 @@ let members = [];
 
       try {
         const { data, error } = await supabaseClient
-          .from("team_members")
-          .select("name, role, image_url, type")
+          .from("portfolio_items")
+          .select("type, image_url")
           .order("sort_order", { ascending: true });
         if (!error && data) members = data;
       } catch (e) {
