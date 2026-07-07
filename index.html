@@ -1658,9 +1658,9 @@ engGrid.innerHTML = engSource.map(m => `
       let items = [];
 
       try {
-        const { data, error } = await supabaseClient
+const { data, error } = await supabaseClient
           .from("portfolio_items")
-          .select("name, image_url, type")
+          .select("category, image_url")
           .order("sort_order", { ascending: true });
         if (!error && data) items = data;
       } catch (e) {
