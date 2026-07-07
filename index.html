@@ -1621,9 +1621,9 @@ function restoreScrollPosition() {
       let members = [];
 
       try {
-        const { data, error } = await supabaseClient
-          .from("team_members")
-          .select("name, role, image_url, type")
+const { data, error } = await supabaseClient
+          .from("portfolio_items")
+          .select("category, image_url, poster_url")
           .order("sort_order", { ascending: true });
         if (!error && data) members = data;
       } catch (e) {
