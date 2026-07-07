@@ -740,11 +740,30 @@
     color: var(--clr-gold);
   }
 
-  .team-grid,
+.team-grid,
   .engineer-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
+  }
+
+  .videos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 900px) {
+    .videos-grid { grid-template-columns: 1fr; }
+  }
+  .video-card {
+    overflow: hidden;
+    border: 1px solid var(--clr-line);
+    border-radius: 2px;
+    background: #000;
+  }
+  .video-card video {
+    width: 100%;
+    display: block;
   }
 
   @media (max-width: 900px) {
@@ -1316,8 +1335,29 @@
         فريق واحد، بيحوّل كل تفصيلة صغيرة لقطعة أثاث تستحق تكون في بيتك.
         <span class="team-intro-sub">الصور دي مش مجرد لحظات شغل... دي حكاية كل قطعة أثاث قبل ما توصلك.</span>
       </p>
-      <div class="team-grid" id="team-grid">
+<div class="team-grid" id="team-grid">
         <p class="state-msg">Loading team...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       Videos — 3 فيديوهات جنب بعض من Supabase Storage
+       ==================================================================== -->
+  <section id="videos">
+    <div class="wrap">
+      <h2 class="section-title">Videos</h2>
+      <div class="section-rule"></div>
+      <div class="videos-grid">
+        <div class="video-card">
+          <video src="PASTE_VIDEO_1_URL_HERE" controls playsinline></video>
+        </div>
+        <div class="video-card">
+          <video src="PASTE_VIDEO_2_URL_HERE" controls playsinline></video>
+        </div>
+        <div class="video-card">
+          <video src="PASTE_VIDEO_3_URL_HERE" controls playsinline></video>
+        </div>
       </div>
     </div>
   </section>
