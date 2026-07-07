@@ -1670,12 +1670,34 @@ engGrid.innerHTML = engSource.map(m => `
       const videos = items.filter(v => (v.type || "").toLowerCase() === "video");
       const videoSource = videos.length > 0 ? videos : DEMO_VIDEOS;
 
-      videosGrid.innerHTML = videoSource.map(v => `
+videosGrid.innerHTML = videoSource.map(v => `
         <div class="video-card">
-          <video src="${v.image_url}" controls playsinline></video>
+          <video
+            src="${v.image_url}"
+            poster="${v.poster_url || ''}"
+            muted
+            loop
+            autoplay
+            playsinline
+            preload="auto"
+          ></video>
         </div>
       `).join("");
-    }
+
+      // شغّل التلاتة فيديوهات مع بعض على طول، ولفهم مستمر (loop) لحد ما حد يدوس عليهم
+      const allVideoEls = videosGrid.querySelectorAll("video");
+      allVideoEls.forEach(v => {
+        v.play().catch(() => {});
+      });
+
+      // الدوس على أي فيديو: يشغّل بالصوت العادي مع أزرار التحكم (وباقي الفيديوهات تفضل شغالة صامتة)
+      videosGrid.addEventListener("click", (e) => {
+        const v = e.target.closest("video");
+        if (!v) return;
+        v.muted = false;
+        v.controls = true;
+        v.play().catch(() => {});
+      });
     // ============================================
     // Fade-in-on-scroll for elements with the .reveal class
     // ============================================
