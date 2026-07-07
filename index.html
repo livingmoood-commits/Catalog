@@ -997,7 +997,23 @@
     -webkit-overflow-scrolling: touch;
     padding: 16px 28px;
   }
-  .product-detail-overlay.open { display: block; }
+.product-detail-overlay.open { display: block; }
+
+  @keyframes detailPopIn {
+    from { opacity: 0; transform: translateY(18px) scale(.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .product-detail-overlay.open .product-detail-inner {
+    animation: detailPopIn .4s ease both;
+  }
+
+  @keyframes imgFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .product-detail-main img.fade-in {
+    animation: imgFadeIn .35s ease both;
+  }
 
   .product-detail-inner { max-width: 900px; margin: 0 auto; }
 
@@ -1843,8 +1859,12 @@ document.addEventListener("click", (e) => {
     let detailImages = [];
     let detailIndex = 0;
 
-    function renderDetailImage() {
+function renderDetailImage() {
+      detailMainImg.classList.remove("fade-in");
       detailMainImg.src = detailImages[detailIndex];
+      void detailMainImg.offsetWidth;
+      detailMainImg.classList.add("fade-in");
+
       const showArrows = detailImages.length > 1;
       detailPrev.style.display = showArrows ? "flex" : "none";
       detailNext.style.display = showArrows ? "flex" : "none";
