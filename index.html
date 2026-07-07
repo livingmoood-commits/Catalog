@@ -1694,6 +1694,15 @@ videosGrid.innerHTML = videoSource.map(v => `
 videosGrid.addEventListener("click", (e) => {
         const v = e.target.closest("video");
         if (!v) return;
+
+        // أي فيديو تاني شغال بصوت، رجّعه صامت تاني
+        allVideoEls.forEach(other => {
+          if (other !== v) {
+            other.muted = true;
+            other.controls = false;
+          }
+        });
+
         v.muted = false;
         v.controls = true;
         v.play().catch(() => {});
