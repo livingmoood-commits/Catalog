@@ -1556,7 +1556,7 @@ let allProducts = [];
           ? items.map(p => `
 <div class="product-card reveal" data-idx="${allProducts.indexOf(p)}">
                 <div class="product-media">
-                  <img src="${p.image_url}" alt="${p.name}" loading="lazy">
+                  <img src="${p.image_url}" alt="${p.name}" loading="lazy" onerror="this.style.opacity='0'">
                 </div>
                 <div class="product-info">
                   <div class="product-name">${p.name}</div>
