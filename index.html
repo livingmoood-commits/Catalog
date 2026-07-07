@@ -1340,24 +1340,17 @@
       </div>
     </div>
   </section>
-  
+
   <!-- ====================================================================
-       Videos — 3 فيديوهات جنب بعض من Supabase Storage
+       Videos — بيتحمّل تلقائيًا من جدول portfolio_items في Supabase
+       (type = 'video'). عايز تضيف/تشيل فيديو؟ عدّلي من Table Editor بس.
        ==================================================================== -->
   <section id="videos">
     <div class="wrap">
       <h2 class="section-title">Videos</h2>
       <div class="section-rule"></div>
-      <div class="videos-grid">
-        <div class="video-card">
-          <video src="PASTE_VIDEO_1_URL_HERE" controls playsinline></video>
-        </div>
-        <div class="video-card">
-          <video src="PASTE_VIDEO_2_URL_HERE" controls playsinline></video>
-        </div>
-        <div class="video-card">
-          <video src="PASTE_VIDEO_3_URL_HERE" controls playsinline></video>
-        </div>
+      <div class="videos-grid" id="videos-grid">
+        <p class="state-msg">Loading videos...</p>
       </div>
     </div>
   </section>
@@ -1651,13 +1644,37 @@ function restoreScrollPosition() {
         </div>
       `).join("");
 
-      engGrid.innerHTML = engSource.map(m => `
+engGrid.innerHTML = engSource.map(m => `
         <div class="engineer-card">
           <div class="engineer-media">
             <img src="${m.image_url}" alt="${m.name || 'Engineer'}" loading="lazy">
           </div>
           <div class="engineer-name">${m.name || ""}</div>
           <div class="engineer-role">${m.role || ""}</div>
+        </div>
+      `).join("");
+    }
+
+    async function loadVideos() {
+      const videosGrid = document.getElementById("videos-grid");
+      let items = [];
+
+      try {
+        const { data, error } = await supabaseClient
+          .from("portfolio_items")
+          .select("name, image_url, type")
+          .order("sort_order", { ascending: true });
+        if (!error && data) items = data;
+      } catch (e) {
+        console.warn("Could not connect to Supabase for portfolio_items:", e);
+      }
+
+      const videos = items.filter(v => (v.type || "").toLowerCase() === "video");
+      const videoSource = videos.length > 0 ? videos : DEMO_VIDEOS;
+
+      videosGrid.innerHTML = videoSource.map(v => `
+        <div class="video-card">
+          <video src="${v.image_url}" controls playsinline></video>
         </div>
       `).join("");
     }
