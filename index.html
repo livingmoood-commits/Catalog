@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Living Mood | Catalog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&family=Markazi+Text:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
   /* ============================================
@@ -28,6 +28,7 @@
     --font-display: "Playfair Display", Georgia, serif;
     --font-elegant: "Cormorant Garamond", Georgia, serif;
     --font-body: "Inter", -apple-system, "Segoe UI", sans-serif;
+    --font-arabic: "Amiri", "Markazi Text", Georgia, serif;
 
     --container: 1240px;
 
@@ -138,12 +139,40 @@
 
   .about-section .section-title { margin-bottom: 0; }
 
+  .about-tagline {
+    max-width: 620px;
+    margin: 22px auto 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(19px, 2.4vw, 24px);
+    line-height: 1.6;
+    color: var(--clr-gold);
+    letter-spacing: 0.3px;
+  }
+
   .about-text {
     max-width: 760px;
-    margin: 28px auto 0;
+    margin: 34px auto 0;
+    font-family: var(--font-arabic);
+    direction: rtl;
+    font-size: clamp(19px, 2.2vw, 23px);
+    line-height: 2;
+    color: var(--clr-ink-70);
+    text-align: center;
+  }
+
+  .about-text .accent {
+    color: var(--clr-gold);
+    font-weight: 700;
+  }
+
+  .about-text-en {
+    max-width: 700px;
+    margin: 24px auto 0;
     font-family: var(--font-elegant);
-    font-size: 20px;
-    line-height: 1.7;
+    font-size: 18px;
+    line-height: 1.8;
     color: var(--clr-ink-70);
   }
 
@@ -1388,19 +1417,19 @@
     <div class="stats-grid">
       <div class="stat-item">
         <span class="stat-label">Designs</span>
-        <span class="stat-number">120+</span>
+        <span class="stat-number" data-target="120" data-suffix="+">0</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">Satisfied Clients</span>
-        <span class="stat-number">510+</span>
+        <span class="stat-number" data-target="510" data-suffix="+">0</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">Years</span>
-        <span class="stat-number">13+</span>
+        <span class="stat-number" data-target="13" data-suffix="+">0</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">Projects</span>
-        <span class="stat-number">256</span>
+        <span class="stat-number" data-target="256" data-suffix="">0</span>
       </div>
     </div>
   </section>
@@ -1413,8 +1442,24 @@
     <div class="wrap">
       <h2 class="section-title">About Us</h2>
       <div class="section-rule"></div>
+
+      <p class="about-tagline">
+        Live Beautiful. Live Your Mood.
+      </p>
+
       <p class="about-text">
-        اكتب هنا قصة قصيرة عن Living Mood... إزاي بدأتوا، وإيه اللي بيميزكم، وليه العملاء بيثقوا فيكم.
+        بدأت <span class="accent">Living Mood</span> بحلم بسيط… إننا نصمّم أماكن مش بس بيوت، أماكن بتحكي حكاية أصحابها.
+        من ورشة صغيرة وشغف بالتفاصيل، كبرت تجربتنا سنة بعد سنة، وبقينا نُتقن كل خطوة من التصميم للتنفيذ بإحساس مختلف.
+        اللي بيميّزنا إننا بنمزج بين <span class="accent">الفخامة</span> و<span class="accent">البساطة</span>،
+        وبين <span class="accent">جودة الخامات</span> ودقة الصنعة، عشان كل قطعة تطلع بروح مختلفة وهوية واضحة.
+        وعملاؤنا بيثقوا فينا لأننا بنسمعهم قبل ما نصمّم، وبنحوّل ذوقهم وأسلوب حياتهم لمساحة حقيقية يعيشوا فيها راحتهم وجمالهم كل يوم.
+      </p>
+
+      <p class="about-text-en">
+        At Living Mood, we create bespoke interiors, timeless furniture, and complete interior solutions designed around your lifestyle.
+        Blending elegant design, premium materials, and exceptional craftsmanship, we transform every space into a refined environment
+        where beauty, comfort, and functionality exist in perfect harmony. Every detail is thoughtfully crafted to tell your story
+        and create a home you'll love for years to come.
       </p>
     </div>
   </section>
@@ -2129,6 +2174,53 @@ function renderDetailImage() {
       .forEach(el => el.classList.add("reveal-pop"));
 
     initPopReveal();
+
+    // ============================================
+    // Stats Counter Animation — الأرقام بتعد لما تدخل الشاشة
+    // ============================================
+    function initStatsCounter() {
+      const counters = document.querySelectorAll(".stat-number[data-target]");
+      if (!counters.length) return;
+
+      const animateCounter = (el) => {
+        const target = parseInt(el.getAttribute("data-target"), 10) || 0;
+        const suffix = el.getAttribute("data-suffix") || "";
+        const duration = 1800; // مدة العد بالمللي ثانية
+        let startTime = null;
+
+        function easeOutQuad(t) {
+          return t * (2 - t);
+        }
+
+        function step(timestamp) {
+          if (!startTime) startTime = timestamp;
+          const elapsed = timestamp - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = easeOutQuad(progress);
+          const current = Math.floor(eased * target);
+          el.textContent = current + suffix;
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            el.textContent = target + suffix; // نضمن إنه يوصل للرقم النهائي بالظبط
+          }
+        }
+        requestAnimationFrame(step);
+      };
+
+      const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            statsObserver.unobserve(entry.target); // يتحرك مرة واحدة بس
+          }
+        });
+      }, { threshold: 0.4 });
+
+      counters.forEach(el => statsObserver.observe(el));
+    }
+
+    initStatsCounter();
   </script>
 </body>
 </html>
