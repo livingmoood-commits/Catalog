@@ -784,11 +784,50 @@
     scroll-margin-top: 80px;
   }
 
+  .catalog-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 6px;
+  }
+
   .catalog-section-title {
     font-family: var(--font-display);
     font-size: 24px;
     font-weight: 600;
-    margin: 0 0 6px;
+    margin: 0;
+  }
+
+  .back-to-top-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border: 1px solid var(--clr-gold);
+    border-radius: 30px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--clr-gold);
+    background: transparent;
+    transition: background .25s ease, color .25s ease, transform .25s ease;
+    white-space: nowrap;
+  }
+
+  .back-to-top-btn:hover {
+    background: var(--clr-gold);
+    color: var(--clr-surface);
+    transform: translateY(-2px);
+  }
+
+  .back-to-top-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  @media (max-width: 560px) {
+    .back-to-top-btn span { display: none; }
+    .back-to-top-btn { padding: 8px; }
   }
 
   .product-grid {
@@ -1417,19 +1456,19 @@
     <div class="stats-grid">
       <div class="stat-item">
         <span class="stat-label">Designs</span>
-        <span class="stat-number" data-target="120" data-suffix="+">0</span>
+        <span class="stat-number" data-target="30" data-suffix="+">0</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">Satisfied Clients</span>
-        <span class="stat-number" data-target="510" data-suffix="+">0</span>
+        <span class="stat-number" data-target="120" data-suffix="+">0</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">Years</span>
-        <span class="stat-number" data-target="13" data-suffix="+">0</span>
+        <span class="stat-number" data-target="3" data-suffix="+">0</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">Projects</span>
-        <span class="stat-number" data-target="256" data-suffix="">0</span>
+        <span class="stat-number" data-target="60" data-suffix="">0</span>
       </div>
     </div>
   </section>
@@ -1713,7 +1752,13 @@ let allProducts = [];
 
         return `
           <div class="catalog-section" id="cat-${cat.id}">
-            <h3 class="catalog-section-title">${cat.name}</h3>
+            <div class="catalog-section-head">
+              <h3 class="catalog-section-title">${cat.name}</h3>
+              <a href="#categories" class="back-to-top-btn" aria-label="Back to categories" dir="rtl">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                <span>رجوع للـ <bdi dir="ltr">Categories</bdi></span>
+              </a>
+            </div>
             <div class="section-rule small"></div>
             <div class="product-grid">${itemsHtml}</div>
           </div>
