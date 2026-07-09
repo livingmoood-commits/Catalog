@@ -875,6 +875,20 @@
     overflow: hidden;
   }
 
+  /* الوصف بيدعم عربي/إنجليزي/مختلط بخط واحد متناسق ويحدد الاتجاه تلقائي */
+  .product-description {
+    font-family: "Inter", "Markazi Text", "Amiri", sans-serif;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--clr-ink-70);
+    margin: -4px 0 2px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    unicode-bidi: plaintext;
+  }
+
   /* ============================================
      Our Team — سكشن ثابت (static)، صور مربعة بس من غير أي تفاعل
      مفيهاش hover ولا zoom ولا lightbox خالص
@@ -1197,6 +1211,15 @@
     margin: 0 0 18px;
   }
   .product-detail-info .contact-actions { display: flex; gap: 12px; justify-content: center; }
+  .product-detail-description {
+    font-family: "Inter", "Markazi Text", "Amiri", sans-serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--clr-ink-70);
+    max-width: 560px;
+    margin: 0 auto 22px;
+    unicode-bidi: plaintext;
+  }
   .lightbox-prev, .lightbox-next {
     position: absolute;
     top: 50%;
@@ -1324,6 +1347,7 @@
         <div class="nav-links">
           <a href="#categories">Categories</a>
           <a href="#products">Catalog</a>
+          <a href="#about">About Us</a>
         </div>
       </div>
 
@@ -1334,7 +1358,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="url(#igGradientNav)" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
           <span>Living Mood</span>
         </a>
-        <a class="nav-tiktok" href="https://www.tiktok.com/@livingmoood?_r=1&_t=ZS-97peQgvTOWD" target="_blank" rel="noopener" aria-label="Living Mood">
+        <a class="nav-tiktok" href="https://www.tiktok.com/@livingmoood?_r=1&_t=ZS-97peQgvTOWD" target="_blank" rel="noopener" aria-label="TikTok">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/></svg>
           <span>Living Mood</span>
         </a>
@@ -1367,6 +1391,10 @@
       <a href="#products">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg>
         Catalog
+      </a>
+      <a href="#about">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        About Us
       </a>
 <a href="https://www.instagram.com/livingmoood/" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="url(#igGradientMobile)" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
@@ -1571,7 +1599,7 @@
         </a>
         <a class="footer-ig" href="https://www.tiktok.com/@livingmoood?_r=1&_t=ZS-97peQgvTOWD" target="_blank" rel="noopener">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/></svg>
-          TikTok
+          Living Mood
         </a>
         <a class="footer-phone" id="footer-call-link" href="#">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -1628,6 +1656,7 @@
 
       <div class="product-detail-info">
         <h2 id="detail-title"></h2>
+        <p class="product-detail-description" id="detail-description" dir="auto"></p>
         <div class="contact-actions">
           <a class="contact-btn whatsapp" id="detail-whatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a>
           <a class="contact-btn call" id="detail-call" href="#">Call</a>
@@ -1716,7 +1745,7 @@ let allProducts = [];
 
         const { data: prodData, error: prodError } = await supabaseClient
           .from("products")
-          .select("id, name, image_url, category_id, extra_images")
+          .select("id, name, image_url, category_id, extra_images, description")
           .order("sort_order", { ascending: true });
         if (!prodError && prodData) products = prodData;
       } catch (e) {
@@ -1741,6 +1770,7 @@ let allProducts = [];
                 </div>
                 <div class="product-info">
                   <div class="product-name">${p.name}</div>
+                  ${p.description ? `<div class="product-description" dir="auto">${p.description}</div>` : ""}
                   <div class="contact-actions">
                     <a class="contact-btn whatsapp" href="${buildWhatsappLink(p.name)}" target="_blank" rel="noopener">WhatsApp</a>
                     <a class="contact-btn call" href="${buildCallLink()}">Call</a>
@@ -2066,6 +2096,7 @@ document.addEventListener("click", (e) => {
     const detailMainImg = document.getElementById("detail-main-img");
     const detailThumbs = document.getElementById("detail-thumbs");
     const detailTitle = document.getElementById("detail-title");
+    const detailDescription = document.getElementById("detail-description");
     const detailWhatsapp = document.getElementById("detail-whatsapp");
     const detailCall = document.getElementById("detail-call");
     const detailPrev = document.getElementById("detail-prev");
@@ -2108,6 +2139,13 @@ function renderDetailImage() {
       detailIndex = 0;
 
       detailTitle.textContent = product.name || "";
+      if (product.description && product.description.trim() !== "") {
+        detailDescription.textContent = product.description;
+        detailDescription.style.display = "";
+      } else {
+        detailDescription.textContent = "";
+        detailDescription.style.display = "none";
+      }
       detailWhatsapp.href = buildWhatsappLink(product.name || "");
       detailCall.href = buildCallLink();
 
