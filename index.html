@@ -758,7 +758,7 @@
     border: 2px solid var(--clr-gold-light);
     transition: transform .25s ease, border-color .25s ease;
   }
-  .category-circle .wm-badge { width: 13%; top: 12%; left: 50%; transform: translateX(-50%); }
+  .category-circle .wm-badge { display: none; }
 @media (max-width: 600px) {
   .category-rail {
     display: flex;
@@ -1796,7 +1796,6 @@ const DEMO_VIDEOS = [
         <a class="category-item reveal" href="#cat-${cat.id}">
           <span class="category-circle">
             <img src="${cat.image_url}" alt="${cat.name}" loading="lazy">
-            <div class="wm-badge"><img class="wm-logo" src="${WM_LOGO_SRC}" alt="" aria-hidden="true"><span class="wm-badge-text">Living Mood</span></div>
           </span>
           <span class="category-label">${cat.name}</span>
         </a>
