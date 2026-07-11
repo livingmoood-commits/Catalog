@@ -61,44 +61,37 @@
      ============================================ */
   .wm-badge {
     position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 7%;
-    max-width: 20px;
-    min-width: 24px;
-    box-sizing: border-box;
+    top: 6%;
+    left: 6%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
     pointer-events: none;
     user-select: none;
     z-index: 3;
     background: rgba(20,16,12,0.4);
     border-radius: 3px;
-    padding: 4px 5px 5px;
+    padding: 3px 6px 3px 4px;
     -webkit-backdrop-filter: blur(1px);
     backdrop-filter: blur(1px);
   }
   .wm-logo {
     display: block;
-    width: 100%;
+    width: 12px;
     height: auto;
+    flex-shrink: 0;
     opacity: 0.92;
     filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5));
   }
   .wm-badge-text {
     font-family: var(--font-body);
-    font-size: 5px;
+    font-size: 6px;
     line-height: 1.15;
     letter-spacing: 0.02em;
     color: #C9C5BC;
     opacity: 0.92;
-    white-space: normal;
-    width: 100%;
-    text-align: center;
-    word-break: normal;
-    overflow-wrap: break-word;
+    white-space: nowrap;
     text-shadow: 0 1px 2px rgba(0,0,0,0.6);
   }
 
@@ -1152,7 +1145,7 @@
     border-radius: 2px;
   }
 
-  .lightbox-img-wrap .wm-badge { width: 6%; max-width: 30px; position: absolute; }
+  .lightbox-img-wrap .wm-badge { position: absolute; }
 
 .lightbox-close {
     position: absolute;
@@ -1238,7 +1231,7 @@
     object-fit: contain;
     display: block;
   }
-.product-detail-img-wrap .wm-badge { width: 6%; max-width: 28px; }
+
 
   .gallery-arrow {
     position: absolute;
