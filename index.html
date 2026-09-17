@@ -1483,13 +1483,13 @@
   <div class="hero-banner-wrap">
     <div class="brand-hero">
       <h1>Living <span class="accent">Mood</span></h1>
-      <div class="subtitle">Interior Design &amp; Furniture</div>
+      <div class="subtitle" id="hero-subtitle">Interior Design &amp; Furniture</div>
       <div class="brand-divider"></div>
     </div>
 
     <div class="banner-inner reveal">
-      <div class="banner-eyebrow">Luxury Home · Aesthetic Living</div>
-      <h2 class="banner-title">"We don't make furniture.<br>We make mood."</h2>
+      <div class="banner-eyebrow" id="banner-eyebrow">Luxury Home · Aesthetic Living</div>
+      <h2 class="banner-title" id="banner-title">"We don't make furniture.<br>We make mood."</h2>
       <a href="#products" class="banner-cta">Explore the Catalog</a>
     </div>
   </div>
@@ -1507,7 +1507,7 @@
     <div class="wrap">
       <div class="statement-grid">
         <div class="statement-item reveal">
-          <p class="statement-quote ar" dir="rtl">"جودة خشبنا <span class="accent">لا تُضاهى</span>، وتصنيعنا <span class="accent">فاخر</span>، وسعرنا <span class="accent">لا يُنافَس</span>."</p>
+          <p class="statement-quote ar" id="statement-quote" dir="rtl">"جودة خشبنا <span class="accent">لا تُضاهى</span>، وتصنيعنا <span class="accent">فاخر</span>، وسعرنا <span class="accent">لا يُنافَس</span>."</p>
         </div>
       </div>
     </div>
@@ -1548,19 +1548,19 @@
     <div class="stats-grid">
       <div class="stat-item">
         <span class="stat-label">Designs</span>
-        <span class="stat-number" data-target="30" data-suffix="+">0</span>
+        <span class="stat-number" id="stat-designs" data-target="30" data-suffix="+">0</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">Satisfied Clients</span>
-        <span class="stat-number" data-target="120" data-suffix="+">0</span>
+        <span class="stat-number" id="stat-clients" data-target="120" data-suffix="+">0</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">Years</span>
-        <span class="stat-number" data-target="3" data-suffix="+">0</span>
+        <span class="stat-number" id="stat-years" data-target="3" data-suffix="+">0</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">Projects</span>
-        <span class="stat-number" data-target="60" data-suffix="">0</span>
+        <span class="stat-number" id="stat-projects" data-target="60" data-suffix="">0</span>
       </div>
     </div>
   </section>
@@ -1574,11 +1574,11 @@
       <h2 class="section-title">About Us</h2>
       <div class="section-rule"></div>
 
-      <p class="about-tagline">
+      <p class="about-tagline" id="about-tagline">
         Live Beautiful. Live Your Mood.
       </p>
 
-      <p class="about-text">
+      <p class="about-text" id="about-text-ar">
         بدأت <span class="accent">Living Mood</span> بحلم بسيط… إننا نصمّم أماكن مش بس بيوت، أماكن بتحكي حكاية أصحابها.
         من ورشة صغيرة وشغف بالتفاصيل، كبرت تجربتنا سنة بعد سنة، وبقينا نُتقن كل خطوة من التصميم للتنفيذ بإحساس مختلف.
         اللي بيميّزنا إننا بنمزج بين <span class="accent">الفخامة</span> و<span class="accent">البساطة</span>،
@@ -1586,7 +1586,7 @@
         وعملاؤنا بيثقوا فينا لأننا بنسمعهم قبل ما نصمّم، وبنحوّل ذوقهم وأسلوب حياتهم لمساحة حقيقية يعيشوا فيها راحتهم وجمالهم كل يوم.
       </p>
 
-      <p class="about-text-en">
+      <p class="about-text-en" id="about-text-en">
         At Living Mood, we create bespoke interiors, timeless furniture, and complete interior solutions designed around your lifestyle.
         Blending elegant design, premium materials, and exceptional craftsmanship, we transform every space into a refined environment
         where beauty, comfort, and functionality exist in perfect harmony. Every detail is thoughtfully crafted to tell your story
@@ -1743,8 +1743,8 @@
     const SUPABASE_URL = "https://ppiokabsxhklamhlrzzw.supabase.co";   // من Project Settings > API
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwaW9rYWJzeGhrbGFtaGxyenp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4Nzc3MzAsImV4cCI6MjA5ODQ1MzczMH0.6yF7rh-zgR39vDwcM9TtcHSAMk4otLD-jKsqlVrj-FA";     // من نفس الصفحة
 
-    const CONTACT_PHONE = "01000351597";       // رقم الاتصال المباشر
-    const CONTACT_WHATSAPP = "201000351597";   // نفس الرقم بكود الدولة (20 لمصر)، بدون + أو صفر البداية
+    let CONTACT_PHONE = "01000351597";       // رقم الاتصال المباشر (يتحدّث تلقائيًا لو الأدمن غيّره من site_settings)
+    let CONTACT_WHATSAPP = "201000351597";   // نفس الرقم بكود الدولة (20 لمصر)، بدون + أو صفر البداية
 
     // ============================================
     // 🖼️ لوجو الووترمارك — يتحط تلقائي فوق أي صورة بتتضاف في الموقع
@@ -1791,6 +1791,61 @@ const DEMO_VIDEOS = [
     function buildGeneralWhatsappLink() {
       const msg = encodeURIComponent("Hello, I would like to ask about your products");
       return `https://wa.me/${CONTACT_WHATSAPP}?text=${msg}`;
+    }
+
+    // ============================================
+    // إعدادات الموقع القابلة للتعديل من لوحة الأدمن (site_settings)
+    // الجدول ده اختياري — لو مش موجود لسه، الموقع بيفضل شغال
+    // بالنصوص الافتراضية المكتوبة في الكود من غير أي مشكلة.
+    // ============================================
+    async function loadSettings() {
+      try {
+        const { data, error } = await supabaseClient
+          .from("site_settings")
+          .select("data")
+          .eq("id", 1)
+          .single();
+        if (error || !data || !data.data) return;
+        const s = data.data;
+
+        if (s.contact_phone) CONTACT_PHONE = s.contact_phone;
+        if (s.contact_whatsapp) CONTACT_WHATSAPP = s.contact_whatsapp;
+
+        const setText = (id, val) => {
+          if (val === undefined || val === null || val === "") return;
+          const el = document.getElementById(id);
+          if (el) el.textContent = val;
+        };
+        const setHtml = (id, val) => {
+          if (val === undefined || val === null || val === "") return;
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = String(val).replace(/\n/g, "<br>");
+        };
+
+        setText("hero-subtitle", s.hero_subtitle);
+        setText("banner-eyebrow", s.banner_eyebrow);
+        setHtml("banner-title", s.banner_title);
+        setText("about-tagline", s.about_tagline);
+        setHtml("about-text-ar", s.about_text_ar);
+        setText("about-text-en", s.about_text_en);
+        setHtml("statement-quote", s.statement_quote);
+
+        ["designs", "clients", "years", "projects"].forEach(key => {
+          const val = s["stat_" + key];
+          if (val === undefined || val === null || val === "") return;
+          const el = document.getElementById("stat-" + key);
+          if (el) el.setAttribute("data-target", val);
+        });
+
+        if (s.hero_banner_image) {
+          const heroWrap = document.querySelector(".hero-banner-wrap");
+          if (heroWrap) {
+            heroWrap.style.backgroundImage = `url('${s.hero_banner_image}')`;
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load site_settings, using page defaults:", e);
+      }
     }
 
     async function loadCategoryRail(categories) {
@@ -1876,7 +1931,7 @@ let allProducts = [];
 // ============================================
     // حفظ واسترجاع مكان آخر تمرير (scroll) في الصفحة
     // ============================================
-    Promise.all([loadCatalog(), loadTeam(), loadVideos()]).then(() => {
+    loadSettings().then(() => Promise.all([loadCatalog(), loadTeam(), loadVideos()])).then(() => {
   initReveal();
   restoreScrollPosition();
 });

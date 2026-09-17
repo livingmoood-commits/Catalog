@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Living Mood — لوحة التحكم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --clr-bg:#F3EFEA; --clr-surface:#FFFFFF; --clr-ink:#1C1712; --clr-ink-70:#4A423A;
+    --clr-gold:#B08D57; --clr-gold-light:#D9C6A3; --clr-line:#E3DCD0;
+    --clr-danger:#B3453A; --clr-success:#3C7A5C;
+    --font-body:"Cairo","Inter",-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--clr-bg);color:var(--clr-ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  button{font-family:inherit;cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+
+  /* ---------- Login ---------- */
+  #login-view{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .login-box{background:var(--clr-surface);border:1px solid var(--clr-line);border-radius:14px;padding:36px 32px;width:100%;max-width:380px;box-shadow:0 10px 40px rgba(28,23,18,0.08);}
+  .login-box h1{font-size:22px;margin:0 0 4px;color:var(--clr-ink);}
+  .login-box p{margin:0 0 24px;color:var(--clr-ink-70);font-size:14px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--clr-ink-70);}
+  .field input, .field select, .field textarea{
+    width:100%;padding:11px 12px;border:1px solid var(--clr-line);border-radius:8px;
+    background:var(--clr-bg);color:var(--clr-ink);font-size:14px;outline:none;transition:border-color .15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--clr-gold);}
+  .field textarea{resize:vertical;min-height:70px;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:8px;padding:11px 18px;font-size:14px;font-weight:600;transition:opacity .15s;}
+  .btn:hover{opacity:.88;}
+  .btn-primary{background:var(--clr-ink);color:#fff;width:100%;}
+  .btn-gold{background:var(--clr-gold);color:#fff;}
+  .btn-outline{background:transparent;color:var(--clr-ink);border:1px solid var(--clr-line);}
+  .btn-danger{background:var(--clr-danger);color:#fff;}
+  .btn-sm{padding:7px 12px;font-size:13px;}
+  .error-msg{color:var(--clr-danger);font-size:13px;margin-top:10px;min-height:16px;}
+
+  /* ---------- App shell ---------- */
+  #app-view{display:none;min-height:100vh;}
+  .topbar{position:sticky;top:0;z-index:10;background:var(--clr-surface);border-bottom:1px solid var(--clr-line);
+    display:flex;align-items:center;justify-content:space-between;padding:14px 22px;}
+  .topbar .brand{font-weight:700;font-size:17px;}
+  .topbar .brand span{color:var(--clr-gold);}
+  .setup-banner{background:#FFF3E0;border:1px solid #E8C48A;color:#7A5B1E;padding:10px 22px;font-size:13px;display:none;}
+  .setup-banner.show{display:block;}
+
+  .layout{display:flex;max-width:1180px;margin:0 auto;}
+  .sidebar{width:190px;flex-shrink:0;padding:22px 14px;position:sticky;top:61px;align-self:flex-start;height:calc(100vh - 61px);}
+  .sidebar button{
+    display:flex;align-items:center;gap:8px;width:100%;text-align:right;background:none;border:none;
+    padding:11px 12px;border-radius:8px;font-size:14px;color:var(--clr-ink-70);margin-bottom:4px;font-weight:600;
+  }
+  .sidebar button.active{background:var(--clr-ink);color:#fff;}
+  .sidebar button:hover:not(.active){background:var(--clr-line);}
+
+  .content{flex:1;padding:24px 22px 60px;min-width:0;}
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+  .panel-head h2{margin:0;font-size:20px;}
+
+  .card{background:var(--clr-surface);border:1px solid var(--clr-line);border-radius:12px;padding:18px;margin-bottom:16px;}
+  .card h3{margin:0 0 14px;font-size:15px;color:var(--clr-ink-70);}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-grid .full{grid-column:1/-1;}
+  @media(max-width:640px){.form-grid{grid-template-columns:1fr;}.layout{flex-direction:column;}.sidebar{width:100%;height:auto;position:static;display:flex;overflow-x:auto;padding:12px 14px;gap:6px;}.sidebar button{white-space:nowrap;width:auto;margin-bottom:0;}}
+
+  .img-preview{width:90px;height:90px;border-radius:8px;object-fit:cover;background:var(--clr-line);border:1px solid var(--clr-line);}
+  .img-upload-row{display:flex;align-items:center;gap:12px;}
+
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{text-align:right;font-size:12px;color:var(--clr-ink-70);text-transform:uppercase;letter-spacing:.03em;padding:8px 10px;border-bottom:2px solid var(--clr-line);}
+  td{padding:10px;border-bottom:1px solid var(--clr-line);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  .row-thumb{width:46px;height:46px;border-radius:6px;object-fit:cover;background:var(--clr-line);}
+  .row-actions{display:flex;gap:6px;white-space:nowrap;}
+  .state-msg{color:var(--clr-ink-70);font-size:14px;padding:20px 0;text-align:center;}
+  .muted{color:var(--clr-ink-70);font-size:13px;}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--clr-ink);color:#fff;
+    padding:12px 22px;border-radius:10px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:100;
+    opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+  .toast.error{background:var(--clr-danger);}
+  .toast.success{background:var(--clr-success);}
+</style>
+</head>
+<body>
+
+<!-- ============ Login ============ -->
+<div id="login-view">
+  <div class="login-box">
+    <h1>Living <span style="color:var(--clr-gold)">Mood</span></h1>
+    <p>لوحة تحكم الأدمن — سجّل دخولك</p>
+    <div class="field">
+      <label>الإيميل</label>
+      <input type="email" id="login-email" autocomplete="username" placeholder="admin@example.com">
+    </div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input type="password" id="login-password" autocomplete="current-password" placeholder="••••••••">
+    </div>
+    <button class="btn btn-primary" id="login-btn">دخول</button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ============ App ============ -->
+<div id="app-view">
+  <div class="topbar">
+    <div class="brand">Living <span>Mood</span> — Admin</div>
+    <button class="btn btn-outline btn-sm" id="logout-btn">تسجيل خروج</button>
+  </div>
+  <div class="setup-banner" id="setup-banner">
+    ⚠️ جدول إعدادات الموقع (site_settings) لسه مش متظبط في قاعدة البيانات. تبويب "الإعدادات" مش هيشتغل لحد ما تشغّل ملف setup.sql في Supabase SQL Editor.
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <button class="tab-btn active" data-tab="categories">التصنيفات</button>
+      <button class="tab-btn" data-tab="products">المنتجات</button>
+      <button class="tab-btn" data-tab="team">الفريق والمهندسين</button>
+      <button class="tab-btn" data-tab="videos">الفيديوهات</button>
+      <button class="tab-btn" data-tab="settings">إعدادات الموقع</button>
+    </div>
+
+    <div class="content">
+
+      <!-- ---------------- Categories ---------------- -->
+      <div class="panel active" id="panel-categories">
+        <div class="panel-head"><h2>التصنيفات</h2></div>
+        <div class="card">
+          <h3 id="cat-form-title">إضافة تصنيف جديد</h3>
+          <input type="hidden" id="cat-id">
+          <div class="form-grid">
+            <div class="field"><label>اسم التصنيف</label><input type="text" id="cat-name" placeholder="مثال: Living Room Sets"></div>
+            <div class="field"><label>الترتيب (رقم أصغر = أول)</label><input type="number" id="cat-sort" value="0"></div>
+            <div class="field full">
+              <label>صورة التصنيف</label>
+              <div class="img-upload-row">
+                <img class="img-preview" id="cat-img-preview" src="" style="display:none;">
+                <input type="file" accept="image/*" id="cat-img-file">
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:10px;">
+            <button class="btn btn-gold" id="cat-save-btn">حفظ</button>
+            <button class="btn btn-outline" id="cat-cancel-btn" style="display:none;">إلغاء التعديل</button>
+          </div>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>صورة</th><th>الاسم</th><th>الترتيب</th><th></th></tr></thead>
+            <tbody id="cat-table-body"><tr><td colspan="4" class="state-msg">جارِ التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ---------------- Products ---------------- -->
+      <div class="panel" id="panel-products">
+        <div class="panel-head"><h2>المنتجات</h2></div>
+        <div class="card">
+          <h3 id="prod-form-title">إضافة منتج جديد</h3>
+          <input type="hidden" id="prod-id">
+          <div class="form-grid">
+            <div class="field"><label>اسم المنتج</label><input type="text" id="prod-name"></div>
+            <div class="field">
+              <label>التصنيف</label>
+              <select id="prod-category"></select>
+            </div>
+            <div class="field full"><label>الوصف (اختياري)</label><textarea id="prod-desc"></textarea></div>
+            <div class="field"><label>الترتيب</label><input type="number" id="prod-sort" value="0"></div>
+            <div class="field full">
+              <label>صورة المنتج</label>
+              <div class="img-upload-row">
+                <img class="img-preview" id="prod-img-preview" src="" style="display:none;">
+                <input type="file" accept="image/*" id="prod-img-file">
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:10px;">
+            <button class="btn btn-gold" id="prod-save-btn">حفظ</button>
+            <button class="btn btn-outline" id="prod-cancel-btn" style="display:none;">إلغاء التعديل</button>
+          </div>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>صورة</th><th>الاسم</th><th>التصنيف</th><th>الترتيب</th><th></th></tr></thead>
+            <tbody id="prod-table-body"><tr><td colspan="5" class="state-msg">جارِ التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ---------------- Team ---------------- -->
+      <div class="panel" id="panel-team">
+        <div class="panel-head"><h2>الفريق والمهندسين</h2></div>
+        <div class="card">
+          <h3 id="team-form-title">إضافة عضو جديد</h3>
+          <input type="hidden" id="team-id">
+          <div class="form-grid">
+            <div class="field"><label>الاسم</label><input type="text" id="team-name"></div>
+            <div class="field">
+              <label>النوع</label>
+              <select id="team-type">
+                <option value="team">Our Team</option>
+                <option value="engineer">Engineering</option>
+              </select>
+            </div>
+            <div class="field"><label>المنصب / الدور (اختياري)</label><input type="text" id="team-role" placeholder="مثال: Site Engineer"></div>
+            <div class="field"><label>الترتيب</label><input type="number" id="team-sort" value="0"></div>
+            <div class="field full">
+              <label>الصورة</label>
+              <div class="img-upload-row">
+                <img class="img-preview" id="team-img-preview" src="" style="display:none;">
+                <input type="file" accept="image/*" id="team-img-file">
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:10px;">
+            <button class="btn btn-gold" id="team-save-btn">حفظ</button>
+            <button class="btn btn-outline" id="team-cancel-btn" style="display:none;">إلغاء التعديل</button>
+          </div>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>صورة</th><th>الاسم</th><th>النوع</th><th>الدور</th><th>الترتيب</th><th></th></tr></thead>
+            <tbody id="team-table-body"><tr><td colspan="6" class="state-msg">جارِ التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ---------------- Videos ---------------- -->
+      <div class="panel" id="panel-videos">
+        <div class="panel-head"><h2>الفيديوهات</h2></div>
+        <div class="card">
+          <h3>إضافة فيديو جديد</h3>
+          <div class="form-grid">
+            <div class="field"><label>الترتيب</label><input type="number" id="video-sort" value="0"></div>
+            <div class="field full">
+              <label>ملف الفيديو</label>
+              <input type="file" accept="video/*" id="video-file">
+              <p class="muted" style="margin:6px 0 0;">ملفات الفيديو بتاخد وقت أطول شوية في الرفع حسب حجمها.</p>
+            </div>
+          </div>
+          <div style="margin-top:14px;">
+            <button class="btn btn-gold" id="video-save-btn">رفع الفيديو</button>
+          </div>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>الفيديو</th><th>الترتيب</th><th></th></tr></thead>
+            <tbody id="video-table-body"><tr><td colspan="3" class="state-msg">جارِ التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ---------------- Settings ---------------- -->
+      <div class="panel" id="panel-settings">
+        <div class="panel-head"><h2>إعدادات الموقع</h2></div>
+        <div class="card">
+          <h3>بيانات التواصل</h3>
+          <div class="form-grid">
+            <div class="field"><label>رقم التليفون (للاتصال)</label><input type="text" id="set-phone" placeholder="01000351597"></div>
+            <div class="field"><label>رقم الواتساب (بكود الدولة، من غير + أو صفر)</label><input type="text" id="set-whatsapp" placeholder="201000351597"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>الهيدر الرئيسي (Banner)</h3>
+          <div class="form-grid">
+            <div class="field full"><label>الجملة تحت اللوجو (Subtitle)</label><input type="text" id="set-hero-subtitle"></div>
+            <div class="field full"><label>الجملة الصغيرة فوق العنوان (Eyebrow)</label><input type="text" id="set-banner-eyebrow"></div>
+            <div class="field full"><label>عنوان البانر الرئيسي (استخدم سطر جديد للـ line break)</label><textarea id="set-banner-title"></textarea></div>
+            <div class="field full">
+              <label>صورة خلفية البانر (اختياري — سيب فاضي لو عايز تسيب الصورة الحالية)</label>
+              <div class="img-upload-row">
+                <img class="img-preview" id="set-hero-img-preview" src="" style="display:none;">
+                <input type="file" accept="image/*" id="set-hero-img-file">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>قصة العلامة التجارية (About Us)</h3>
+          <div class="form-grid">
+            <div class="field full"><label>الجملة الصغيرة (Tagline)</label><input type="text" id="set-about-tagline"></div>
+            <div class="field full"><label>النص بالعربي</label><textarea id="set-about-ar" style="min-height:110px;"></textarea></div>
+            <div class="field full"><label>النص بالإنجليزي</label><textarea id="set-about-en" style="min-height:110px;"></textarea></div>
+            <div class="field full"><label>جملة الـ Statement (تحت الكاتيجوريز)</label><input type="text" id="set-statement"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>شريط الإحصائيات</h3>
+          <div class="form-grid">
+            <div class="field"><label>عدد التصميمات</label><input type="number" id="set-stat-designs"></div>
+            <div class="field"><label>عدد العملاء</label><input type="number" id="set-stat-clients"></div>
+            <div class="field"><label>عدد السنين</label><input type="number" id="set-stat-years"></div>
+            <div class="field"><label>عدد المشاريع</label><input type="number" id="set-stat-projects"></div>
+          </div>
+        </div>
+        <button class="btn btn-gold" id="settings-save-btn">حفظ كل الإعدادات</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ============================================
+  // نفس بيانات الاتصال بمشروع Supabase الموجودة في index.html
+  // ============================================
+  const SUPABASE_URL = "https://ppiokabsxhklamhlrzzw.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwaW9rYWJzeGhrbGFtaGxyenp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4Nzc3MzAsImV4cCI6MjA5ODQ1MzczMH0.6yF7rh-zgR39vDwcM9TtcHSAMk4otLD-jKsqlVrj-FA";
+  const STORAGE_BUCKET = "site-images";
+
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ============================================
+  // Helpers
+  // ============================================
+  function showToast(msg, type) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "toast show" + (type ? " " + type : "");
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => { t.className = "toast"; }, 3200);
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  async function uploadImage(file, folder) {
+    const cleanName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+    const path = `${folder}/${Date.now()}-${cleanName}`;
+    const { error } = await supabaseClient.storage.from(STORAGE_BUCKET).upload(path, file, { upsert: false });
+    if (error) throw error;
+    const { data } = supabaseClient.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+    return data.publicUrl;
+  }
+
+  function previewFile(fileInput, imgEl) {
+    fileInput.addEventListener("change", () => {
+      const f = fileInput.files[0];
+      if (!f) return;
+      imgEl.src = URL.createObjectURL(f);
+      imgEl.style.display = "block";
+    });
+  }
+
+  // ============================================
+  // Auth
+  // ============================================
+  const loginView = document.getElementById("login-view");
+  const appView = document.getElementById("app-view");
+
+  async function checkSession() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+      loginView.style.display = "none";
+      appView.style.display = "block";
+      initAppOnce();
+    } else {
+      loginView.style.display = "flex";
+      appView.style.display = "none";
+    }
+  }
+
+  document.getElementById("login-btn").addEventListener("click", async () => {
+    const email = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value;
+    const errEl = document.getElementById("login-error");
+    errEl.textContent = "";
+    if (!email || !password) { errEl.textContent = "اكتب الإيميل وكلمة المرور."; return; }
+
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+      errEl.textContent = "بيانات الدخول غلط أو الحساب مش موجود.";
+      return;
+    }
+    checkSession();
+  });
+
+  document.getElementById("logout-btn").addEventListener("click", async () => {
+    await supabaseClient.auth.signOut();
+    checkSession();
+  });
+
+  // Enter key submits login
+  document.getElementById("login-password").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("login-btn").click();
+  });
+
+  // ============================================
+  // Tabs
+  // ============================================
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  // ============================================
+  // App init (runs once after login)
+  // ============================================
+  let appInitialized = false;
+  function initAppOnce() {
+    if (appInitialized) return;
+    appInitialized = true;
+    loadCategories();
+    loadProducts();
+    loadTeam();
+    loadVideos();
+    loadSettings();
+  }
+
+  // ============================================
+  // Categories
+  // ============================================
+  let categoriesCache = [];
+  previewFile(document.getElementById("cat-img-file"), document.getElementById("cat-img-preview"));
+
+  async function loadCategories() {
+    const tbody = document.getElementById("cat-table-body");
+    const { data, error } = await supabaseClient.from("categories").select("*").order("sort_order", { ascending: true });
+    if (error) { tbody.innerHTML = `<tr><td colspan="4" class="state-msg">حصل خطأ: ${escapeHtml(error.message)}</td></tr>`; return; }
+    categoriesCache = data || [];
+    fillCategorySelect();
+    if (!categoriesCache.length) { tbody.innerHTML = `<tr><td colspan="4" class="state-msg">مفيش تصنيفات لسه.</td></tr>`; return; }
+    tbody.innerHTML = categoriesCache.map(c => `
+      <tr>
+        <td><img class="row-thumb" src="${escapeHtml(c.image_url || "")}"></td>
+        <td>${escapeHtml(c.name)}</td>
+        <td>${c.sort_order ?? 0}</td>
+        <td class="row-actions">
+          <button class="btn btn-outline btn-sm" onclick="editCategory('${c.id}')">تعديل</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCategory('${c.id}')">حذف</button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  function fillCategorySelect() {
+    const sel = document.getElementById("prod-category");
+    const current = sel.value;
+    sel.innerHTML = categoriesCache.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
+    if (current) sel.value = current;
+  }
+
+  function resetCategoryForm() {
+    document.getElementById("cat-id").value = "";
+    document.getElementById("cat-name").value = "";
+    document.getElementById("cat-sort").value = "0";
+    document.getElementById("cat-img-file").value = "";
+    document.getElementById("cat-img-preview").style.display = "none";
+    document.getElementById("cat-form-title").textContent = "إضافة تصنيف جديد";
+    document.getElementById("cat-cancel-btn").style.display = "none";
+  }
+
+  window.editCategory = function (id) {
+    const c = categoriesCache.find(x => String(x.id) === String(id));
+    if (!c) return;
+    document.getElementById("cat-id").value = c.id;
+    document.getElementById("cat-name").value = c.name || "";
+    document.getElementById("cat-sort").value = c.sort_order ?? 0;
+    const preview = document.getElementById("cat-img-preview");
+    if (c.image_url) { preview.src = c.image_url; preview.style.display = "block"; }
+    document.getElementById("cat-form-title").textContent = "تعديل تصنيف";
+    document.getElementById("cat-cancel-btn").style.display = "inline-flex";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  document.getElementById("cat-cancel-btn").addEventListener("click", resetCategoryForm);
+
+  document.getElementById("cat-save-btn").addEventListener("click", async () => {
+    const id = document.getElementById("cat-id").value;
+    const name = document.getElementById("cat-name").value.trim();
+    const sort_order = Number(document.getElementById("cat-sort").value) || 0;
+    const file = document.getElementById("cat-img-file").files[0];
+    if (!name) { showToast("اكتب اسم التصنيف الأول", "error"); return; }
+
+    const btn = document.getElementById("cat-save-btn");
+    btn.disabled = true;
+    try {
+      const payload = { name, sort_order };
+      if (file) payload.image_url = await uploadImage(file, "categories");
+
+      let error;
+      if (id) {
+        ({ error } = await supabaseClient.from("categories").update(payload).eq("id", id));
+      } else {
+        if (!file) { showToast("اختار صورة للتصنيف", "error"); btn.disabled = false; return; }
+        ({ error } = await supabaseClient.from("categories").insert(payload));
+      }
+      if (error) throw error;
+      showToast("اتحفظ بنجاح", "success");
+      resetCategoryForm();
+      loadCategories();
+      loadProducts();
+    } catch (e) {
+      showToast("حصل خطأ: " + e.message, "error");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  window.deleteCategory = async function (id) {
+    if (!confirm("متأكد إنك عايز تمسح التصنيف ده؟ المنتجات اللي جواه هتفضل موجودة بس من غير تصنيف.")) return;
+    const { error } = await supabaseClient.from("categories").delete().eq("id", id);
+    if (error) { showToast("حصل خطأ: " + error.message, "error"); return; }
+    showToast("اتمسح", "success");
+    loadCategories();
+  };
+
+  // ============================================
+  // Products
+  // ============================================
+  let productsCache = [];
+  previewFile(document.getElementById("prod-img-file"), document.getElementById("prod-img-preview"));
+
+  async function loadProducts() {
+    const tbody = document.getElementById("prod-table-body");
+    const { data, error } = await supabaseClient.from("products").select("*").order("sort_order", { ascending: true });
+    if (error) { tbody.innerHTML = `<tr><td colspan="5" class="state-msg">حصل خطأ: ${escapeHtml(error.message)}</td></tr>`; return; }
+    productsCache = data || [];
+    if (!productsCache.length) { tbody.innerHTML = `<tr><td colspan="5" class="state-msg">مفيش منتجات لسه.</td></tr>`; return; }
+    tbody.innerHTML = productsCache.map(p => {
+      const cat = categoriesCache.find(c => String(c.id) === String(p.category_id));
+      return `
+      <tr>
+        <td><img class="row-thumb" src="${escapeHtml(p.image_url || "")}"></td>
+        <td>${escapeHtml(p.name)}</td>
+        <td>${escapeHtml(cat ? cat.name : "—")}</td>
+        <td>${p.sort_order ?? 0}</td>
+        <td class="row-actions">
+          <button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">تعديل</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">حذف</button>
+        </td>
+      </tr>`;
+    }).join("");
+  }
+
+  function resetProductForm() {
+    document.getElementById("prod-id").value = "";
+    document.getElementById("prod-name").value = "";
+    document.getElementById("prod-desc").value = "";
+    document.getElementById("prod-sort").value = "0";
+    document.getElementById("prod-img-file").value = "";
+    document.getElementById("prod-img-preview").style.display = "none";
+    document.getElementById("prod-form-title").textContent = "إضافة منتج جديد";
+    document.getElementById("prod-cancel-btn").style.display = "none";
+  }
+
+  window.editProduct = function (id) {
+    const p = productsCache.find(x => String(x.id) === String(id));
+    if (!p) return;
+    document.getElementById("prod-id").value = p.id;
+    document.getElementById("prod-name").value = p.name || "";
+    document.getElementById("prod-desc").value = p.description || "";
+    document.getElementById("prod-sort").value = p.sort_order ?? 0;
+    document.getElementById("prod-category").value = p.category_id ?? "";
+    const preview = document.getElementById("prod-img-preview");
+    if (p.image_url) { preview.src = p.image_url; preview.style.display = "block"; }
+    document.getElementById("prod-form-title").textContent = "تعديل منتج";
+    document.getElementById("prod-cancel-btn").style.display = "inline-flex";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  document.getElementById("prod-cancel-btn").addEventListener("click", resetProductForm);
+
+  document.getElementById("prod-save-btn").addEventListener("click", async () => {
+    const id = document.getElementById("prod-id").value;
+    const name = document.getElementById("prod-name").value.trim();
+    const description = document.getElementById("prod-desc").value.trim();
+    const category_id = document.getElementById("prod-category").value;
+    const sort_order = Number(document.getElementById("prod-sort").value) || 0;
+    const file = document.getElementById("prod-img-file").files[0];
+    if (!name) { showToast("اكتب اسم المنتج الأول", "error"); return; }
+
+    const btn = document.getElementById("prod-save-btn");
+    btn.disabled = true;
+    try {
+      const payload = { name, description, category_id: category_id || null, sort_order };
+      if (file) payload.image_url = await uploadImage(file, "products");
+
+      let error;
+      if (id) {
+        ({ error } = await supabaseClient.from("products").update(payload).eq("id", id));
+      } else {
+        if (!file) { showToast("اختار صورة للمنتج", "error"); btn.disabled = false; return; }
+        ({ error } = await supabaseClient.from("products").insert(payload));
+      }
+      if (error) throw error;
+      showToast("اتحفظ بنجاح", "success");
+      resetProductForm();
+      loadProducts();
+    } catch (e) {
+      showToast("حصل خطأ: " + e.message, "error");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  window.deleteProduct = async function (id) {
+    if (!confirm("متأكد إنك عايز تمسح المنتج ده؟")) return;
+    const { error } = await supabaseClient.from("products").delete().eq("id", id);
+    if (error) { showToast("حصل خطأ: " + error.message, "error"); return; }
+    showToast("اتمسح", "success");
+    loadProducts();
+  };
+
+  // ============================================
+  // Team members
+  // ============================================
+  let teamCache = [];
+  previewFile(document.getElementById("team-img-file"), document.getElementById("team-img-preview"));
+
+  async function loadTeam() {
+    const tbody = document.getElementById("team-table-body");
+    const { data, error } = await supabaseClient.from("team_members").select("*").order("sort_order", { ascending: true });
+    if (error) { tbody.innerHTML = `<tr><td colspan="6" class="state-msg">حصل خطأ: ${escapeHtml(error.message)}</td></tr>`; return; }
+    teamCache = data || [];
+    if (!teamCache.length) { tbody.innerHTML = `<tr><td colspan="6" class="state-msg">مفيش أعضاء لسه.</td></tr>`; return; }
+    tbody.innerHTML = teamCache.map(m => `
+      <tr>
+        <td><img class="row-thumb" src="${escapeHtml(m.image_url || "")}"></td>
+        <td>${escapeHtml(m.name)}</td>
+        <td>${m.type === "engineer" ? "Engineering" : "Our Team"}</td>
+        <td>${escapeHtml(m.role || "—")}</td>
+        <td>${m.sort_order ?? 0}</td>
+        <td class="row-actions">
+          <button class="btn btn-outline btn-sm" onclick="editTeamMember('${m.id}')">تعديل</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteTeamMember('${m.id}')">حذف</button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  function resetTeamForm() {
+    document.getElementById("team-id").value = "";
+    document.getElementById("team-name").value = "";
+    document.getElementById("team-role").value = "";
+    document.getElementById("team-type").value = "team";
+    document.getElementById("team-sort").value = "0";
+    document.getElementById("team-img-file").value = "";
+    document.getElementById("team-img-preview").style.display = "none";
+    document.getElementById("team-form-title").textContent = "إضافة عضو جديد";
+    document.getElementById("team-cancel-btn").style.display = "none";
+  }
+
+  window.editTeamMember = function (id) {
+    const m = teamCache.find(x => String(x.id) === String(id));
+    if (!m) return;
+    document.getElementById("team-id").value = m.id;
+    document.getElementById("team-name").value = m.name || "";
+    document.getElementById("team-role").value = m.role || "";
+    document.getElementById("team-type").value = m.type || "team";
+    document.getElementById("team-sort").value = m.sort_order ?? 0;
+    const preview = document.getElementById("team-img-preview");
+    if (m.image_url) { preview.src = m.image_url; preview.style.display = "block"; }
+    document.getElementById("team-form-title").textContent = "تعديل عضو";
+    document.getElementById("team-cancel-btn").style.display = "inline-flex";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  document.getElementById("team-cancel-btn").addEventListener("click", resetTeamForm);
+
+  document.getElementById("team-save-btn").addEventListener("click", async () => {
+    const id = document.getElementById("team-id").value;
+    const name = document.getElementById("team-name").value.trim();
+    const role = document.getElementById("team-role").value.trim();
+    const type = document.getElementById("team-type").value;
+    const sort_order = Number(document.getElementById("team-sort").value) || 0;
+    const file = document.getElementById("team-img-file").files[0];
+    if (!name) { showToast("اكتب الاسم الأول", "error"); return; }
+
+    const btn = document.getElementById("team-save-btn");
+    btn.disabled = true;
+    try {
+      const payload = { name, role, type, sort_order };
+      if (file) payload.image_url = await uploadImage(file, "team");
+
+      let error;
+      if (id) {
+        ({ error } = await supabaseClient.from("team_members").update(payload).eq("id", id));
+      } else {
+        if (!file) { showToast("اختار صورة", "error"); btn.disabled = false; return; }
+        ({ error } = await supabaseClient.from("team_members").insert(payload));
+      }
+      if (error) throw error;
+      showToast("اتحفظ بنجاح", "success");
+      resetTeamForm();
+      loadTeam();
+    } catch (e) {
+      showToast("حصل خطأ: " + e.message, "error");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  window.deleteTeamMember = async function (id) {
+    if (!confirm("متأكد إنك عايز تمسح العضو ده؟")) return;
+    const { error } = await supabaseClient.from("team_members").delete().eq("id", id);
+    if (error) { showToast("حصل خطأ: " + error.message, "error"); return; }
+    showToast("اتمسح", "success");
+    loadTeam();
+  };
+
+  // ============================================
+  // Videos (portfolio_items)
+  // ============================================
+  let videosCache = [];
+
+  async function loadVideos() {
+    const tbody = document.getElementById("video-table-body");
+    const { data, error } = await supabaseClient.from("portfolio_items").select("*").order("sort_order", { ascending: true });
+    if (error) { tbody.innerHTML = `<tr><td colspan="3" class="state-msg">حصل خطأ: ${escapeHtml(error.message)}</td></tr>`; return; }
+    videosCache = (data || []).filter(v => (v.type || "").toLowerCase() === "video");
+    if (!videosCache.length) { tbody.innerHTML = `<tr><td colspan="3" class="state-msg">مفيش فيديوهات لسه.</td></tr>`; return; }
+    tbody.innerHTML = videosCache.map(v => `
+      <tr>
+        <td><video src="${escapeHtml(v.image_url || "")}" style="width:90px;height:60px;object-fit:cover;border-radius:6px;background:#000;" muted></video></td>
+        <td>${v.sort_order ?? 0}</td>
+        <td class="row-actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteVideo('${v.id}')">حذف</button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  document.getElementById("video-save-btn").addEventListener("click", async () => {
+    const file = document.getElementById("video-file").files[0];
+    const sort_order = Number(document.getElementById("video-sort").value) || 0;
+    if (!file) { showToast("اختار ملف فيديو الأول", "error"); return; }
+
+    const btn = document.getElementById("video-save-btn");
+    btn.disabled = true;
+    btn.textContent = "جارِ الرفع...";
+    try {
+      const url = await uploadImage(file, "videos");
+      const { error } = await supabaseClient.from("portfolio_items").insert({ type: "video", image_url: url, sort_order });
+      if (error) throw error;
+      showToast("اتحفظ بنجاح", "success");
+      document.getElementById("video-file").value = "";
+      document.getElementById("video-sort").value = "0";
+      loadVideos();
+    } catch (e) {
+      showToast("حصل خطأ: " + e.message, "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "رفع الفيديو";
+    }
+  });
+
+  window.deleteVideo = async function (id) {
+    if (!confirm("متأكد إنك عايز تمسح الفيديو ده؟")) return;
+    const { error } = await supabaseClient.from("portfolio_items").delete().eq("id", id);
+    if (error) { showToast("حصل خطأ: " + error.message, "error"); return; }
+    showToast("اتمسح", "success");
+    loadVideos();
+  };
+
+  // ============================================
+  // Site settings
+  // ============================================
+  previewFile(document.getElementById("set-hero-img-file"), document.getElementById("set-hero-img-preview"));
+
+  let currentSettingsData = {};
+
+  async function loadSettings() {
+    const { data, error } = await supabaseClient.from("site_settings").select("data").eq("id", 1).single();
+    if (error) {
+      document.getElementById("setup-banner").classList.add("show");
+      return;
+    }
+    currentSettingsData = (data && data.data) || {};
+    const s = currentSettingsData;
+    document.getElementById("set-phone").value = s.contact_phone || "";
+    document.getElementById("set-whatsapp").value = s.contact_whatsapp || "";
+    document.getElementById("set-hero-subtitle").value = s.hero_subtitle || "";
+    document.getElementById("set-banner-eyebrow").value = s.banner_eyebrow || "";
+    document.getElementById("set-banner-title").value = s.banner_title || "";
+    document.getElementById("set-about-tagline").value = s.about_tagline || "";
+    document.getElementById("set-about-ar").value = s.about_text_ar || "";
+    document.getElementById("set-about-en").value = s.about_text_en || "";
+    document.getElementById("set-statement").value = s.statement_quote || "";
+    document.getElementById("set-stat-designs").value = s.stat_designs ?? "";
+    document.getElementById("set-stat-clients").value = s.stat_clients ?? "";
+    document.getElementById("set-stat-years").value = s.stat_years ?? "";
+    document.getElementById("set-stat-projects").value = s.stat_projects ?? "";
+    if (s.hero_banner_image) {
+      const preview = document.getElementById("set-hero-img-preview");
+      preview.src = s.hero_banner_image;
+      preview.style.display = "block";
+    }
+  }
+
+  document.getElementById("settings-save-btn").addEventListener("click", async () => {
+    const btn = document.getElementById("settings-save-btn");
+    btn.disabled = true;
+    try {
+      const file = document.getElementById("set-hero-img-file").files[0];
+      let hero_banner_image = currentSettingsData.hero_banner_image;
+      if (file) hero_banner_image = await uploadImage(file, "settings");
+
+      const newData = {
+        ...currentSettingsData,
+        contact_phone: document.getElementById("set-phone").value.trim(),
+        contact_whatsapp: document.getElementById("set-whatsapp").value.trim(),
+        hero_subtitle: document.getElementById("set-hero-subtitle").value.trim(),
+        banner_eyebrow: document.getElementById("set-banner-eyebrow").value.trim(),
+        banner_title: document.getElementById("set-banner-title").value.trim(),
+        about_tagline: document.getElementById("set-about-tagline").value.trim(),
+        about_text_ar: document.getElementById("set-about-ar").value.trim(),
+        about_text_en: document.getElementById("set-about-en").value.trim(),
+        statement_quote: document.getElementById("set-statement").value.trim(),
+        stat_designs: document.getElementById("set-stat-designs").value,
+        stat_clients: document.getElementById("set-stat-clients").value,
+        stat_years: document.getElementById("set-stat-years").value,
+        stat_projects: document.getElementById("set-stat-projects").value,
+        hero_banner_image
+      };
+
+      const { error } = await supabaseClient.from("site_settings").upsert({ id: 1, data: newData, updated_at: new Date().toISOString() });
+      if (error) throw error;
+      currentSettingsData = newData;
+      showToast("اتحفظت الإعدادات بنجاح", "success");
+    } catch (e) {
+      showToast("حصل خطأ: " + e.message, "error");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // ============================================
+  // Boot
+  // ============================================
+  checkSession();
+</script>
+</body>
+</html>
