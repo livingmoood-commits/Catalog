@@ -73,6 +73,9 @@
 
   .img-preview{width:90px;height:90px;border-radius:8px;object-fit:cover;background:var(--clr-line);border:1px solid var(--clr-line);}
   .img-upload-row{display:flex;align-items:center;gap:12px;}
+  .extra-thumb{position:relative;width:74px;height:74px;}
+  .extra-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--clr-line);}
+  .extra-thumb button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--clr-danger);color:#fff;border:none;font-size:12px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 
   table{width:100%;border-collapse:collapse;font-size:14px;}
   th{text-align:right;font-size:12px;color:var(--clr-ink-70);text-transform:uppercase;letter-spacing:.03em;padding:8px 10px;border-bottom:2px solid var(--clr-line);}
@@ -177,11 +180,16 @@
             <div class="field full"><label>الوصف (اختياري)</label><textarea id="prod-desc"></textarea></div>
             <div class="field"><label>الترتيب</label><input type="number" id="prod-sort" value="0"></div>
             <div class="field full">
-              <label>صورة المنتج</label>
+              <label>صورة الغلاف (اللي بتظهر في الكارت)</label>
               <div class="img-upload-row">
                 <img class="img-preview" id="prod-img-preview" src="" style="display:none;">
                 <input type="file" accept="image/*" id="prod-img-file">
               </div>
+            </div>
+            <div class="field full">
+              <label>معرض الصور (اللي بتظهر لما حد يدوس على المنتج ويشوف التفاصيل — اختار أكتر من صورة مرة واحدة لو عايز)</label>
+              <div class="img-upload-row" id="prod-extra-list" style="flex-wrap:wrap;"></div>
+              <input type="file" accept="image/*" id="prod-extra-file" multiple style="margin-top:10px;">
             </div>
           </div>
           <div style="margin-top:14px;display:flex;gap:10px;">
@@ -527,7 +535,45 @@
   // Products
   // ============================================
   let productsCache = [];
+  let currentExtraImages = [];
   previewFile(document.getElementById("prod-img-file"), document.getElementById("prod-img-preview"));
+
+  function parseExtraImages(val) {
+    if (Array.isArray(val)) return val.filter(Boolean);
+    if (typeof val === "string" && val.trim() !== "") return val.split(",").map(s => s.trim()).filter(Boolean);
+    return [];
+  }
+
+  function renderExtraList() {
+    const wrap = document.getElementById("prod-extra-list");
+    wrap.innerHTML = currentExtraImages.map((url, i) => `
+      <div class="extra-thumb">
+        <img src="${escapeHtml(url)}">
+        <button type="button" onclick="removeExtraImage(${i})" aria-label="حذف">✕</button>
+      </div>
+    `).join("");
+  }
+
+  window.removeExtraImage = function (i) {
+    currentExtraImages.splice(i, 1);
+    renderExtraList();
+  };
+
+  document.getElementById("prod-extra-file").addEventListener("change", async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    try {
+      for (const f of files) {
+        const url = await uploadImage(f, "products");
+        currentExtraImages.push(url);
+      }
+      renderExtraList();
+    } catch (err) {
+      showToast("حصل خطأ في رفع إحدى الصور: " + err.message, "error");
+    } finally {
+      e.target.value = "";
+    }
+  });
 
   async function loadProducts() {
     const tbody = document.getElementById("prod-table-body");
@@ -560,6 +606,8 @@
     document.getElementById("prod-img-preview").style.display = "none";
     document.getElementById("prod-form-title").textContent = "إضافة منتج جديد";
     document.getElementById("prod-cancel-btn").style.display = "none";
+    currentExtraImages = [];
+    renderExtraList();
   }
 
   window.editProduct = function (id) {
@@ -574,6 +622,8 @@
     if (p.image_url) { preview.src = p.image_url; preview.style.display = "block"; }
     document.getElementById("prod-form-title").textContent = "تعديل منتج";
     document.getElementById("prod-cancel-btn").style.display = "inline-flex";
+    currentExtraImages = parseExtraImages(p.extra_images);
+    renderExtraList();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -591,7 +641,10 @@
     const btn = document.getElementById("prod-save-btn");
     btn.disabled = true;
     try {
-      const payload = { name, description, category_id: category_id || null, sort_order };
+      const payload = {
+        name, description, category_id: category_id || null, sort_order,
+        extra_images: currentExtraImages.length ? currentExtraImages.join(",") : null
+      };
       if (file) payload.image_url = await uploadImage(file, "products");
 
       let error;
