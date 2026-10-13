@@ -344,6 +344,17 @@
   .search-clear.show { display: flex; }
   .filter-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1; padding: 2px; }
   .filter-chips::-webkit-scrollbar { display: none; }
+  .chips-scroller { position: relative; flex: 1; min-width: 0; display: flex; }
+  .chips-scroller .filter-chips { scroll-behavior: smooth; }
+  .chips-arrow { position: absolute; top: 50%; z-index: 3; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--clr-line); background: var(--clr-surface); color: var(--clr-ink); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md); cursor: pointer; opacity: 0; pointer-events: none; transform: translateY(-50%) scale(.85); transition: opacity .25s ease, transform .25s var(--ease), border-color .2s ease, color .2s ease; }
+  .chips-arrow svg { width: 16px; height: 16px; }
+  .chips-arrow:hover { border-color: var(--clr-gold); color: var(--clr-gold-dark); }
+  .chips-arrow.prev { left: -4px; } .chips-arrow.next { right: -4px; }
+  .chips-scroller.can-prev .chips-arrow.prev, .chips-scroller.can-next .chips-arrow.next { opacity: 1; pointer-events: auto; transform: translateY(-50%) scale(1); }
+  .chips-scroller::before, .chips-scroller::after { content: ""; position: absolute; top: 0; bottom: 0; width: 56px; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .25s ease; }
+  .chips-scroller::before { left: 0; background: linear-gradient(to right, var(--clr-bg) 30%, transparent); }
+  .chips-scroller::after { right: 0; background: linear-gradient(to left, var(--clr-bg) 30%, transparent); }
+  .chips-scroller.can-prev::before, .chips-scroller.can-next::after { opacity: 1; }
   .chip {
     flex-shrink: 0; display: inline-flex; align-items: center; gap: 7px;
     height: 40px; padding: 0 18px; border-radius: 40px;
@@ -876,7 +887,11 @@
           <input type="search" id="catalog-search" placeholder="Search designs..." autocomplete="off" dir="auto">
           <button type="button" class="search-clear" id="search-clear" aria-label="Clear search">✕</button>
         </label>
-        <div class="filter-chips" id="filter-chips"></div>
+        <div class="chips-scroller" id="chips-scroller">
+          <button type="button" class="chips-arrow prev" id="chips-prev" aria-label="Scroll left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <div class="filter-chips" id="filter-chips"></div>
+          <button type="button" class="chips-arrow next" id="chips-next" aria-label="Scroll right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+        </div>
       </div>
     </div>
     <div class="wrap">
@@ -1638,6 +1653,22 @@
 
     const navEl = $("site-nav");
     const fabTop = $("fab-top");
+    // أسهم شريط التصنيفات
+    (function () {
+      const sc = $("chips-scroller"), list = $("filter-chips");
+      const update = () => {
+        const max = list.scrollWidth - list.clientWidth;
+        sc.classList.toggle("can-prev", list.scrollLeft > 4);
+        sc.classList.toggle("can-next", list.scrollLeft < max - 4);
+      };
+      const step = () => Math.max(160, list.clientWidth * 0.7);
+      $("chips-prev").addEventListener("click", () => list.scrollBy({ left: -step(), behavior: "smooth" }));
+      $("chips-next").addEventListener("click", () => list.scrollBy({ left: step(), behavior: "smooth" }));
+      list.addEventListener("scroll", update, { passive: true });
+      window.addEventListener("resize", update);
+      new MutationObserver(() => setTimeout(update, 50)).observe(list, { childList: true });
+      setTimeout(update, 300);
+    })();
     const toolbarEl = $("catalog-toolbar");
     const navLinks = document.querySelectorAll(".nav-links a");
     const spySections = ["categories", "products", "about", "team", "videos"].map(id => $(id));
