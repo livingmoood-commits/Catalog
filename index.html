@@ -638,7 +638,24 @@
   .detail-perks { list-style: none; padding: 22px 0 0; margin: 26px 0 0; border-top: 1px solid var(--clr-line); display: grid; gap: 12px; }
   .detail-perks li { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--clr-ink-70); }
   .detail-perks svg { width: 18px; height: 18px; color: var(--clr-gold); flex-shrink: 0; }
-  .detail-related { grid-column: 1 / -1; margin-top: 20px; }
+  .quote-form { margin-top: 26px; background: var(--clr-surface); border: 1px solid var(--clr-line); border-radius: var(--radius); padding: 20px; position: relative; }
+  .quote-form h4 { margin: 0 0 4px; font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+  .quote-form p.sub { margin: 0 0 14px; font-size: 13px; color: var(--clr-ink-50); }
+  .qf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .quote-form input, .quote-form textarea { width: 100%; border: 1px solid var(--clr-line); background: var(--clr-bg); border-radius: 10px; padding: 11px 12px; font-family: inherit; font-size: 14px; color: var(--clr-ink); outline: none; margin-bottom: 10px; }
+  .quote-form input:focus, .quote-form textarea:focus { border-color: var(--clr-gold); background: #fff; }
+  .quote-form textarea { resize: vertical; min-height: 70px; }
+  .quote-form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .qf-btn { width: 100%; border: none; border-radius: 30px; padding: 13px; background: var(--clr-gold); color: var(--clr-ink); font-weight: 700; font-size: 14px; letter-spacing: .03em; transition: opacity .2s ease; }
+  .qf-btn:hover { opacity: .9; }
+  .qf-btn:disabled { opacity: .5; }
+  .qf-done { display: none; text-align: center; padding: 10px 0; color: var(--clr-ink-70); font-size: 14px; line-height: 1.7; }
+  .qf-done strong { display: block; font-family: var(--font-display); font-size: 18px; color: var(--clr-ink); }
+  .quote-form.sent form { display: none; }
+  .quote-form.sent .qf-done { display: block; }
+  @media (max-width: 480px) { .qf-row { grid-template-columns: 1fr; } }
+  .detail-related { max-width: 1180px; margin: 0 auto; padding: 10px 28px 70px; position: relative; z-index: 1; }
+  .detail-related:empty { display: none; }
   .detail-related h3 { font-family: var(--font-display); font-size: 24px; font-weight: 600; margin: 0 0 20px; }
   @media (max-width: 900px) {
     .product-detail-inner { grid-template-columns: 1fr; gap: 26px; padding: 18px 16px 50px; }
@@ -647,6 +664,7 @@
     .product-detail-img-wrap > img:first-child { max-height: 62vh; }
     .detail-topbar { padding: 10px 16px; }
     .detail-topbar .nav-brand { display: none; }
+    .detail-related { padding: 0 16px 50px; }
     .gallery-arrow { width: 38px; height: 38px; font-size: 20px; }
   }
 
@@ -1029,10 +1047,24 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5 2 7.5L12 16.5 5.5 21l2-7.5L2 9h7z"/></svg>Premium wood &amp; luxury craftsmanship</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Delivery &amp; installation</li>
         </ul>
+        <div class="quote-form" id="quote-form">
+          <h4>Request a price</h4>
+          <p class="sub">Leave your number and we'll call you back. اكتب رقمك وهنكلمك.</p>
+          <form id="quote-form-el" autocomplete="on">
+            <div class="qf-row">
+              <input type="text" id="qf-name" name="name" placeholder="Your name / الاسم" maxlength="80" dir="auto">
+              <input type="tel" id="qf-phone" name="phone" placeholder="Phone / رقم الموبايل" maxlength="20" dir="ltr" required>
+            </div>
+            <textarea id="qf-msg" name="message" placeholder="Size, color or any details (optional)" maxlength="600" dir="auto"></textarea>
+            <input type="text" class="hp" id="qf-website" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <button type="submit" class="qf-btn" id="qf-btn">Send request</button>
+          </form>
+          <div class="qf-done"><strong>Request sent ✓</strong>We'll contact you very soon. هنتواصل معاك في أقرب وقت.</div>
+        </div>
       </div>
 
-      <div class="detail-related" id="detail-related"></div>
     </div>
+    <div class="detail-related" id="detail-related"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1077,6 +1109,30 @@
     // Helpers
     // ============================================
     const $ = (id) => document.getElementById(id);
+
+    // ============================================
+    // تسجيل الاستفسارات (واتساب / اتصال / طلب سعر / مشاهدة منتج)
+    // بتظهر في لوحة الأدمن تبويب "الاستفسارات" — محتاج جدول inquiries (ملف setup-inquiries.sql)
+    // ============================================
+    function logInquiry(type, product, extra) {
+      try {
+        if (product && usingDemo) return Promise.resolve({ ok: true });
+        const row = Object.assign({
+          type,
+          product_id: product ? String(product.id) : null,
+          product_name: product ? String(product.name || "").slice(0, 200) : null,
+          category_name: product ? (catName(product.category_id).slice(0, 120) || null) : null,
+          page: (location.pathname + location.hash).slice(0, 300),
+        }, extra || {});
+        return fetch(`${SUPABASE_URL}/rest/v1/inquiries`, {
+          method: "POST",
+          keepalive: true,
+          headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+          body: JSON.stringify(row),
+        }).catch(() => null);
+      } catch (e) { return Promise.resolve(null); } // التتبع مايوقفش الموقع أبدًا
+    }
+    const viewedThisSession = new Set();
     function esc(str) {
       return String(str ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     }
@@ -1529,6 +1585,20 @@
     // ============================================
     // Catalog interactions
     // ============================================
+    // أي دوسة على واتساب/اتصال تتسجّل كاستفسار
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("a.contact-btn, a.js-wa-general, a.js-call, #header-call-link, #header-wa-link, #footer-call-link");
+      if (!a) return;
+      const href = a.getAttribute("href") || "";
+      const type = href.startsWith("tel:") ? "call" : (href.includes("wa.me") ? "whatsapp" : null);
+      if (!type) return;
+      let product = null;
+      const card = a.closest(".product-card");
+      if (card) product = allProducts.find(x => String(x.id) === String(card.dataset.id));
+      else if (a.closest("#product-detail")) product = currentProduct;
+      logInquiry(type, product);
+    }, true);
+
     document.addEventListener("click", (e) => {
       const catBtn = e.target.closest(".category-item, .chip, .see-all-btn");
       if (catBtn && catBtn.dataset.cat) { setCategory(catBtn.dataset.cat); return; }
@@ -1666,6 +1736,10 @@
       if (!wasOpen) lockPageScroll();
       renderDetailImage();
 
+      $("quote-form").classList.remove("sent");
+      $("qf-btn").disabled = false;
+      if (!viewedThisSession.has(product.id)) { viewedThisSession.add(product.id); logInquiry("view", product); }
+
       if (pushHash && product.id) history.pushState({ p: product.id }, "", "#p-" + encodeURIComponent(product.id));
       document.title = `${product.name} | Living Mood`;
     }
@@ -1677,7 +1751,11 @@
       unlockPageScroll();
       document.title = "Living Mood | Catalog";
       if (!fromPop && location.hash.startsWith("#p-")) {
-        if (history.state && history.state.p) history.back();
+        if (history.state && history.state.p) {
+          const y = savedBodyScrollY;
+          history.back();
+          setTimeout(() => window.scrollTo(0, y), 30);
+        }
         else history.replaceState(null, "", location.pathname + location.search);
       }
     }
@@ -1692,6 +1770,8 @@
         closeProductDetail(true);
       }
     }
+    // نمنع المتصفح يرجّع السكرول لأول الصفحة لما اللينك يتغيّر (#p-ID)، إحنا اللي بنرجّعه لمكانه
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.addEventListener("popstate", openFromHash);
 
     const detailStep = (d) => { if (detailImages.length < 2) return; detailIndex = (detailIndex + d + detailImages.length) % detailImages.length; renderDetailImage(); };
@@ -1718,6 +1798,31 @@
         x0 = null;
       });
     })();
+
+    $("quote-form-el").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if ($("qf-website").value) return; // spam bot
+      const phone = $("qf-phone").value.trim();
+      if (phone.replace(/[^\d]/g, "").length < 8) { showToast("Please enter a valid phone number"); $("qf-phone").focus(); return; }
+      const btn = $("qf-btn");
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      try {
+        const res = await logInquiry("form", currentProduct, {
+          customer_name: $("qf-name").value.trim().slice(0, 80) || null,
+          customer_phone: phone.slice(0, 20),
+          message: $("qf-msg").value.trim().slice(0, 600) || null,
+        });
+        if (!res || !res.ok) throw new Error("failed");
+        $("quote-form").classList.add("sent");
+        $("qf-msg").value = "";
+      } catch (err) {
+        showToast("Couldn't send — please try WhatsApp");
+        btn.disabled = false;
+      } finally {
+        btn.textContent = "Send request";
+      }
+    });
 
     $("detail-share").addEventListener("click", async () => {
       if (!currentProduct) return;

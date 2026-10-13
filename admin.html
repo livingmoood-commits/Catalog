@@ -165,6 +165,32 @@
   .link-box{display:flex;gap:8px;align-items:center;background:var(--clr-bg);border:1px solid var(--clr-line);border-radius:10px;padding:8px 8px 8px 12px;margin-top:10px;}
   .link-box code{flex:1;font-size:12.5px;direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--clr-ink-70);}
 
+  .inq-banner{background:#FFF3E0;border:1px solid #E8C48A;color:#7A5B1E;padding:14px 16px;border-radius:12px;font-size:13.5px;line-height:1.8;margin-bottom:16px;display:none;}
+  .inq-banner.show{display:block;}
+  .inq-banner code{background:#fff;padding:1px 6px;border-radius:5px;direction:ltr;display:inline-block;}
+  .range-tabs{display:inline-flex;background:var(--clr-bg-2);border-radius:10px;padding:3px;gap:2px;}
+  .range-tabs button{border:none;background:none;padding:7px 12px;border-radius:8px;font-size:13px;font-weight:600;color:var(--clr-ink-70);}
+  .range-tabs button.active{background:#fff;color:var(--clr-ink);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .stat-card.static{cursor:default;}
+  .stat-card.static:hover{transform:none;border-color:var(--clr-line);}
+  .ic.wa{background:#E7F8EE;color:#1f9c46;} .ic.call{background:#EEE9E2;color:var(--clr-ink);} .ic.form{background:#F4ECDF;color:var(--clr-gold-dark);} .ic.view{background:#EAF0F6;color:#3B5B7A;}
+  .tag.wa{background:#E7F8EE;color:#1f9c46;} .tag.call{background:#EEE9E2;color:var(--clr-ink);} .tag.form{background:#F4ECDF;color:var(--clr-gold-dark);} .tag.view{background:#EAF0F6;color:#3B5B7A;}
+  .top-list{list-style:none;margin:0;padding:0;}
+  .top-list li{display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--clr-line);font-size:13.5px;}
+  .top-list li:last-child{border-bottom:none;}
+  .top-list .rank{width:24px;height:24px;border-radius:50%;background:var(--clr-bg);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--clr-ink-70);}
+  .top-list .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-list .ct{display:flex;gap:6px;}
+  .status-select{padding:6px 8px;border:1px solid var(--clr-line);border-radius:8px;background:var(--clr-bg);font-size:12.5px;font-weight:600;}
+  .status-select.new{background:#FCEFD9;border-color:#F0D6A8;color:var(--clr-warn);}
+  .status-select.contacted{background:#EAF0F6;border-color:#cddbe8;color:#3B5B7A;}
+  .status-select.done{background:#E7F3EC;border-color:#c8e3d2;color:var(--clr-success);}
+  tr.is-new td:first-child{box-shadow:inset -3px 0 0 var(--clr-gold);}
+  .cust{font-weight:600;}
+  .cust a{color:#1f9c46;text-decoration:none;font-weight:600;direction:ltr;display:inline-block;}
+  .msg-cell{max-width:260px;font-size:13px;color:var(--clr-ink-70);white-space:pre-line;}
+  .when{font-size:12.5px;color:var(--clr-ink-50);white-space:nowrap;}
+  .tab-btn .badge.hot{background:var(--clr-danger);color:#fff;}
   .save-bar{position:sticky;bottom:0;z-index:5;background:rgba(243,239,234,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--clr-line);padding:12px 0;margin-top:6px;display:flex;align-items:center;gap:12px;}
 
   .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--clr-ink);color:#fff;
@@ -234,6 +260,7 @@
   <div class="layout">
     <nav class="sidebar">
       <button class="tab-btn active" data-tab="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>نظرة عامة</button>
+      <button class="tab-btn" data-tab="inquiries"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>الاستفسارات<span class="badge" id="badge-inquiries">0</span></button>
       <div class="side-label">المحتوى</div>
       <button class="tab-btn" data-tab="products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg>المنتجات<span class="badge" id="badge-products">0</span></button>
       <button class="tab-btn" data-tab="categories"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>التصنيفات<span class="badge" id="badge-categories">0</span></button>
@@ -254,6 +281,13 @@
             <button class="btn btn-gold" data-goto="products" data-focus="prod-name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>منتج جديد</button>
             <button class="btn btn-outline" data-goto="categories" data-focus="cat-name">تصنيف جديد</button>
           </div>
+        </div>
+        <div class="card" data-goto="inquiries" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div class="ic form" style="width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <div><div style="font-size:15.5px;font-weight:700;" id="ov-inq-title">الاستفسارات</div><div class="muted" id="ov-inq-sub">جارِ التحميل...</div></div>
+          </div>
+          <span class="btn btn-dark btn-sm">عرض الاستفسارات</span>
         </div>
         <div class="stat-cards">
           <div class="stat-card" data-goto="products"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg></div><div><div class="num" id="ov-products">—</div><div class="lbl">منتج</div></div></div>
@@ -277,6 +311,66 @@
               <div class="link-box"><code id="site-link"></code><button class="btn btn-dark btn-sm" id="copy-site-link">نسخ</button></div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- ---------------- Inquiries ---------------- -->
+      <section class="panel" id="panel-inquiries">
+        <div class="panel-head">
+          <div><h2>الاستفسارات</h2><p>كل حد داس واتساب أو اتصال أو بعت طلب سعر من الموقع — بتتحدّث لوحدها كل دقيقة</p></div>
+          <div class="range-tabs" id="inq-range">
+            <button data-days="1">النهارده</button>
+            <button data-days="7" class="active">٧ أيام</button>
+            <button data-days="30">٣٠ يوم</button>
+            <button data-days="0">الكل</button>
+          </div>
+        </div>
+        <div class="inq-banner" id="inq-banner">
+          ⚠️ جدول الاستفسارات لسه مش متعمل في قاعدة البيانات، فمفيش حاجة بتتسجّل لحد دلوقتي.<br>
+          افتح <b>Supabase ← SQL Editor ← New query</b>، الزق محتوى ملف <code>setup-inquiries.sql</code>، ودوس <b>Run</b>، وبعدين اعمل رفريش للصفحة دي.
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card static"><div class="ic wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.85L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2z"/></svg></div><div><div class="num" id="inq-n-whatsapp">—</div><div class="lbl">دوسة واتساب</div></div></div>
+          <div class="stat-card static"><div class="ic call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><div class="num" id="inq-n-call">—</div><div class="lbl">دوسة اتصال</div></div></div>
+          <div class="stat-card static"><div class="ic form"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></div><div><div class="num" id="inq-n-form">—</div><div class="lbl">طلب سعر (فيه رقم)</div></div></div>
+          <div class="stat-card static"><div class="ic view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><div><div class="num" id="inq-n-view">—</div><div class="lbl">مشاهدة منتج</div></div></div>
+        </div>
+        <div class="ov-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="card">
+            <div class="card-head"><h3>🔥 أكتر منتجات بيتسأل عليها</h3></div>
+            <ul class="top-list" id="inq-top-asked"><li class="muted">—</li></ul>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>👁️ أكتر منتجات اتشافت</h3></div>
+            <ul class="top-list" id="inq-top-viewed"><li class="muted">—</li></ul>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <h3>سجل الاستفسارات <span class="count-note" id="inq-count"></span></h3>
+            <div class="table-tools">
+              <input type="search" id="inq-search" placeholder="🔍 منتج، اسم أو رقم...">
+              <select id="inq-type">
+                <option value="">كل الأنواع</option>
+                <option value="form">طلبات السعر</option>
+                <option value="whatsapp">واتساب</option>
+                <option value="call">اتصال</option>
+              </select>
+              <select id="inq-status">
+                <option value="">كل الحالات</option>
+                <option value="new">جديد</option>
+                <option value="contacted">اتكلمنا معاه</option>
+                <option value="done">خلص</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>الوقت</th><th>النوع</th><th>المنتج</th><th>العميل</th><th>الرسالة</th><th>الحالة</th><th></th></tr></thead>
+              <tbody id="inq-table-body"><tr><td colspan="7" class="state-msg">جارِ التحميل...</td></tr></tbody>
+            </table>
+          </div>
+          <p class="muted" style="margin:12px 0 0;">دوسات الواتساب والاتصال مابيبقاش فيها رقم العميل (الكلام بيكمل على الواتساب نفسه)، بس بتعرّفك مين بيسأل على أنهي منتج وإمتى. طلبات السعر فيها الاسم والرقم.</p>
         </div>
       </section>
 
@@ -645,8 +739,9 @@
     $("site-link").textContent = SITE_URL;
     try { const t = localStorage.getItem("lm_admin_tab"); if (t && $("panel-" + t)) openTab(t); } catch (e) {}
     await loadCategories();          // لازم التصنيفات الأول عشان أسامي التصنيف تظهر في جدول المنتجات
-    await Promise.all([loadProducts(), loadTeam(), loadVideos(), loadSettings()]);
+    await Promise.all([loadProducts(), loadTeam(), loadVideos(), loadSettings(), loadInquiries()]);
     renderOverview();
+    setInterval(() => loadInquiries(true), 60000); // تحديث تلقائي كل دقيقة
   }
 
   $("copy-site-link").addEventListener("click", async () => {
@@ -696,6 +791,151 @@
   });
 
   function countInCategory(id) { return productsCache.filter(p => String(p.category_id) === String(id)).length; }
+
+  // ============================================
+  // Inquiries (الاستفسارات)
+  // ============================================
+  let inquiriesCache = [];
+  let inqRangeDays = 7;
+  let inqTableMissing = false;
+  let lastSeenNewIds = null;
+  const INQ_TYPE = { whatsapp: "واتساب", call: "اتصال", form: "طلب سعر", view: "مشاهدة" };
+  const INQ_CLS = { whatsapp: "wa", call: "call", form: "form", view: "view" };
+
+  async function loadInquiries(silent) {
+    const { data, error } = await supabaseClient.from("inquiries").select("*").order("created_at", { ascending: false }).limit(3000);
+    if (error) {
+      inqTableMissing = true;
+      $("inq-banner").classList.add("show");
+      $("inq-table-body").innerHTML = `<tr><td colspan="7" class="state-msg">مفيش بيانات لسه — شغّل ملف setup-inquiries.sql الأول.</td></tr>`;
+      $("ov-inq-sub").textContent = "محتاج تفعيل — اضغط هنا للتفاصيل";
+      return;
+    }
+    inqTableMissing = false;
+    $("inq-banner").classList.remove("show");
+    const prevIds = new Set(inquiriesCache.map(r => r.id));
+    inquiriesCache = data || [];
+    if (silent && prevIds.size) {
+      const fresh = inquiriesCache.filter(r => !prevIds.has(r.id) && r.type === "form");
+      if (fresh.length) showToast(`🔔 ${fresh.length} طلب سعر جديد!`, "success");
+    }
+    renderInquiries();
+  }
+
+  function inRange(r) {
+    if (!inqRangeDays) return true;
+    const from = new Date();
+    if (inqRangeDays === 1) from.setHours(0, 0, 0, 0);
+    else from.setDate(from.getDate() - inqRangeDays);
+    return new Date(r.created_at) >= from;
+  }
+
+  function timeAgo(iso) {
+    const d = new Date(iso), diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return "دلوقتي";
+    if (diff < 3600) return `من ${Math.floor(diff / 60)} دقيقة`;
+    if (diff < 86400) return `من ${Math.floor(diff / 3600)} ساعة`;
+    if (diff < 86400 * 7) return `من ${Math.floor(diff / 86400)} يوم`;
+    return d.toLocaleDateString("ar-EG", { day: "numeric", month: "short" });
+  }
+
+  function waLinkFor(phone) {
+    let n = String(phone || "").replace(/[^\d]/g, "");
+    if (n.startsWith("00")) n = n.slice(2);
+    else if (n.startsWith("0")) n = "20" + n.slice(1);
+    return `https://wa.me/${n}`;
+  }
+
+  function topProducts(rows, types) {
+    const m = new Map();
+    rows.filter(r => types.includes(r.type) && r.product_name).forEach(r => {
+      const k = r.product_id || r.product_name;
+      const o = m.get(k) || { id: r.product_id, name: r.product_name, total: 0, whatsapp: 0, call: 0, form: 0, view: 0 };
+      o.total++; o[r.type]++;
+      m.set(k, o);
+    });
+    return [...m.values()].sort((a, b) => b.total - a.total).slice(0, 8);
+  }
+
+  function renderInquiries() {
+    const rows = inquiriesCache.filter(inRange);
+    ["whatsapp", "call", "form", "view"].forEach(t => $("inq-n-" + t).textContent = rows.filter(r => r.type === t).length);
+
+    const asked = topProducts(rows, ["whatsapp", "call", "form"]);
+    $("inq-top-asked").innerHTML = asked.length ? asked.map((p, i) => `
+      <li><span class="rank">${i + 1}</span><span class="nm">${escapeHtml(p.name)}</span>
+        <span class="ct">${p.whatsapp ? `<span class="tag wa">${p.whatsapp} واتساب</span>` : ""}${p.call ? `<span class="tag call">${p.call} اتصال</span>` : ""}${p.form ? `<span class="tag form">${p.form} طلب</span>` : ""}</span></li>`).join("")
+      : `<li class="muted" style="display:block;">لسه محدش سأل في الفترة دي.</li>`;
+    const viewed = topProducts(rows, ["view"]);
+    $("inq-top-viewed").innerHTML = viewed.length ? viewed.map((p, i) => `
+      <li><span class="rank">${i + 1}</span><span class="nm">${escapeHtml(p.name)}</span><span class="tag view">${p.view} مشاهدة</span></li>`).join("")
+      : `<li class="muted" style="display:block;">مفيش مشاهدات في الفترة دي.</li>`;
+
+    // الجدول (من غير المشاهدات)
+    const term = $("inq-search").value.trim().toLowerCase();
+    const type = $("inq-type").value, status = $("inq-status").value;
+    let list = rows.filter(r => r.type !== "view");
+    if (type) list = list.filter(r => r.type === type);
+    if (status) list = list.filter(r => r.status === status);
+    if (term) list = list.filter(r => [r.product_name, r.customer_name, r.customer_phone, r.message, r.category_name].some(v => (v || "").toLowerCase().includes(term)));
+    $("inq-count").textContent = `(${list.length})`;
+    $("inq-table-body").innerHTML = list.length ? list.slice(0, 400).map(r => `
+      <tr class="${r.status === "new" ? "is-new" : ""}">
+        <td class="when" title="${escapeHtml(new Date(r.created_at).toLocaleString("ar-EG"))}">${timeAgo(r.created_at)}</td>
+        <td><span class="tag ${INQ_CLS[r.type] || ""}">${INQ_TYPE[r.type] || escapeHtml(r.type)}</span></td>
+        <td>${r.product_name ? `<div class="row-title">${escapeHtml(r.product_name)}</div>${r.category_name ? `<div class="row-sub">${escapeHtml(r.category_name)}</div>` : ""}` : `<span class="muted">عام (مش منتج معيّن)</span>`}</td>
+        <td>${r.customer_phone ? `<div class="cust">${escapeHtml(r.customer_name || "—")}</div><a href="${waLinkFor(r.customer_phone)}" target="_blank" rel="noopener">${escapeHtml(r.customer_phone)}</a>` : `<span class="muted">—</span>`}</td>
+        <td class="msg-cell">${escapeHtml(r.message || "")}</td>
+        <td><select class="status-select ${escapeHtml(r.status)}" data-inq-status="${r.id}">
+          <option value="new" ${r.status === "new" ? "selected" : ""}>جديد</option>
+          <option value="contacted" ${r.status === "contacted" ? "selected" : ""}>اتكلمنا معاه</option>
+          <option value="done" ${r.status === "done" ? "selected" : ""}>خلص</option>
+        </select></td>
+        <td class="row-actions">
+          ${r.product_id ? `<a class="btn btn-outline btn-sm btn-icon" href="index.html#p-${encodeURIComponent(r.product_id)}" target="_blank" rel="noopener" title="عرض المنتج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>` : ""}
+          <button class="btn btn-ghost-danger btn-sm btn-icon" data-inq-del="${r.id}" title="حذف">✕</button>
+        </td>
+      </tr>`).join("")
+      : `<tr><td colspan="7" class="state-msg">${inquiriesCache.length ? "مفيش نتايج في الفترة/الفلتر ده." : "لسه مفيش استفسارات — أول ما حد يسأل من الموقع هيظهر هنا."}</td></tr>`;
+
+    // البادج + الأوفرفيو
+    const newCount = inquiriesCache.filter(r => r.type !== "view" && r.status === "new").length;
+    const badge = $("badge-inquiries");
+    badge.textContent = newCount;
+    badge.classList.toggle("hot", newCount > 0);
+    document.title = (newCount ? `(${newCount}) ` : "") + "Living Mood — لوحة التحكم";
+    const today = inquiriesCache.filter(r => r.type !== "view" && new Date(r.created_at) >= new Date(new Date().setHours(0, 0, 0, 0))).length;
+    $("ov-inq-title").textContent = newCount ? `${newCount} استفسار جديد` : "الاستفسارات";
+    $("ov-inq-sub").textContent = `${today} النهارده · ${inquiriesCache.filter(r => r.type === "form" && r.status === "new").length} طلب سعر مستني رد`;
+  }
+
+  document.querySelectorAll("#inq-range button").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll("#inq-range button").forEach(x => x.classList.toggle("active", x === b));
+    inqRangeDays = Number(b.dataset.days);
+    renderInquiries();
+  }));
+  ["inq-search", "inq-type", "inq-status"].forEach(id => $(id).addEventListener(id === "inq-search" ? "input" : "change", renderInquiries));
+
+  document.addEventListener("change", async (e) => {
+    const sel = e.target.closest && e.target.closest("[data-inq-status]");
+    if (!sel) return;
+    const id = sel.dataset.inqStatus;
+    const { error } = await supabaseClient.from("inquiries").update({ status: sel.value }).eq("id", id);
+    if (error) { showToast("حصل خطأ: " + error.message, "error"); return; }
+    const r = inquiriesCache.find(x => String(x.id) === String(id));
+    if (r) r.status = sel.value;
+    renderInquiries();
+  });
+  document.addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-inq-del]");
+    if (!b) return;
+    if (!confirm("تمسح الاستفسار ده؟")) return;
+    const id = b.dataset.inqDel;
+    const { error } = await supabaseClient.from("inquiries").delete().eq("id", id);
+    if (error) { showToast("حصل خطأ: " + error.message, "error"); return; }
+    inquiriesCache = inquiriesCache.filter(x => String(x.id) !== String(id));
+    renderInquiries();
+  });
 
   // ============================================
   // Categories
