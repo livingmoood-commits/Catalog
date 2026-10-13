@@ -72,5 +72,19 @@ grant select, insert, update, delete on public.inquiries to authenticated;
 alter table public.products add column if not exists is_available boolean not null default true;
 alter table public.products add column if not exists is_visible   boolean not null default true;
 
+-- ============================================================
+-- ⚡ تحديث لحظي: أي تعديل من الأدمن يوصل للزوار فورًا (Supabase Realtime)
+-- ============================================================
+do $$
+declare t text;
+begin
+  foreach t in array array['products','categories','team_members','portfolio_items','site_settings'] loop
+    if exists (select 1 from pg_tables where schemaname = 'public' and tablename = t)
+       and not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = t) then
+      execute format('alter publication supabase_realtime add table public.%I', t);
+    end if;
+  end loop;
+end $$;
+
 -- تحديث الـ API عشان يشوف الخانات الجديدة فورًا
 notify pgrst, 'reload schema';

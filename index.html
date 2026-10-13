@@ -1309,6 +1309,7 @@
       try {
         const { data, error } = await supabaseClient.from("site_settings").select("data").eq("id", 1).single();
         if (error || !data || !data.data) return;
+        if (!changed("settings", data.data)) return;
         const s = data.data;
         if (s.contact_phone) CONTACT_PHONE = s.contact_phone;
         if (s.contact_whatsapp) CONTACT_WHATSAPP = s.contact_whatsapp;
@@ -1493,6 +1494,9 @@
       if (scroll) scrollToCatalog();
     }
 
+    let liveSilent = false;          // true أثناء التحديث اللحظي (من غير أنيميشن)
+    const lastSig = {};
+    const changed = (key, data) => { const sig = JSON.stringify(data); if (lastSig[key] === sig) return false; lastSig[key] = sig; return true; };
     async function loadCatalog() {
       let categories = DEMO_CATEGORIES;
       let products = DEMO_PRODUCTS;
@@ -1508,6 +1512,7 @@
           console.warn("Could not connect to Supabase, showing demo data:", e);
         }
       }
+      if (!changed("catalog", [categories, products])) return;
       allCategories = categories;
       allProducts = products;
       usingDemo = products === DEMO_PRODUCTS;
@@ -1527,6 +1532,7 @@
           if (!error && data) members = data;
         } catch (e) { console.warn("team_members:", e); }
       }
+      if (!changed("team", members)) return;
       const team = members.filter(m => m.type === "team");
       const engineers = members.filter(m => m.type === "engineer");
       const teamSource = team.length > 0 ? team : DEMO_TEAM;
@@ -1560,6 +1566,7 @@
           if (!error && data) items = data;
         } catch (e) { console.warn("portfolio_items:", e); }
       }
+      if (!changed("videos", items)) return;
       const videos = items.filter(v => (v.type || "").toLowerCase() === "video");
       const source = videos.length > 0 ? videos : DEMO_VIDEOS;
       const grid = $("videos-grid");
@@ -2039,7 +2046,69 @@
         initStatsCounter();
         openFromHash();
         restoreScrollPosition();
+        startLiveUpdates();
       });
+
+    // ============================================
+    // ⚡ تحديث لحظي: أي تعديل من الأدمن يظهر لكل الزوار من غير Refresh
+    // ============================================
+    let liveTimer = null, liveBusy = false;
+    async function liveRefresh() {
+      if (liveBusy || !supabaseClient) return;
+      liveBusy = true;
+      const y = window.scrollY;
+      try {
+        await loadSettings();
+        await Promise.all([loadCatalog(), loadTeam(), loadVideos()]);
+        // العناصر الجديدة تظهر على طول من غير أنيميشن الظهور
+        document.querySelectorAll(".reveal:not(.visible), .reveal-pop:not(.visible)").forEach(el => { el.style.transitionDelay = "0s"; el.classList.add("visible"); });
+        if (currentProduct && document.getElementById("product-detail").classList.contains("open")) {
+          const fresh = allProducts.find(p => String(p.id) === String(currentProduct.id));
+          if (fresh) $("detail-soldout").classList.toggle("show", fresh.is_available === false);
+        }
+        if (Math.abs(window.scrollY - y) > 2 && !document.getElementById("product-detail").classList.contains("open")) window.scrollTo(0, y);
+      } catch (e) { console.warn("live refresh:", e); }
+      liveBusy = false;
+    }
+    const queueLive = () => { clearTimeout(liveTimer); liveTimer = setTimeout(liveRefresh, 700); };
+    function startLiveUpdates() {
+      if (!supabaseClient || usingDemo) return;
+      try {
+        const ch = supabaseClient.channel("catalog-live");
+        ["products", "categories", "team_members", "portfolio_items", "site_settings"].forEach(t =>
+          ch.on("postgres_changes", { event: "*", schema: "public", table: t }, queueLive));
+        ch.subscribe();
+      } catch (e) { console.warn("realtime:", e); }
+      // احتياطي لو الـ Realtime مش شغال: يشيّك كل 30 ثانية، وأول ما الزائر يرجع للتاب
+      setInterval(() => { if (document.visibilityState === "visible") liveRefresh(); }, 30000);
+      document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") queueLive(); });
+    }
+
+    // ============================================
+    // 🚀 نسخة جديدة من الموقع؟ تتحدث لوحدها عند كل الزوار
+    // ============================================
+    const BUILD_VERSION = "20261013120615";
+    (function watchNewVersion() {
+      if (location.protocol === "file:") return;
+      let pending = null;
+      const busy = () => document.getElementById("product-detail").classList.contains("open") ||
+        (document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName));
+      const go = (v) => {
+        try { if (sessionStorage.getItem("lm_reloaded_for") === v) return; sessionStorage.setItem("lm_reloaded_for", v); } catch (e) {}
+        const u = new URL(location.href); u.searchParams.set("v", v); location.replace(u.toString());
+      };
+      async function check() {
+        try {
+          const r = await fetch("version.json?t=" + Date.now(), { cache: "no-store" });
+          if (!r.ok) return;
+          const { v } = await r.json();
+          if (v && v !== BUILD_VERSION) { pending = v; if (!busy()) go(v); }
+        } catch (e) {}
+      }
+      setInterval(() => { if (pending && !busy()) go(pending); else if (document.visibilityState === "visible") check(); }, 60000);
+      document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") check(); });
+      setTimeout(check, 8000);
+    })();
   </script>
   <script>
     // 🌙 Dark mode بأنيميشن دايرة بتلوّن الصفحة من مكان الزرار

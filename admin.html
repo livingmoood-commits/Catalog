@@ -913,6 +913,30 @@
   });
 
   // ============================================
+  // 🚀 نسخة جديدة من لوحة التحكم؟ تتحدث لوحدها (لو مفيش تعديل مفتوح)
+  // ============================================
+  const BUILD_VERSION = "20261013120615";
+  function watchNewVersion() {
+    if (location.protocol === "file:") return;
+    let pending = null;
+    const busy = () => document.querySelector(".card.editing") || (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName));
+    const go = (v) => {
+      try { if (sessionStorage.getItem("lm_admin_reloaded_for") === v) return; sessionStorage.setItem("lm_admin_reloaded_for", v); } catch (e) {}
+      const u = new URL(location.href); u.searchParams.set("v", v); location.replace(u.toString());
+    };
+    async function check() {
+      try {
+        const r = await fetch("version.json?t=" + Date.now(), { cache: "no-store" });
+        if (!r.ok) return;
+        const { v } = await r.json();
+        if (v && v !== BUILD_VERSION) { pending = v; if (!busy()) go(v); }
+      } catch (e) {}
+    }
+    setInterval(() => { if (pending && !busy()) go(pending); else if (document.visibilityState === "visible") check(); }, 60000);
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") check(); });
+  }
+
+  // ============================================
   // App init (مرة واحدة بعد الدخول)
   // ============================================
   let appInitialized = false;
@@ -925,6 +949,7 @@
     await Promise.all([loadProducts(), loadTeam(), loadVideos(), loadSettings(), loadInquiries()]);
     renderOverview();
     setInterval(() => loadInquiries(true), 60000); // تحديث تلقائي كل دقيقة
+    watchNewVersion();
   }
 
   $("copy-site-link").addEventListener("click", async () => {
