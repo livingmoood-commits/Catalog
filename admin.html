@@ -305,6 +305,11 @@
     .setup-banner{padding:10px 16px;}
   }
   @media(max-width:520px){.stat-cards{gap:10px;}.stat-card{padding:15px;gap:11px;}.stat-card .ic{width:40px;height:40px;}.stat-card .num{font-size:24px;}}
+  .theme-toggle.pop{animation:themePop .5s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes themePop{0%{transform:scale(1);}35%{transform:scale(.78);}100%{transform:scale(1);}}
+  html,body{transition:none;}
+  ::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal;}
+  ::view-transition-new(root){z-index:9999;} ::view-transition-old(root){z-index:1;}
   @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
 </style>
 </head>
@@ -832,9 +837,18 @@
     const h = d.getHours();
     $("ov-hello").textContent = h < 12 ? "صباح الخير ☀️" : (h < 18 ? "أهلاً بيك 👋" : "مساء الخير 🌙");
     $("theme-toggle").addEventListener("click", () => {
-      const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-      document.documentElement.dataset.theme = t;
-      try { localStorage.setItem("lm_admin_theme", t); } catch (e) {}
+      const root = document.documentElement;
+      const t = root.dataset.theme === "dark" ? "light" : "dark";
+      const apply = () => { root.dataset.theme = t; try { localStorage.setItem("lm_admin_theme", t); } catch (e) {} };
+      const btn = $("theme-toggle");
+      btn.classList.remove("pop"); void btn.offsetWidth; btn.classList.add("pop");
+      if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) { apply(); return; }
+      const r = btn.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+      const end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+      document.startViewTransition(apply).ready.then(() => {
+        root.animate({ clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${end}px at ${x}px ${y}px)`] },
+          { duration: 750, easing: "cubic-bezier(.65,0,.35,1)", pseudoElement: "::view-transition-new(root)" });
+      }).catch(() => {});
     });
   })();
   document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", () => openTab(btn.dataset.tab)));
