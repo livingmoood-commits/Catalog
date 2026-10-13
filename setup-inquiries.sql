@@ -2,6 +2,8 @@
 -- Living Mood — جدول الاستفسارات (inquiries)
 -- شغّل الملف ده مرة واحدة بس من: Supabase → SQL Editor → New query → Paste → Run
 -- بيسجّل: دوسات واتساب، دوسات الاتصال، طلبات السعر من الفورم، ومشاهدات المنتجات
+-- وكمان بيضيف خانة "متاح / مش متاح" للمنتجات (زرار ON/OFF في الأدمن)
+-- آمن تشغّله أكتر من مرة (لو كنت شغّلت نسخة قديمة، شغّل دي تاني وهتكمّل الناقص)
 -- ============================================================
 
 create table if not exists public.inquiries (
@@ -13,11 +15,17 @@ create table if not exists public.inquiries (
   category_name  text,
   customer_name  text,
   customer_phone text,
+  customer_email text,
+  customer_address text,
   message        text,
   page           text,
   status         text not null default 'new' check (status in ('new', 'contacted', 'done')),
   note           text
 );
+
+-- لو الجدول كان متعمل بنسخة قديمة
+alter table public.inquiries add column if not exists customer_email   text;
+alter table public.inquiries add column if not exists customer_address text;
 
 create index if not exists inquiries_created_at_idx on public.inquiries (created_at desc);
 create index if not exists inquiries_type_idx on public.inquiries (type);
@@ -36,6 +44,8 @@ create policy "public can insert inquiries"
     and coalesce(length(category_name), 0)  <= 120
     and coalesce(length(customer_name), 0)  <= 80
     and coalesce(length(customer_phone), 0) <= 20
+    and coalesce(length(customer_email), 0) <= 120
+    and coalesce(length(customer_address), 0) <= 300
     and coalesce(length(message), 0)        <= 600
     and coalesce(length(page), 0)           <= 300
   );
@@ -55,3 +65,11 @@ create policy "admin can delete inquiries"
 
 grant insert on public.inquiries to anon;
 grant select, insert, update, delete on public.inquiries to authenticated;
+
+-- ============================================================
+-- المنتجات: متاح / مش متاح (ON/OFF)
+-- ============================================================
+alter table public.products add column if not exists is_available boolean not null default true;
+
+-- تحديث الـ API عشان يشوف الخانات الجديدة فورًا
+notify pgrst, 'reload schema';

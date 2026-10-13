@@ -642,6 +642,12 @@
   .quote-form { margin-top: 26px; background: var(--clr-surface); border: 1px solid var(--clr-line); border-radius: var(--radius); padding: 20px; position: relative; }
   .quote-form h4 { margin: 0 0 4px; font-family: var(--font-display); font-size: 18px; font-weight: 600; }
   .quote-form p.sub { margin: 0 0 14px; font-size: 13px; color: var(--clr-ink-50); }
+  .qf-note { display: flex; gap: 10px; align-items: flex-start; background: rgba(176,141,87,.1); border: 1px solid rgba(176,141,87,.28); border-radius: 12px; padding: 10px 12px; margin: 2px 0 10px; font-size: 12.5px; line-height: 1.65; color: var(--clr-ink-70); }
+  .qf-note svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--clr-gold-dark); margin-top: 2px; }
+  .qf-note strong { color: var(--clr-ink); }
+  .quote-form textarea.invalid { border-color: #B3453A; box-shadow: 0 0 0 3px rgba(179,69,58,.12); }
+  .qf-note .ar { display: block; direction: rtl; text-align: right; margin-top: 4px; font-family: var(--font-body); }
+
   .qf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .quote-form input, .quote-form textarea { width: 100%; border: 1px solid var(--clr-line); background: var(--clr-bg); border-radius: 10px; padding: 11px 12px; font-family: inherit; font-size: 14px; color: var(--clr-ink); outline: none; margin-bottom: 10px; }
   .quote-form input:focus, .quote-form textarea:focus { border-color: var(--clr-gold); background: #fff; }
@@ -702,6 +708,13 @@
   html[data-theme="dark"] .wm-badge-text { text-shadow: 0 0 4px rgba(0,0,0,.5); }
   html[data-theme="dark"] .category-circle img, html[data-theme="dark"] .product-media img { filter: brightness(.94); }
 
+  /* منتج مش متاح حالياً (ON/OFF من الأدمن) */
+  .soldout-badge { position: absolute; left: 10px; bottom: 10px; z-index: 3; display: inline-flex; align-items: center; gap: 6px; background: rgba(28,23,18,.82); color: #F3EFEA; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 5px 11px; border-radius: 20px; backdrop-filter: blur(6px); }
+  .soldout-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #E0796D; }
+  .product-card.is-off .product-media img { filter: grayscale(.85) brightness(.92); }
+  .detail-soldout { display: none; align-items: center; gap: 8px; margin: -6px 0 18px; font-size: 13px; font-weight: 600; color: #B3453A; background: rgba(179,69,58,.08); border: 1px solid rgba(179,69,58,.2); padding: 8px 14px; border-radius: 30px; width: fit-content; }
+  .detail-soldout.show { display: inline-flex; }
+  html[data-theme="dark"] .detail-soldout { color: #E0796D; }
   .theme-toggle {
     position: relative; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%;
     border: 1px solid var(--clr-line); background: var(--clr-surface); color: var(--clr-ink); cursor: pointer; overflow: hidden;
@@ -1088,6 +1101,7 @@
       <div class="product-detail-info">
         <span class="detail-cat" id="detail-cat"></span>
         <h2 id="detail-title"></h2>
+        <span class="detail-soldout" id="detail-soldout">غير متاح حالياً · Not available now — اسألنا على البديل</span>
         <div class="detail-rule"></div>
         <p class="product-detail-description" id="detail-description" dir="auto"></p>
         <div class="contact-actions">
@@ -1107,7 +1121,16 @@
               <input type="text" id="qf-name" name="name" placeholder="Your name / الاسم" maxlength="80" dir="auto">
               <input type="tel" id="qf-phone" name="phone" placeholder="Phone / رقم الموبايل" maxlength="20" dir="ltr" required>
             </div>
-            <textarea id="qf-msg" name="message" placeholder="Size, color or any details (optional)" maxlength="600" dir="auto"></textarea>
+            <div class="qf-row">
+              <input type="email" id="qf-email" name="email" placeholder="Email / الإيميل (optional)" maxlength="120" dir="ltr" autocomplete="email">
+              <input type="text" id="qf-address" name="address" placeholder="Address / العنوان (optional)" maxlength="300" dir="auto" autocomplete="street-address">
+            </div>
+            <div class="qf-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2M11.5 9.5l2-2M8.5 6.5l2-2M17.5 15.5l2-2"/></svg>
+              <div><strong>Measurements matter.</strong> We can't give you an accurate price without the sizes and details: dimensions, material, color and quantity.
+              <span class="ar"><strong>المقاسات والتفاصيل مهمة جدًا:</strong> مش هنقدر نحدد سعر إلا لو كتبت المقاسات (الطول × العرض × العمق)، الخامة، اللون والعدد.</span></div>
+            </div>
+            <textarea id="qf-msg" name="message" aria-required="true" placeholder="e.g. 120 × 220 cm, walnut color, 2 pieces — مثال: مقاس 120×220، لون جوز، عدد 2" maxlength="600" dir="auto"></textarea>
             <input type="text" class="hp" id="qf-website" tabindex="-1" autocomplete="off" aria-hidden="true">
             <button type="submit" class="qf-btn" id="qf-btn">Send request</button>
           </form>
@@ -1298,11 +1321,12 @@
       const imgs = productImages(p);
       const cname = catName(p.category_id);
       return `
-        <article class="product-card reveal" data-id="${esc(p.id)}" tabindex="0" aria-label="${esc(p.name)}">
+        <article class="product-card reveal${p.is_available === false ? " is-off" : ""}" data-id="${esc(p.id)}" tabindex="0" aria-label="${esc(p.name)}">
           <div class="product-media">
             <img src="${esc(p.image_url || imgs[0] || "")}" alt="${esc(p.name)}" loading="lazy" decoding="async" onerror="this.style.opacity='0'">
             ${wmBadge()}
             ${imgs.length > 1 ? `<span class="product-photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>${imgs.length}</span>` : ""}
+            ${p.is_available === false ? `<span class="soldout-badge">Not available now</span>` : ""}
             <span class="product-view">View details</span>
           </div>
           <div class="product-info">
@@ -1764,6 +1788,7 @@
       $("detail-cat").textContent = cname;
       $("detail-cat").style.display = cname ? "" : "none";
       $("detail-title").textContent = product.name || "";
+      $("detail-soldout").classList.toggle("show", product.is_available === false);
       const desc = $("detail-description");
       desc.textContent = product.description || "";
       desc.style.display = product.description && product.description.trim() ? "" : "none";
@@ -1851,6 +1876,7 @@
       });
     })();
 
+    $("qf-msg").addEventListener("input", () => $("qf-msg").classList.remove("invalid"));
     $("quote-form-el").addEventListener("submit", async (e) => {
       e.preventDefault();
       if ($("qf-website").value) return; // spam bot
@@ -1860,14 +1886,28 @@
       btn.disabled = true;
       btn.textContent = "Sending...";
       try {
-        const res = await logInquiry("form", currentProduct, {
-          customer_name: $("qf-name").value.trim().slice(0, 80) || null,
-          customer_phone: phone.slice(0, 20),
-          message: $("qf-msg").value.trim().slice(0, 600) || null,
-        });
+        const email = $("qf-email").value.trim().slice(0, 120);
+        const address = $("qf-address").value.trim().slice(0, 300);
+        const msg = $("qf-msg").value.trim();
+        if (msg.length < 6) {
+          $("qf-msg").classList.add("invalid"); $("qf-msg").focus();
+          showToast("اكتب المقاسات والتفاصيل الأول عشان نقدر نحدد السعر");
+          btn.disabled = false; btn.textContent = "Send request";
+          return;
+        }
+        const base = { customer_name: $("qf-name").value.trim().slice(0, 80) || null, customer_phone: phone.slice(0, 20) };
+        let res = await logInquiry("form", currentProduct, Object.assign({}, base, {
+          customer_email: email || null, customer_address: address || null, message: msg.slice(0, 600) || null,
+        }));
+        // لو قاعدة البيانات لسه مافيهاش خانات الإيميل/العنوان، نبعتهم جوه الرسالة عشان الطلب مايضيعش
+        if ((!res || !res.ok) && (email || address)) {
+          const extra = [email && "Email: " + email, address && "Address: " + address].filter(Boolean).join("\n");
+          res = await logInquiry("form", currentProduct, Object.assign({}, base, { message: ((msg ? msg + "\n" : "") + extra).slice(0, 600) }));
+        }
         if (!res || !res.ok) throw new Error("failed");
         $("quote-form").classList.add("sent");
         $("qf-msg").value = "";
+        $("qf-address").value = "";
       } catch (err) {
         showToast("Couldn't send — please try WhatsApp");
         btn.disabled = false;

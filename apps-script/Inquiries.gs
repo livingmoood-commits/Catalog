@@ -14,10 +14,11 @@ const SUPABASE_URL = 'https://ppiokabsxhklamhlrzzw.supabase.co';
 const SHEET_NAME = 'Inquiries';
 const INCLUDE_VIEWS = false; // true لو عايز مشاهدات المنتجات كمان تنزل في الشيت (كتير)
 
-const HEADERS = ['#', 'التاريخ', 'الوقت', 'النوع', 'المنتج', 'التصنيف', 'اسم العميل', 'رقم العميل', 'واتساب العميل', 'الرسالة', 'الحالة', 'لينك المنتج'];
+const HEADERS = ['#', 'التاريخ', 'الوقت', 'النوع', 'المنتج', 'التصنيف', 'اسم العميل', 'رقم العميل', 'واتساب العميل', 'الإيميل', 'العنوان', 'الرسالة', 'الحالة', 'لينك المنتج'];
 const TYPE_AR = { whatsapp: 'واتساب', call: 'اتصال', form: 'طلب سعر', view: 'مشاهدة' };
 const STATUS_AR = { new: 'جديد', contacted: 'اتكلمنا معاه', done: 'خلص' };
 const SITE_URL = 'https://livingmoood-commits.github.io/Catalog/';
+const STATUS_COL = HEADERS.indexOf('الحالة') + 1;
 
 function onOpen() {
   SpreadsheetApp.getUi()
@@ -58,7 +59,7 @@ function syncInquiries() {
       const status = STATUS_AR[r.status] || r.status || '';
       if (existing[r.id]) {
         // تحديث الحالة لو اتغيّرت من لوحة الأدمن
-        const cell = sh.getRange(existing[r.id], 11);
+        const cell = sh.getRange(existing[r.id], STATUS_COL);
         if (cell.getValue() !== status) cell.setValue(status);
         return;
       }
@@ -120,6 +121,8 @@ function toRow_(r) {
     r.customer_name || '',
     phone ? "'" + phone : '',
     phone ? waLink_(phone) : '',
+    r.customer_email || '',
+    r.customer_address || '',
     r.message || '',
     STATUS_AR[r.status] || r.status || '',
     r.product_id ? SITE_URL + '#p-' + encodeURIComponent(r.product_id) : '',
@@ -137,16 +140,17 @@ function getSheet_() {
   const ss = SpreadsheetApp.getActive();
   let sh = ss.getSheetByName(SHEET_NAME);
   if (!sh) sh = ss.insertSheet(SHEET_NAME);
-  if (sh.getRange(1, 1).getValue() !== HEADERS[0]) {
+  const head = sh.getRange(1, 1, 1, HEADERS.length).getValues()[0];
+  if (head.join('|') !== HEADERS.join('|')) {
     sh.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS])
       .setFontWeight('bold').setFontColor('#F3EFEA').setBackground('#1C1712')
       .setHorizontalAlignment('center').setVerticalAlignment('middle');
     sh.setFrozenRows(1);
     sh.setRowHeight(1, 34);
     sh.setRightToLeft(true);
-    [60, 95, 80, 85, 200, 130, 140, 120, 200, 280, 110, 220].forEach((w, i) => sh.setColumnWidth(i + 1, w));
+    [60, 95, 80, 85, 200, 130, 140, 120, 200, 200, 220, 280, 110, 220].forEach((w, i) => sh.setColumnWidth(i + 1, w));
     const rule = (text, bg, fg) => SpreadsheetApp.newConditionalFormatRule()
-      .whenTextEqualTo(text).setBackground(bg).setFontColor(fg).setRanges([sh.getRange('D2:D'), sh.getRange('K2:K')]).build();
+      .whenTextEqualTo(text).setBackground(bg).setFontColor(fg).setRanges([sh.getRange('D2:D'), sh.getRange(2, STATUS_COL, sh.getMaxRows() - 1, 1)]).build();
     sh.setConditionalFormatRules([
       rule('طلب سعر', '#F4ECDF', '#8F6F3F'),
       rule('واتساب', '#E7F8EE', '#1F9C46'),
@@ -164,7 +168,7 @@ function styleRows_(sh, start, n) {
     .setFontWeight('normal').setFontColor('#1C1712').setBackground(null)
     .setVerticalAlignment('middle').setWrap(true);
   sh.getRange(start, 1, n, 4).setHorizontalAlignment('center');
-  sh.getRange(start, 11, n, 1).setHorizontalAlignment('center');
+  sh.getRange(start, STATUS_COL, n, 1).setHorizontalAlignment('center');
 }
 
 function getKey_() {

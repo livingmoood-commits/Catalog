@@ -200,6 +200,9 @@
   .row-title{font-weight:700;}
   .row-sub{font-size:12px;color:var(--clr-ink-50);margin-top:3px;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .row-actions{display:flex;gap:6px;white-space:nowrap;justify-content:flex-end;}
+  td.row-actions{display:table-cell;text-align:left;}
+  td.row-actions > *{margin-right:6px;vertical-align:middle;}
+  td.row-actions > *:first-child{margin-right:0;}
   .tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--clr-bg-2);color:var(--clr-ink-70);white-space:nowrap;}
   .tag.gold{background:var(--clr-gold-soft);color:var(--clr-gold-dark);}
   .tag.warn{background:color-mix(in srgb,var(--clr-warn) 14%,transparent);color:var(--clr-warn);}
@@ -281,6 +284,63 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast.error{background:#B3453A;}
   .toast.success{background:#3C7A5C;}
+
+  /* ---- ستايل Living Mood (زي الداشبورد الأساسية) ---- */
+  :root{--bounce:cubic-bezier(.3,1.15,.55,1);}
+  .card h3::before{width:4px;height:18px;border-radius:3px;box-shadow:none;}
+  th{background:#1E1A15;color:#E8DCC4;border-color:#1E1A15;}
+  html[data-theme="dark"] th{background:#0B0907;border-color:var(--clr-line);}
+  .tab-btn{border:1px solid rgba(255,255,255,.06);margin-bottom:4px;transition:background .25s var(--bounce),color .2s,transform .25s var(--bounce);}
+  .tab-btn:hover:not(.active){transform:translateX(-3px);}
+  .tab-btn.active{background:linear-gradient(135deg,#C9A46A,#A9844E);color:#15120E;border-color:transparent;box-shadow:0 10px 24px -12px rgba(201,164,106,.9);}
+  .tab-btn.active svg{color:#15120E;}
+  .tab-btn.active .badge{background:rgba(21,18,14,.18);color:#15120E;}
+  .tab-btn.active::before{display:none;}
+  .stat-card,.card,.btn{transition-timing-function:var(--bounce);}
+
+  /* Sub tabs (segmented) */
+  .seg{display:inline-flex;gap:4px;background:var(--clr-surface);border:1px solid var(--clr-line);border-radius:14px;padding:5px;box-shadow:var(--shadow);margin-bottom:18px;flex-wrap:wrap;}
+  .seg button{border:none;background:none;padding:9px 18px;border-radius:10px;font-size:13.5px;font-weight:700;color:var(--clr-ink-50);display:inline-flex;align-items:center;gap:8px;transition:all .25s var(--bounce);}
+  .seg button:hover{color:var(--clr-ink);}
+  .seg button.active{background:var(--clr-ink);color:var(--clr-bg);}
+  .seg button .n{font-size:11px;background:var(--clr-bg-2);color:var(--clr-ink-70);padding:1px 8px;border-radius:20px;}
+  .seg button.active .n{background:rgba(201,164,106,.25);color:#E2C48E;}
+  .seg button svg{width:15px;height:15px;}
+  .prod-view{display:none;}
+  .prod-view.active{display:block;animation:panelIn .4s var(--ease) both;}
+
+  /* Category tabs */
+  .cat-tabs{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 14px;margin-bottom:6px;scrollbar-width:thin;}
+  .cat-tab{flex-shrink:0;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--clr-line);background:var(--clr-surface-2);color:var(--clr-ink-70);border-radius:30px;padding:8px 14px;font-size:13px;font-weight:700;transition:all .25s var(--bounce);}
+  .cat-tab img{width:24px;height:24px;border-radius:50%;object-fit:cover;margin:-3px -6px -3px 0;}
+  .cat-tab .n{font-size:11px;background:var(--clr-bg-2);padding:1px 7px;border-radius:20px;color:var(--clr-ink-50);}
+  .cat-tab:hover{border-color:var(--clr-gold);color:var(--clr-ink);transform:translateY(-1px);}
+  .cat-tab.active{background:linear-gradient(135deg,#C9A46A,#A9844E);border-color:transparent;color:#15120E;box-shadow:0 8px 20px -10px rgba(201,164,106,.9);}
+  .cat-tab.active .n{background:rgba(21,18,14,.15);color:#15120E;}
+  .list-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+  .mini-seg{display:inline-flex;background:var(--clr-bg-2);border-radius:11px;padding:3px;gap:2px;}
+  .mini-seg button{border:none;background:none;padding:7px 12px;border-radius:9px;font-size:12.5px;font-weight:700;color:var(--clr-ink-50);display:inline-flex;align-items:center;gap:6px;}
+  .mini-seg button.active{background:var(--clr-surface);color:var(--clr-ink);box-shadow:0 2px 8px rgba(0,0,0,.08);}
+  .mini-seg .dot{width:7px;height:7px;border-radius:50%;}
+
+  /* ON/OFF switch */
+  .switch{position:relative;display:inline-flex;align-items:center;gap:9px;cursor:pointer;user-select:none;font-size:12.5px;font-weight:700;}
+  .switch input{position:absolute;opacity:0;pointer-events:none;}
+  .switch .track{position:relative;width:46px;height:26px;border-radius:30px;background:var(--clr-line);transition:background .3s var(--bounce);flex-shrink:0;}
+  .switch .track::after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .35s var(--bounce);}
+  .switch input:checked + .track{background:var(--clr-success);}
+  .switch input:checked + .track::after{transform:translateX(-20px);}
+  .switch input:focus-visible + .track{box-shadow:0 0 0 4px var(--clr-gold-soft);}
+  .switch .lbl-on,.switch .lbl-off{min-width:44px;}
+  .switch .lbl-on{color:var(--clr-success);display:none;} .switch .lbl-off{color:var(--clr-danger);}
+  .switch input:checked ~ .lbl-on{display:inline;} .switch input:checked ~ .lbl-off{display:none;}
+  .switch.busy{opacity:.5;pointer-events:none;}
+  tr.is-off .row-thumb{filter:grayscale(1);opacity:.6;}
+  tr.is-off .row-title{color:var(--clr-ink-50);}
+  .avail-field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--clr-line);border-radius:var(--radius-sm);background:var(--clr-surface-2);}
+  .avail-field .t{font-size:13.5px;font-weight:700;} .avail-field .d{font-size:12px;color:var(--clr-ink-50);margin-top:2px;}
+  .cust-extra{font-size:12px;color:var(--clr-ink-50);margin-top:3px;display:flex;flex-direction:column;gap:2px;}
+  .cust-extra a{color:var(--clr-gold-dark) !important;direction:ltr;text-align:right;}
 
   @media(max-width:1100px){.stat-cards{grid-template-columns:repeat(2,1fr);}.ov-grid{grid-template-columns:1fr !important;}}
   @media(max-width:860px){
@@ -480,7 +540,12 @@
 
       <!-- ---------------- Products ---------------- -->
       <section class="panel" id="panel-products">
-        <div class="panel-head"><div><h2>المنتجات</h2><p>كل منتج بيظهر في الكاتلوج تحت التصنيف بتاعه</p></div></div>
+        <div class="panel-head"><div><h2>المنتجات</h2><p>قسّم حسب التصنيف، واقفل أو افتح أي منتج بزرار ON/OFF</p></div></div>
+        <div class="seg" id="prod-seg">
+          <button class="active" data-pview="list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>كل المنتجات <span class="n" id="prod-seg-n">0</span></button>
+          <button data-pview="form" id="prod-seg-form"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span id="prod-seg-form-lbl">إضافة منتج</span></button>
+        </div>
+        <div class="prod-view" id="prod-view-form">
         <div class="card" id="prod-form-card">
           <div class="card-head"><h3 id="prod-form-title">إضافة منتج جديد</h3></div>
           <input type="hidden" id="prod-id">
@@ -489,6 +554,12 @@
             <div class="field"><label>التصنيف</label><select id="prod-category"></select></div>
             <div class="field full"><label>الوصف <span class="hint">(اختياري — يظهر في الكارت وصفحة التفاصيل)</span></label><textarea id="prod-desc" dir="auto"></textarea></div>
             <div class="field"><label>الترتيب <span class="hint">(رقم أصغر = يظهر الأول)</span></label><input type="number" id="prod-sort" value="0"></div>
+            <div class="field full">
+              <div class="avail-field">
+                <div><div class="t">متاح في الكاتلوج</div><div class="d">لو قفلته، المنتج بيفضل ظاهر بس عليه "Not available now"</div></div>
+                <label class="switch"><input type="checkbox" id="prod-available" checked><span class="track"></span><span class="lbl-on">ON</span><span class="lbl-off">OFF</span></label>
+              </div>
+            </div>
             <div class="field full">
               <label>صورة الغلاف <span class="hint">(اللي بتظهر في الكارت — يفضّل طولية 4:5)</span></label>
               <div class="upload-zone">
@@ -507,23 +578,32 @@
           </div>
           <div class="form-actions">
             <button class="btn btn-gold" id="prod-save-btn">حفظ المنتج</button>
-            <button class="btn btn-outline" id="prod-cancel-btn" style="display:none;">إلغاء التعديل</button>
+            <button class="btn btn-outline" id="prod-cancel-btn">إلغاء</button>
           </div>
         </div>
+        </div>
+        <div class="prod-view active" id="prod-view-list">
         <div class="card">
-          <div class="card-head">
-            <h3>كل المنتجات <span class="count-note" id="prod-count"></span></h3>
+          <div class="cat-tabs" id="prod-cat-tabs"></div>
+          <div class="list-bar">
+            <h3>المنتجات <span class="count-note" id="prod-count"></span></h3>
             <div class="table-tools">
+              <div class="mini-seg" id="prod-avail-seg">
+                <button class="active" data-avail="">الكل</button>
+                <button data-avail="on"><span class="dot" style="background:var(--clr-success)"></span>متاح</button>
+                <button data-avail="off"><span class="dot" style="background:var(--clr-danger)"></span>مش متاح</button>
+              </div>
               <input type="search" id="prod-search" placeholder="🔍 دوّر باسم المنتج...">
-              <select id="prod-filter"></select>
+              <select id="prod-filter" hidden></select>
             </div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>صورة</th><th>المنتج</th><th>التصنيف</th><th>الصور</th><th>الترتيب</th><th></th></tr></thead>
-              <tbody id="prod-table-body"><tr><td colspan="6" class="state-msg">جارِ التحميل...</td></tr></tbody>
+              <thead><tr><th>صورة</th><th>المنتج</th><th>التصنيف</th><th>متاح</th><th>الصور</th><th>الترتيب</th><th></th></tr></thead>
+              <tbody id="prod-table-body"><tr><td colspan="7" class="state-msg">جارِ التحميل...</td></tr></tbody>
             </table>
           </div>
+        </div>
         </div>
       </section>
 
@@ -856,6 +936,7 @@
     const g = e.target.closest("[data-goto]");
     if (!g) return;
     openTab(g.dataset.goto);
+    if (g.dataset.focus === "prod-name") { resetProductForm(true); setProdView("form"); }
     if (g.dataset.focus) setTimeout(() => $(g.dataset.focus).focus(), 50);
   });
 
@@ -917,6 +998,7 @@
     if (!f) return;
     e.preventDefault();
     $("prod-filter").value = f.dataset.filter;
+    setProdView("list");
     renderProductsTable();
   });
 
@@ -1007,14 +1089,14 @@
     let list = rows.filter(r => r.type !== "view");
     if (type) list = list.filter(r => r.type === type);
     if (status) list = list.filter(r => r.status === status);
-    if (term) list = list.filter(r => [r.product_name, r.customer_name, r.customer_phone, r.message, r.category_name].some(v => (v || "").toLowerCase().includes(term)));
+    if (term) list = list.filter(r => [r.product_name, r.customer_name, r.customer_phone, r.customer_email, r.customer_address, r.message, r.category_name].some(v => (v || "").toLowerCase().includes(term)));
     $("inq-count").textContent = `(${list.length})`;
     $("inq-table-body").innerHTML = list.length ? list.slice(0, 400).map(r => `
       <tr class="${r.status === "new" ? "is-new" : ""}">
         <td class="when" title="${escapeHtml(new Date(r.created_at).toLocaleString("ar-EG"))}">${timeAgo(r.created_at)}</td>
         <td><span class="tag ${INQ_CLS[r.type] || ""}">${INQ_TYPE[r.type] || escapeHtml(r.type)}</span></td>
         <td>${r.product_name ? `<div class="row-title">${escapeHtml(r.product_name)}</div>${r.category_name ? `<div class="row-sub">${escapeHtml(r.category_name)}</div>` : ""}` : `<span class="muted">عام (مش منتج معيّن)</span>`}</td>
-        <td>${r.customer_phone ? `<div class="cust">${escapeHtml(r.customer_name || "—")}</div><a href="${waLinkFor(r.customer_phone)}" target="_blank" rel="noopener">${escapeHtml(r.customer_phone)}</a>` : `<span class="muted">—</span>`}</td>
+        <td>${r.customer_phone ? `<div class="cust">${escapeHtml(r.customer_name || "—")}</div><a href="${waLinkFor(r.customer_phone)}" target="_blank" rel="noopener">${escapeHtml(r.customer_phone)}</a>${(r.customer_email || r.customer_address) ? `<div class="cust-extra">${r.customer_email ? `<a href="mailto:${escapeHtml(r.customer_email)}">✉ ${escapeHtml(r.customer_email)}</a>` : ""}${r.customer_address ? `<span>📍 ${escapeHtml(r.customer_address)}</span>` : ""}</div>` : ""}` : `<span class="muted">—</span>`}</td>
         <td class="msg-cell">${escapeHtml(r.message || "")}</td>
         <td><select class="status-select ${escapeHtml(r.status)}" data-inq-status="${r.id}">
           <option value="new" ${r.status === "new" ? "selected" : ""}>جديد</option>
@@ -1245,26 +1327,86 @@
     renderCategoriesTable();
   }
 
+  // ---- تابات المنتجات: القائمة / الفورم ----
+  function setProdView(v) {
+    document.querySelectorAll("#prod-seg [data-pview]").forEach(b => b.classList.toggle("active", b.dataset.pview === v));
+    $("prod-view-form").classList.toggle("active", v === "form");
+    $("prod-view-list").classList.toggle("active", v === "list");
+  }
+  document.querySelectorAll("#prod-seg [data-pview]").forEach(b => b.addEventListener("click", () => {
+    if (b.dataset.pview === "form" && !$("prod-id").value && !$("prod-form-card").classList.contains("editing")) resetProductForm(true);
+    setProdView(b.dataset.pview);
+  }));
+  let prodAvailFilter = "";
+  document.querySelectorAll("#prod-avail-seg [data-avail]").forEach(b => b.addEventListener("click", () => {
+    prodAvailFilter = b.dataset.avail;
+    document.querySelectorAll("#prod-avail-seg [data-avail]").forEach(x => x.classList.toggle("active", x === b));
+    renderProductsTable();
+  }));
+  const isOn = (p) => p.is_available !== false;
+  const hasAvailColumn = () => productsCache.some(p => "is_available" in p);
+
+  function renderProdCatTabs() {
+    const cur = $("prod-filter").value;
+    const orphans = productsCache.filter(p => !categoriesCache.some(c => String(c.id) === String(p.category_id))).length;
+    const tabs = [{ id: "", name: "الكل", n: productsCache.length }]
+      .concat(categoriesCache.map(c => ({ id: String(c.id), name: c.name, n: countInCategory(c.id), img: c.image_url })))
+      .concat(orphans ? [{ id: "__none", name: "بدون تصنيف", n: orphans }] : []);
+    $("prod-cat-tabs").innerHTML = tabs.map(t => `<button class="cat-tab ${t.id === cur ? "active" : ""}" data-cat-tab="${escapeHtml(t.id)}">${t.img ? `<img src="${escapeHtml(t.img)}" alt="" loading="lazy">` : ""}${escapeHtml(t.name)} <span class="n">${t.n}</span></button>`).join("");
+    $("prod-seg-n").textContent = productsCache.length;
+  }
+  $("prod-cat-tabs").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-cat-tab]");
+    if (!b) return;
+    $("prod-filter").value = b.dataset.catTab;
+    renderProductsTable();
+  });
+
+  async function toggleAvailability(id, on, el) {
+    const wrap = el.closest(".switch");
+    wrap.classList.add("busy");
+    const { error } = await supabaseClient.from("products").update({ is_available: on }).eq("id", id);
+    wrap.classList.remove("busy");
+    if (error) {
+      el.checked = !on;
+      const missing = /is_available/.test(error.message || "");
+      showToast(missing ? "لازم تشغّل ملف setup-inquiries.sql في Supabase الأول عشان زرار ON/OFF يشتغل" : "حصل خطأ: " + error.message, "error");
+      return;
+    }
+    const p = productsCache.find(x => String(x.id) === String(id));
+    if (p) p.is_available = on;
+    showToast(on ? "المنتج بقى متاح ✓" : "المنتج اتقفل — هيظهر عليه Not available", "success");
+    renderProductsTable();
+  }
+  document.addEventListener("change", (e) => {
+    const t = e.target.closest && e.target.closest("input[data-avail-id]");
+    if (t) toggleAvailability(t.dataset.availId, t.checked, t);
+  });
+
   function renderProductsTable() {
     const tbody = $("prod-table-body");
     const term = $("prod-search").value.trim().toLowerCase();
     const filter = $("prod-filter").value;
+    renderProdCatTabs();
     let list = productsCache;
+    if (prodAvailFilter === "on") list = list.filter(isOn);
+    else if (prodAvailFilter === "off") list = list.filter(p => !isOn(p));
     if (filter === "__none") list = list.filter(p => !categoriesCache.some(c => String(c.id) === String(p.category_id)));
     else if (filter) list = list.filter(p => String(p.category_id) === String(filter));
     if (term) list = list.filter(p => (p.name || "").toLowerCase().includes(term) || (p.description || "").toLowerCase().includes(term));
     $("prod-count").textContent = `(${list.length}${list.length !== productsCache.length ? " من " + productsCache.length : ""})`;
 
-    if (!productsCache.length) { tbody.innerHTML = `<tr><td colspan="6" class="state-msg">مفيش منتجات لسه — ضيف أول منتج من الفورم اللي فوق.</td></tr>`; return; }
-    if (!list.length) { tbody.innerHTML = `<tr><td colspan="6" class="state-msg">مفيش نتايج.</td></tr>`; return; }
+    if (!productsCache.length) { tbody.innerHTML = `<tr><td colspan="7" class="state-msg">مفيش منتجات لسه — دوس "إضافة منتج" فوق.</td></tr>`; return; }
+    if (!list.length) { tbody.innerHTML = `<tr><td colspan="7" class="state-msg">مفيش منتجات هنا.</td></tr>`; return; }
     tbody.innerHTML = list.map(p => {
       const cat = categoriesCache.find(c => String(c.id) === String(p.category_id));
       const nImgs = parseExtraImages(p.extra_images).length;
       return `
-      <tr>
+      <tr class="${isOn(p) ? "" : "is-off"}">
         <td><img class="row-thumb" src="${escapeHtml(p.image_url || "")}" alt="" loading="lazy"></td>
         <td><div class="row-title">${escapeHtml(p.name)}</div>${p.description ? `<div class="row-sub">${escapeHtml(p.description)}</div>` : ""}</td>
         <td>${cat ? `<span class="tag">${escapeHtml(cat.name)}</span>` : `<span class="tag warn">بدون تصنيف</span>`}</td>
+        <td><label class="switch" title="متاح / مش متاح"><input type="checkbox" data-avail-id="${escapeHtml(p.id)}" ${isOn(p) ? "checked" : ""}><span class="track"></span><span class="lbl-on">ON</span><span class="lbl-off">OFF</span></label></td>
         <td>${nImgs ? `<span class="tag gold">${nImgs} صورة</span>` : `<span class="muted">غلاف بس</span>`}</td>
         <td><input class="sort-input" type="number" value="${p.sort_order ?? 0}" data-act="prod-sort" data-id="${escapeHtml(p.id)}" title="غيّر الرقم واضغط Enter"></td>
         <td class="row-actions">
@@ -1279,7 +1421,10 @@
   $("prod-search").addEventListener("input", renderProductsTable);
   $("prod-filter").addEventListener("change", renderProductsTable);
 
-  function resetProductForm() {
+  function resetProductForm(stayOnForm) {
+    $("prod-available").checked = true;
+    $("prod-seg-form-lbl").textContent = "إضافة منتج";
+    if (stayOnForm !== true) setProdView("list");
     $("prod-id").value = "";
     $("prod-name").value = "";
     $("prod-desc").value = "";
@@ -1287,7 +1432,6 @@
     $("prod-img-file").value = "";
     $("prod-img-preview").style.display = "none";
     $("prod-form-title").textContent = "إضافة منتج جديد";
-    $("prod-cancel-btn").style.display = "none";
     $("prod-extra-progress").textContent = "";
     currentExtraImages = [];
     currentCoverUrl = "";
@@ -1306,10 +1450,12 @@
     if (p.image_url) { preview.src = p.image_url; preview.style.display = "block"; } else preview.style.display = "none";
     $("prod-img-file").value = "";
     $("prod-form-title").textContent = asCopy ? "منتج جديد (منسوخ من: " + (p.name || "") + ")" : "تعديل منتج: " + (p.name || "");
-    $("prod-cancel-btn").style.display = "inline-flex";
     $("prod-extra-progress").textContent = "";
+    $("prod-available").checked = asCopy ? true : isOn(p);
+    $("prod-seg-form-lbl").textContent = asCopy ? "نسخة جديدة" : "تعديل منتج";
     currentExtraImages = parseExtraImages(p.extra_images);
     renderExtraList();
+    setProdView("form");
     startEditing("prod-form-card");
   }
 
@@ -1332,6 +1478,7 @@
         name, description, category_id: category_id || null, sort_order,
         extra_images: currentExtraImages.length ? currentExtraImages.join(",") : null
       };
+      if (hasAvailColumn()) payload.is_available = $("prod-available").checked;
       if (file) payload.image_url = await uploadImage(file, "products");
       else if (currentCoverUrl) payload.image_url = currentCoverUrl;
       else payload.image_url = currentExtraImages[0]; // لو مفيش غلاف، أول صورة في المعرض تبقى الغلاف
@@ -1530,7 +1677,7 @@
     switch (b.dataset.act) {
       case "cat-edit": editCategory(id); break;
       case "cat-delete": deleteCategory(id); break;
-      case "cat-products": openTab("products"); $("prod-filter").value = id; renderProductsTable(); break;
+      case "cat-products": openTab("products"); setProdView("list"); $("prod-filter").value = id; renderProductsTable(); break;
       case "prod-edit": fillProductForm(productsCache.find(x => String(x.id) === String(id)), false); break;
       case "prod-dup": fillProductForm(productsCache.find(x => String(x.id) === String(id)), true); break;
       case "prod-delete": deleteProduct(id); break;
