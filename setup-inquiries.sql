@@ -2,7 +2,7 @@
 -- Living Mood — جدول الاستفسارات (inquiries)
 -- شغّل الملف ده مرة واحدة بس من: Supabase → SQL Editor → New query → Paste → Run
 -- بيسجّل: دوسات واتساب، دوسات الاتصال، طلبات السعر من الفورم، ومشاهدات المنتجات
--- وكمان بيضيف خانة "متاح / مش متاح" للمنتجات (زرار ON/OFF في الأدمن)
+-- وكمان بيضيف للمنتجات خانتين: "متوفر" و"يتعرض في الكاتلوج" (زراير في الأدمن)
 -- آمن تشغّله أكتر من مرة (لو كنت شغّلت نسخة قديمة، شغّل دي تاني وهتكمّل الناقص)
 -- ============================================================
 
@@ -67,9 +67,10 @@ grant insert on public.inquiries to anon;
 grant select, insert, update, delete on public.inquiries to authenticated;
 
 -- ============================================================
--- المنتجات: متاح / مش متاح (ON/OFF)
+-- المنتجات: متوفر آه/لا + يتعرض آه/لا
 -- ============================================================
 alter table public.products add column if not exists is_available boolean not null default true;
+alter table public.products add column if not exists is_visible   boolean not null default true;
 
 -- تحديث الـ API عشان يشوف الخانات الجديدة فورًا
 notify pgrst, 'reload schema';

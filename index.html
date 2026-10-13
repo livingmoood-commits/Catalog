@@ -1131,7 +1131,7 @@
       <div class="product-detail-info">
         <span class="detail-cat" id="detail-cat"></span>
         <h2 id="detail-title"></h2>
-        <span class="detail-soldout" id="detail-soldout">غير متاح حالياً · Not available now — اسألنا على البديل</span>
+        <span class="detail-soldout" id="detail-soldout">غير متوفر حالياً · Out of stock — اسألنا على البديل</span>
         <div class="detail-rule"></div>
         <p class="product-detail-description" id="detail-description" dir="auto"></p>
         <div class="contact-actions">
@@ -1369,7 +1369,7 @@
             <img src="${esc(p.image_url || imgs[0] || "")}" alt="${esc(p.name)}" loading="lazy" decoding="async" onerror="this.style.opacity='0'">
             ${wmBadge()}
             ${imgs.length > 1 ? `<span class="product-photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>${imgs.length}</span>` : ""}
-            ${p.is_available === false ? `<span class="soldout-badge">Not available now</span>` : ""}
+            ${p.is_available === false ? `<span class="soldout-badge">Out of stock</span>` : ""}
             <span class="product-view">View details</span>
           </div>
           <div class="product-info">
@@ -1500,10 +1500,10 @@
         try {
           const [{ data: catData, error: catError }, { data: prodData, error: prodError }] = await Promise.all([
             supabaseClient.from("categories").select("id, name, image_url, sort_order").order("sort_order", { ascending: true }),
-            supabaseClient.from("products").select("id, name, image_url, category_id, extra_images, description, sort_order").order("sort_order", { ascending: true }),
+            supabaseClient.from("products").select("*").order("sort_order", { ascending: true }),
           ]);
           if (!catError && catData && catData.length > 0) categories = catData;
-          if (!prodError && prodData && (prodData.length > 0 || categories !== DEMO_CATEGORIES)) products = prodData;
+          if (!prodError && prodData && (prodData.length > 0 || categories !== DEMO_CATEGORIES)) products = prodData.filter(p => p.is_visible !== false); // "يتعرض: لا" من الأدمن
         } catch (e) {
           console.warn("Could not connect to Supabase, showing demo data:", e);
         }
