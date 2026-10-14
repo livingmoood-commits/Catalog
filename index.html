@@ -741,6 +741,44 @@
   .detail-soldout { display: none; align-items: center; gap: 8px; margin: -6px 0 18px; font-size: 13px; font-weight: 600; color: #B3453A; background: rgba(179,69,58,.08); border: 1px solid rgba(179,69,58,.2); padding: 8px 14px; border-radius: 30px; width: fit-content; }
   .detail-soldout.show { display: inline-flex; }
   html[data-theme="dark"] .detail-soldout { color: #E0796D; }
+  /* ============ WhatsApp popup (بيسجّل الطلب ويفتح واتساب برسالة مرتبة) ============ */
+  .wam { position: fixed; inset: 0; z-index: 600; display: flex; align-items: center; justify-content: center; padding: 20px; visibility: hidden; }
+  .wam.open { visibility: visible; }
+  .wam-backdrop { position: absolute; inset: 0; background: rgba(15,12,9,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity .3s ease; }
+  .wam.open .wam-backdrop { opacity: 1; }
+  .wam-card { position: relative; width: 100%; max-width: 560px; max-height: calc(100vh - 40px); overflow-y: auto; background: var(--clr-surface); border: 1px solid var(--clr-line); border-radius: 22px; box-shadow: 0 40px 90px -20px rgba(0,0,0,.45); padding: 26px 26px 22px;
+    opacity: 0; transform: translateY(24px) scale(.97); transition: opacity .3s ease, transform .45s cubic-bezier(.34,1.56,.64,1); }
+  .wam.open .wam-card { opacity: 1; transform: none; }
+  .wam-close { position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--clr-line); background: var(--clr-surface); color: var(--clr-ink-70); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; }
+  .wam-close:hover { border-color: var(--clr-gold); color: var(--clr-ink); }
+  .wam-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; padding-right: 40px; }
+  .wam-head .wa-ic { width: 42px; height: 42px; border-radius: 12px; background: var(--clr-wa); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .wam-head .wa-ic svg { width: 22px; height: 22px; }
+  .wam-head h4 { margin: 0; font-family: var(--font-display); font-size: 22px; font-weight: 600; line-height: 1.2; }
+  .wam-head p { margin: 2px 0 0; font-size: 12.5px; color: var(--clr-ink-50); }
+  .wam-product { display: flex; align-items: center; gap: 12px; background: var(--clr-bg); border: 1px solid var(--clr-line); border-radius: 14px; padding: 10px; margin: 16px 0 14px; }
+  .wam-product img { width: 52px; height: 64px; object-fit: cover; border-radius: 9px; flex-shrink: 0; background: var(--clr-line); }
+  .wam-product .k { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--clr-gold-dark); font-weight: 700; }
+  .wam-product .n { font-family: var(--font-display); font-size: 16.5px; font-weight: 600; line-height: 1.3; }
+  .wam-product[hidden] { display: none; }
+  .wam .qf-note { margin: 0 0 12px; font-size: 12.5px; padding: 12px 14px; }
+  .wam .qf-note .ar { margin-top: 6px; padding-top: 6px; }
+  .wam input, .wam textarea { width: 100%; border: 1px solid var(--clr-line); background: var(--clr-bg); border-radius: 12px; padding: 12px 14px; font-family: inherit; font-size: 14px; color: var(--clr-ink); outline: none; margin-bottom: 10px; transition: border-color .2s ease, box-shadow .2s ease; }
+  .wam input:focus, .wam textarea:focus { border-color: var(--clr-gold); box-shadow: 0 0 0 4px rgba(176,141,87,.12); }
+  .wam textarea { min-height: 96px; resize: vertical; line-height: 1.65; }
+  .wam textarea.invalid { border-color: #B3453A; box-shadow: 0 0 0 3px rgba(179,69,58,.12); }
+  .wam .qf-row { gap: 10px; }
+  .wam-send { width: 100%; border: none; border-radius: 30px; padding: 15px; background: var(--clr-wa); color: #fff; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 9px; cursor: pointer; box-shadow: 0 12px 26px -12px rgba(37,211,102,.8); transition: transform .2s ease, box-shadow .2s ease; }
+  .wam-send:hover { transform: translateY(-1px); box-shadow: 0 16px 30px -12px rgba(37,211,102,.9); }
+  .wam-send svg { width: 19px; height: 19px; }
+  .wam-skip { display: block; width: 100%; margin-top: 10px; background: none; border: none; color: var(--clr-ink-50); font-size: 12.5px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-family: inherit; }
+  .wam-skip:hover { color: var(--clr-ink); }
+  .wam .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  @media (max-width: 560px) {
+    .wam { align-items: flex-end; padding: 0; }
+    .wam-card { border-radius: 22px 22px 0 0; max-height: 92vh; padding: 22px 18px calc(18px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: opacity .25s ease, transform .4s cubic-bezier(.22,.61,.36,1); }
+    .wam .qf-row { grid-template-columns: 1fr; gap: 0; }
+  }
   .theme-toggle {
     position: relative; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%;
     border: 1px solid var(--clr-line); background: var(--clr-surface); color: var(--clr-ink); cursor: pointer; overflow: hidden;
@@ -1075,6 +1113,41 @@
   <a class="fab-wa js-wa-general" href="#" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#ico-wa"/></svg></a>
   <button class="fab-top" id="fab-top" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
   <div class="toast" id="toast"></div>
+
+  <!-- WhatsApp popup: بيسجّل الطلب في الداش بورد وبعدين يفتح واتساب برسالة عربي مرتبة -->
+  <div class="wam" id="wa-modal" role="dialog" aria-modal="true" aria-labelledby="wam-title" aria-hidden="true">
+    <div class="wam-backdrop" data-wam-close></div>
+    <div class="wam-card">
+      <button type="button" class="wam-close" data-wam-close aria-label="Close">✕</button>
+      <div class="wam-head">
+        <span class="wa-ic"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#ico-wa"/></svg></span>
+        <div><h4 id="wam-title">Request a price on WhatsApp</h4><p>اكتب بياناتك وهنكمل معاك على واتساب</p></div>
+      </div>
+      <div class="wam-product" id="wam-product" hidden>
+        <img id="wam-product-img" src="" alt="">
+        <div><div class="k" id="wam-product-cat"></div><div class="n" id="wam-product-name"></div></div>
+      </div>
+      <form id="wam-form" autocomplete="on">
+        <div class="qf-row">
+          <input type="text" id="wam-name" placeholder="Your name / الاسم" maxlength="80" dir="auto" autocomplete="name">
+          <input type="tel" id="wam-phone" placeholder="Phone / رقم الموبايل" maxlength="20" dir="ltr" autocomplete="tel" required>
+        </div>
+        <div class="qf-row">
+          <input type="email" id="wam-email" placeholder="Email / الإيميل (optional)" maxlength="120" dir="ltr" autocomplete="email">
+          <input type="text" id="wam-address" placeholder="Address / العنوان (optional)" maxlength="300" dir="auto" autocomplete="street-address">
+        </div>
+        <div class="qf-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2M11.5 9.5l2-2M8.5 6.5l2-2M17.5 15.5l2-2"/></svg>
+          <div><strong>Measurements matter.</strong> We can't price it without the sizes and details.
+          <span class="ar"><strong>المقاسات والتفاصيل مهمة جدًا:</strong> اكتب المقاسات (الطول × العرض × العمق)، الخامة، اللون والعدد.</span></div>
+        </div>
+        <textarea id="wam-msg" placeholder="e.g. 120 × 220 cm, walnut color, 2 pieces — مثال: مقاس 120×220، لون جوز، عدد 2" maxlength="600" dir="auto"></textarea>
+        <input type="text" class="hp" id="wam-website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" class="wam-send"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#ico-wa"/></svg>Send on WhatsApp · ابعت على واتساب</button>
+        <button type="button" class="wam-skip" id="wam-skip">Just open WhatsApp · افتح واتساب من غير بيانات</button>
+      </form>
+    </div>
+  </div>
 
   <!-- أيقونات وتدرّجات مشتركة -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1733,7 +1806,7 @@
       if (!a) return;
       const href = a.getAttribute("href") || "";
       const type = href.startsWith("tel:") ? "call" : (href.includes("wa.me") ? "whatsapp" : null);
-      if (!type) return;
+      if (!type || type === "whatsapp") return; // الواتساب بيتسجّل من نافذة الواتساب نفسها
       let product = null;
       const card = a.closest(".product-card");
       if (card) product = allProducts.find(x => String(x.id) === String(card.dataset.id));
@@ -2001,7 +2074,112 @@
       }
     });
 
+    // ============================================
+    // 💬 نافذة الواتساب
+    // ============================================
+    const waModal = $("wa-modal");
+    let waProduct = null, waDirectHref = "";
+    function openWaModal(product, directHref) {
+      waProduct = product || null;
+      waDirectHref = directHref || buildGeneralWhatsappLink();
+      const box = $("wam-product");
+      if (waProduct) {
+        box.hidden = false;
+        $("wam-product-img").src = waProduct.image_url || productImages(waProduct)[0] || "";
+        $("wam-product-name").textContent = waProduct.name || "";
+        $("wam-product-cat").textContent = catName(waProduct.category_id) || "Product";
+        $("wam-title").textContent = "Request a price on WhatsApp";
+      } else {
+        box.hidden = true;
+        $("wam-title").textContent = "Chat with us on WhatsApp";
+      }
+      $("wam-msg").classList.remove("invalid");
+      waModal.classList.add("open");
+      waModal.setAttribute("aria-hidden", "false");
+      lockPageScroll();
+      setTimeout(() => ($("wam-name").value ? $("wam-msg") : $("wam-name")).focus({ preventScroll: true }), 350);
+    }
+    function closeWaModal() {
+      if (!waModal.classList.contains("open")) return;
+      waModal.classList.remove("open");
+      waModal.setAttribute("aria-hidden", "true");
+      unlockPageScroll();
+    }
+    function buildWaOrderMessage(p, f) {
+      const L = [];
+      if (p) {
+        L.push("*طلب سعر* 🛋️");
+        L.push("المنتج: " + (p.name || ""));
+        if (p.id && !usingDemo) L.push("لينك المنتج: " + productUrl(p));
+        const c = catName(p.category_id); if (c) L.push("التصنيف: " + c);
+      } else {
+        L.push("*استفسار من الموقع* 👋");
+      }
+      L.push("");
+      L.push("*بيانات العميل*");
+      if (f.name) L.push("الاسم: " + f.name);
+      L.push("الموبايل: " + f.phone);
+      if (f.email) L.push("الإيميل: " + f.email);
+      if (f.address) L.push("العنوان: " + f.address);
+      L.push("");
+      L.push("*المقاسات والتفاصيل*");
+      L.push(f.msg);
+      return L.join("\n");
+    }
+    // أي زرار واتساب في الموقع بيفتح النافذة بدل ما يروح على واتساب على طول
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("a.contact-btn.whatsapp, #detail-whatsapp, a.js-wa-general, #header-wa-link");
+      if (!a) return;
+      e.preventDefault();
+      e.stopPropagation();
+      let product = null;
+      const card = a.closest(".product-card");
+      if (card) product = allProducts.find(x => String(x.id) === String(card.dataset.id));
+      else if (a.closest("#product-detail")) product = currentProduct;
+      const menu = document.getElementById("header-call-menu"); if (menu) menu.classList.remove("open");
+      openWaModal(product, a.href);
+    }, true);
+    waModal.addEventListener("click", (e) => { if (e.target.closest("[data-wam-close]")) closeWaModal(); });
+    $("wam-msg").addEventListener("input", () => $("wam-msg").classList.remove("invalid"));
+    $("wam-skip").addEventListener("click", () => {
+      logInquiry("whatsapp", waProduct);
+      const w = window.open(waDirectHref, "_blank");
+      if (w) { try { w.opener = null; } catch (err) {} } else location.href = waDirectHref;
+      closeWaModal();
+    });
+    $("wam-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if ($("wam-website").value) return; // spam bot
+      const f = {
+        name: $("wam-name").value.trim().slice(0, 80),
+        phone: $("wam-phone").value.trim().slice(0, 20),
+        email: $("wam-email").value.trim().slice(0, 120),
+        address: $("wam-address").value.trim().slice(0, 300),
+        msg: $("wam-msg").value.trim().slice(0, 600),
+      };
+      if (f.phone.replace(/[^\d]/g, "").length < 8) { showToast("Please enter a valid phone number"); $("wam-phone").focus(); return; }
+      if (f.msg.length < 6) { $("wam-msg").classList.add("invalid"); $("wam-msg").focus(); showToast("اكتب المقاسات والتفاصيل الأول عشان نقدر نحدد السعر"); return; }
+      // 1) يتسجّل في الداش بورد (من غير ما نستنى، عشان واتساب يفتح فورًا)
+      const product = waProduct;
+      const base = { customer_name: f.name || null, customer_phone: f.phone };
+      logInquiry("whatsapp", product, Object.assign({}, base, { customer_email: f.email || null, customer_address: f.address || null, message: f.msg }))
+        .then(res => {
+          if ((!res || !res.ok) && (f.email || f.address)) {
+            const extra = [f.email && "Email: " + f.email, f.address && "Address: " + f.address].filter(Boolean).join("\n");
+            logInquiry("whatsapp", product, Object.assign({}, base, { message: (f.msg + "\n" + extra).slice(0, 600) }));
+          }
+        });
+      // 2) يفتح واتساب برسالة مرتبة
+      const url = `https://wa.me/${CONTACT_WHATSAPP}?text=${encodeURIComponent(buildWaOrderMessage(product, f))}`;
+      const w = window.open(url, "_blank");
+      if (w) { try { w.opener = null; } catch (err) {} } else location.href = url;
+      $("wam-msg").value = "";
+      closeWaModal();
+      showToast("تمام ✓ كمّل الإرسال على واتساب");
+    });
+
     document.addEventListener("keydown", (e) => {
+      if (waModal.classList.contains("open")) { if (e.key === "Escape") closeWaModal(); return; }
       if (lightbox.classList.contains("open")) {
         if (e.key === "Escape") closeLightbox();
         if (e.key === "ArrowLeft") lbStep(-1);
@@ -2087,7 +2265,7 @@
     // ============================================
     // 🚀 نسخة جديدة من الموقع؟ تتحدث لوحدها عند كل الزوار
     // ============================================
-    const BUILD_VERSION = "20261013120615";
+    const BUILD_VERSION = "20261014103808";
     (function watchNewVersion() {
       if (location.protocol === "file:") return;
       let pending = null;
