@@ -668,7 +668,7 @@
   .qf-note { display: flex; gap: 12px; align-items: flex-start; background: rgba(176,141,87,.1); border: 1px solid rgba(176,141,87,.28); border-radius: 14px; padding: 16px 16px; margin: 0; font-size: 13px; line-height: 1.65; color: var(--clr-ink-70); }
   .qf-note svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--clr-gold-dark); margin-top: 2px; }
   .qf-note strong { color: var(--clr-ink); }
-  .quote-form textarea.invalid { border-color: #B3453A; box-shadow: 0 0 0 3px rgba(179,69,58,.12); }
+  .quote-form textarea.invalid, .quote-form input.invalid { border-color: #B3453A; box-shadow: 0 0 0 3px rgba(179,69,58,.12); }
   .qf-note .ar { display: block; direction: rtl; text-align: right; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(176,141,87,.35); font-family: var(--font-body); }
 
   .qf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -766,13 +766,11 @@
   .wam input, .wam textarea { width: 100%; border: 1px solid var(--clr-line); background: var(--clr-bg); border-radius: 12px; padding: 12px 14px; font-family: inherit; font-size: 14px; color: var(--clr-ink); outline: none; margin-bottom: 10px; transition: border-color .2s ease, box-shadow .2s ease; }
   .wam input:focus, .wam textarea:focus { border-color: var(--clr-gold); box-shadow: 0 0 0 4px rgba(176,141,87,.12); }
   .wam textarea { min-height: 96px; resize: vertical; line-height: 1.65; }
-  .wam textarea.invalid { border-color: #B3453A; box-shadow: 0 0 0 3px rgba(179,69,58,.12); }
+  .wam textarea.invalid, .wam input.invalid { border-color: #B3453A; box-shadow: 0 0 0 3px rgba(179,69,58,.12); }
   .wam .qf-row { gap: 10px; }
   .wam-send { width: 100%; border: none; border-radius: 30px; padding: 15px; background: var(--clr-wa); color: #fff; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 9px; cursor: pointer; box-shadow: 0 12px 26px -12px rgba(37,211,102,.8); transition: transform .2s ease, box-shadow .2s ease; }
   .wam-send:hover { transform: translateY(-1px); box-shadow: 0 16px 30px -12px rgba(37,211,102,.9); }
   .wam-send svg { width: 19px; height: 19px; }
-  .wam-skip { display: block; width: 100%; margin-top: 10px; background: none; border: none; color: var(--clr-ink-50); font-size: 12.5px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-family: inherit; }
-  .wam-skip:hover { color: var(--clr-ink); }
   .wam .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
   @media (max-width: 560px) {
     .wam { align-items: flex-end; padding: 0; }
@@ -1127,13 +1125,13 @@
         <img id="wam-product-img" src="" alt="">
         <div><div class="k" id="wam-product-cat"></div><div class="n" id="wam-product-name"></div></div>
       </div>
-      <form id="wam-form" autocomplete="on">
+      <form id="wam-form" autocomplete="on" novalidate>
         <div class="qf-row">
           <input type="text" id="wam-name" placeholder="Your name / الاسم" maxlength="80" dir="auto" autocomplete="name">
           <input type="tel" id="wam-phone" placeholder="Phone / رقم الموبايل" maxlength="20" dir="ltr" autocomplete="tel" required>
         </div>
         <div class="qf-row">
-          <input type="email" id="wam-email" placeholder="Email / الإيميل (optional)" maxlength="120" dir="ltr" autocomplete="email">
+          <input type="email" id="wam-email" placeholder="Email / الإيميل *" maxlength="120" required dir="ltr" autocomplete="email">
           <input type="text" id="wam-address" placeholder="Address / العنوان (optional)" maxlength="300" dir="auto" autocomplete="street-address">
         </div>
         <div class="qf-note">
@@ -1144,7 +1142,6 @@
         <textarea id="wam-msg" placeholder="e.g. 120 × 220 cm, walnut color, 2 pieces — مثال: مقاس 120×220، لون جوز، عدد 2" maxlength="600" dir="auto"></textarea>
         <input type="text" class="hp" id="wam-website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button type="submit" class="wam-send"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#ico-wa"/></svg>Send on WhatsApp · ابعت على واتساب</button>
-        <button type="button" class="wam-skip" id="wam-skip">Just open WhatsApp · افتح واتساب من غير بيانات</button>
       </form>
     </div>
   </div>
@@ -1237,13 +1234,13 @@
           </div>
         </div>
         <div class="qf-main">
-        <form id="quote-form-el" autocomplete="on">
+        <form id="quote-form-el" autocomplete="on" novalidate>
           <div class="qf-row">
             <input type="text" id="qf-name" name="name" placeholder="Your name / الاسم" maxlength="80" dir="auto">
             <input type="tel" id="qf-phone" name="phone" placeholder="Phone / رقم الموبايل" maxlength="20" dir="ltr" required>
           </div>
           <div class="qf-row">
-            <input type="email" id="qf-email" name="email" placeholder="Email / الإيميل (optional)" maxlength="120" dir="ltr" autocomplete="email">
+            <input type="email" id="qf-email" name="email" placeholder="Email / الإيميل *" maxlength="120" required dir="ltr" autocomplete="email">
             <input type="text" id="qf-address" name="address" placeholder="Address / العنوان (optional)" maxlength="300" dir="auto" autocomplete="street-address">
           </div>
           <label class="qf-label" for="qf-msg">Details & measurements · التفاصيل والمقاسات <b>*</b></label>
@@ -2026,6 +2023,7 @@
       if ($("qf-website").value) return; // spam bot
       const phone = $("qf-phone").value.trim();
       if (phone.replace(/[^\d]/g, "").length < 8) { showToast("Please enter a valid phone number"); $("qf-phone").focus(); return; }
+      if (!checkEmail($("qf-email"))) return;
       const btn = $("qf-btn");
       btn.disabled = true;
       btn.textContent = "Sending...";
@@ -2140,13 +2138,18 @@
       openWaModal(product, a.href);
     }, true);
     waModal.addEventListener("click", (e) => { if (e.target.closest("[data-wam-close]")) closeWaModal(); });
+    // الإيميل إجباري وبصيغة صحيحة (name@domain.com)
+    function checkEmail(el) {
+      const v = el.value.trim();
+      const ok = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v);
+      if (!ok) {
+        el.classList.add("invalid"); el.focus();
+        showToast(v ? "الإيميل مش صحيح — اكتبه كده: name@gmail.com" : "اكتب الإيميل الأول");
+      }
+      return ok;
+    }
     $("wam-msg").addEventListener("input", () => $("wam-msg").classList.remove("invalid"));
-    $("wam-skip").addEventListener("click", () => {
-      logInquiry("whatsapp", waProduct);
-      const w = window.open(waDirectHref, "_blank");
-      if (w) { try { w.opener = null; } catch (err) {} } else location.href = waDirectHref;
-      closeWaModal();
-    });
+    ["qf-email","wam-email"].forEach(id => $(id) && $(id).addEventListener("input", () => $(id).classList.remove("invalid")));
     $("wam-form").addEventListener("submit", (e) => {
       e.preventDefault();
       if ($("wam-website").value) return; // spam bot
@@ -2158,6 +2161,7 @@
         msg: $("wam-msg").value.trim().slice(0, 600),
       };
       if (f.phone.replace(/[^\d]/g, "").length < 8) { showToast("Please enter a valid phone number"); $("wam-phone").focus(); return; }
+      if (!checkEmail($("wam-email"))) return;
       if (f.msg.length < 6) { $("wam-msg").classList.add("invalid"); $("wam-msg").focus(); showToast("اكتب المقاسات والتفاصيل الأول عشان نقدر نحدد السعر"); return; }
       // 1) يتسجّل في الداش بورد (من غير ما نستنى، عشان واتساب يفتح فورًا)
       const product = waProduct;
@@ -2265,7 +2269,7 @@
     // ============================================
     // 🚀 نسخة جديدة من الموقع؟ تتحدث لوحدها عند كل الزوار
     // ============================================
-    const BUILD_VERSION = "20261014103808";
+    const BUILD_VERSION = "20261014104318";
     (function watchNewVersion() {
       if (location.protocol === "file:") return;
       let pending = null;
