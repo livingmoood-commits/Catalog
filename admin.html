@@ -478,14 +478,13 @@
         </div>
         <div class="card">
           <div class="card-head">
-            <h3>سجل الاستفسارات <span class="count-note" id="inq-count"></span></h3>
+            <h3>الطلبات <span class="count-note" id="inq-count"></span></h3>
             <div class="table-tools">
               <input type="search" id="inq-search" placeholder="🔍 منتج، اسم أو رقم...">
               <select id="inq-type">
-                <option value="">كل الأنواع</option>
-                <option value="form">طلبات السعر</option>
+                <option value="">كل الطلبات</option>
+                <option value="form">فورم طلب السعر</option>
                 <option value="whatsapp">واتساب</option>
-                <option value="call">اتصال</option>
               </select>
               <select id="inq-status">
                 <option value="">كل الحالات</option>
@@ -501,7 +500,27 @@
               <tbody id="inq-table-body"><tr><td colspan="7" class="state-msg">جارِ التحميل...</td></tr></tbody>
             </table>
           </div>
-          <p class="muted" style="margin:12px 0 0;">دوسات الواتساب والاتصال مابيبقاش فيها رقم العميل (الكلام بيكمل على الواتساب نفسه)، بس بتعرّفك مين بيسأل على أنهي منتج وإمتى. طلبات السعر فيها الاسم والرقم.</p>
+          <p class="muted" style="margin:12px 0 0;">الطلبات الفعلية بس: اللي العميل ساب فيها اسمه ورقمه، من الفورم أو من نافذة الواتساب.</p>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <h3>النشاط العام <span class="count-note" id="act-count"></span></h3>
+            <div class="table-tools">
+              <select id="act-type">
+                <option value="">كل النشاط</option>
+                <option value="view">مشاهدات</option>
+                <option value="whatsapp">واتساب عام</option>
+                <option value="call">اتصال</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>الوقت</th><th>النوع</th><th>المنتج</th><th></th></tr></thead>
+              <tbody id="act-table-body"><tr><td colspan="4" class="state-msg">جارِ التحميل...</td></tr></tbody>
+            </table>
+          </div>
+          <p class="muted" style="margin:12px 0 0;">مشاهدات المنتجات ودوسات الواتساب العام والاتصال. مفيهاش بيانات عميل، بس بتعرّفك الناس بتبص على إيه وإمتى.</p>
         </div>
       </section>
 
@@ -915,7 +934,7 @@
   // ============================================
   // 🚀 نسخة جديدة من لوحة التحكم؟ تتحدث لوحدها (لو مفيش تعديل مفتوح)
   // ============================================
-  const BUILD_VERSION = "20261014110426";
+  const BUILD_VERSION = "20261014110650";
   function watchNewVersion() {
     if (location.protocol === "file:") return;
     let pending = null;
@@ -1017,6 +1036,7 @@
       inqTableMissing = true;
       $("inq-banner").classList.add("show");
       $("inq-table-body").innerHTML = `<tr><td colspan="7" class="state-msg">مفيش بيانات لسه — شغّل ملف setup-inquiries.sql الأول.</td></tr>`;
+      $("act-table-body").innerHTML = `<tr><td colspan="4" class="state-msg">—</td></tr>`;
       $("ov-inq-sub").textContent = "محتاج تفعيل — اضغط هنا للتفاصيل";
       return;
     }
@@ -1083,6 +1103,9 @@
     return [...m.values()].sort((a, b) => b.total - a.total).slice(0, 8);
   }
 
+  // طلب فعلي = العميل ساب رقمه (فورم أو نافذة الواتساب). الباقي نشاط عام
+  function isRequest(r) { return r.type !== "view" && !!r.customer_phone; }
+
   function renderInquiries() {
     const rows = inquiriesCache.filter(inRange);
     ["whatsapp", "call", "form", "view"].forEach(t => $("inq-n-" + t).textContent = rows.filter(r => r.type === t).length);
@@ -1100,7 +1123,7 @@
     // الجدول (من غير المشاهدات)
     const term = $("inq-search").value.trim().toLowerCase();
     const type = $("inq-type").value, status = $("inq-status").value;
-    let list = rows.filter(r => r.type !== "view");
+    let list = rows.filter(isRequest);
     if (type) list = list.filter(r => r.type === type);
     if (status) list = list.filter(r => r.status === status);
     if (term) list = list.filter(r => [r.product_name, r.customer_name, r.customer_phone, r.customer_email, r.customer_address, r.message, r.category_name].some(v => (v || "").toLowerCase().includes(term)));
@@ -1122,17 +1145,31 @@
           <button class="btn btn-ghost-danger btn-sm btn-icon" data-inq-del="${r.id}" title="حذف">✕</button>
         </td>
       </tr>`).join("")
-      : `<tr><td colspan="7" class="state-msg">${inquiriesCache.length ? "مفيش نتايج في الفترة/الفلتر ده." : "لسه مفيش استفسارات — أول ما حد يسأل من الموقع هيظهر هنا."}</td></tr>`;
+      : `<tr><td colspan="7" class="state-msg">${inquiriesCache.length ? "مفيش طلبات في الفترة/الفلتر ده." : "لسه مفيش طلبات — أول ما حد يبعت من الموقع هيظهر هنا."}</td></tr>`;
+
+    // جدول النشاط العام (مشاهدات + واتساب عام + اتصال)
+    const actType = $("act-type").value;
+    let acts = rows.filter(r => !isRequest(r));
+    if (actType) acts = acts.filter(r => r.type === actType);
+    $("act-count").textContent = `(${acts.length})`;
+    $("act-table-body").innerHTML = acts.length ? acts.slice(0, 300).map(r => `
+      <tr>
+        <td class="when" title="${escapeHtml(new Date(r.created_at).toLocaleString("ar-EG"))}">${timeAgo(r.created_at)}</td>
+        <td><span class="tag ${INQ_CLS[r.type] || ""}">${r.type === "whatsapp" ? "واتساب عام" : (INQ_TYPE[r.type] || escapeHtml(r.type))}</span></td>
+        <td>${r.product_name ? `<div class="row-title">${escapeHtml(r.product_name)}</div>${r.category_name ? `<div class="row-sub">${escapeHtml(r.category_name)}</div>` : ""}` : `<span class="muted">عام (مش منتج معيّن)</span>`}</td>
+        <td class="row-actions"><button class="btn btn-ghost-danger btn-sm btn-icon" data-inq-del="${r.id}" title="حذف">✕</button></td>
+      </tr>`).join("")
+      : `<tr><td colspan="4" class="state-msg">مفيش نشاط في الفترة/الفلتر ده.</td></tr>`;
 
     // البادج + الأوفرفيو
-    const newCount = inquiriesCache.filter(r => r.type !== "view" && r.status === "new").length;
+    const newCount = inquiriesCache.filter(r => isRequest(r) && r.status === "new").length;
     const badge = $("badge-inquiries");
     badge.textContent = newCount;
     badge.classList.toggle("hot", newCount > 0);
     document.title = (newCount ? `(${newCount}) ` : "") + "Living Mood — لوحة التحكم";
-    const today = inquiriesCache.filter(r => r.type !== "view" && new Date(r.created_at) >= new Date(new Date().setHours(0, 0, 0, 0))).length;
-    $("ov-inq-title").textContent = newCount ? `${newCount} استفسار جديد` : "الاستفسارات";
-    $("ov-inq-sub").textContent = `${today} النهارده · ${inquiriesCache.filter(r => r.type === "form" && r.status === "new").length} طلب سعر مستني رد`;
+    const today = inquiriesCache.filter(r => isRequest(r) && new Date(r.created_at) >= new Date(new Date().setHours(0, 0, 0, 0))).length;
+    $("ov-inq-title").textContent = newCount ? `${newCount} طلب جديد` : "الطلبات";
+    $("ov-inq-sub").textContent = `${today} النهارده · ${newCount} طلب مستني رد`;
   }
 
   document.querySelectorAll("#inq-range button").forEach(b => b.addEventListener("click", () => {
@@ -1142,7 +1179,7 @@
     $("inq-date-range").classList.remove("custom");
     renderInquiries();
   }));
-  ["inq-search", "inq-type", "inq-status"].forEach(id => $(id).addEventListener(id === "inq-search" ? "input" : "change", renderInquiries));
+  ["inq-search", "inq-type", "inq-status", "act-type"].forEach(id => $(id).addEventListener(id === "inq-search" ? "input" : "change", renderInquiries));
 
   document.addEventListener("change", async (e) => {
     const sel = e.target.closest && e.target.closest("[data-inq-status]");
