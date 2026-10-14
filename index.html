@@ -1338,7 +1338,7 @@
     }
     function buildCallLink() { return `tel:${CONTACT_PHONE}`; }
     function buildGeneralWhatsappLink() {
-      return `https://wa.me/${CONTACT_WHATSAPP}?text=${encodeURIComponent("السلام عليكم\nكنت عاوز أستفسر عن حاجة مش موجودة في الكاتالوج.\n\n")}`;
+      return `https://wa.me/${CONTACT_WHATSAPP}?text=${encodeURIComponent("السلام عليكم، كنت عاوز أستفسر عن حاجة")}`;
     }
     function parseExtra(val) {
       if (Array.isArray(val)) return val.filter(Boolean);
@@ -2271,7 +2271,7 @@
     // ============================================
     // 🚀 نسخة جديدة من الموقع؟ تتحدث لوحدها عند كل الزوار
     // ============================================
-    const BUILD_VERSION = "20261014110408";
+    const BUILD_VERSION = "20261014110426";
     (function watchNewVersion() {
       if (location.protocol === "file:") return;
       let pending = null;
