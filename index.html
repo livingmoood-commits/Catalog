@@ -1338,7 +1338,7 @@
     }
     function buildCallLink() { return `tel:${CONTACT_PHONE}`; }
     function buildGeneralWhatsappLink() {
-      return `https://wa.me/${CONTACT_WHATSAPP}?text=${encodeURIComponent("Hello, I would like to ask about your products")}`;
+      return `https://wa.me/${CONTACT_WHATSAPP}?text=${encodeURIComponent("السلام عليكم 👋\nكنت عاوز أستفسر عن حاجة مش موجودة في الكاتالوج.\n\n")}`;
     }
     function parseExtra(val) {
       if (Array.isArray(val)) return val.filter(Boolean);
@@ -1803,7 +1803,9 @@
       if (!a) return;
       const href = a.getAttribute("href") || "";
       const type = href.startsWith("tel:") ? "call" : (href.includes("wa.me") ? "whatsapp" : null);
-      if (!type || type === "whatsapp") return; // الواتساب بيتسجّل من نافذة الواتساب نفسها
+      if (!type) return;
+      // واتساب المنتجات بيتسجّل من النافذة نفسها، هنا بنسجّل التواصل العام بس
+      if (type === "whatsapp" && a.matches("a.contact-btn.whatsapp, #detail-whatsapp")) return;
       let product = null;
       const card = a.closest(".product-card");
       if (card) product = allProducts.find(x => String(x.id) === String(card.dataset.id));
@@ -2124,9 +2126,9 @@
       L.push(f.msg);
       return L.join("\n");
     }
-    // أي زرار واتساب في الموقع بيفتح النافذة بدل ما يروح على واتساب على طول
+    // زراير واتساب المنتج بس بتفتح النافذة. التواصل العام بيروح واتساب على طول برسالة عامة
     document.addEventListener("click", (e) => {
-      const a = e.target.closest("a.contact-btn.whatsapp, #detail-whatsapp, a.js-wa-general, #header-wa-link");
+      const a = e.target.closest("a.contact-btn.whatsapp, #detail-whatsapp");
       if (!a) return;
       e.preventDefault();
       e.stopPropagation();
@@ -2269,7 +2271,7 @@
     // ============================================
     // 🚀 نسخة جديدة من الموقع؟ تتحدث لوحدها عند كل الزوار
     // ============================================
-    const BUILD_VERSION = "20261014104318";
+    const BUILD_VERSION = "20261014105618";
     (function watchNewVersion() {
       if (location.protocol === "file:") return;
       let pending = null;
