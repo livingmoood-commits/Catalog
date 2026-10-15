@@ -72,6 +72,11 @@ grant select, insert, update, delete on public.inquiries to authenticated;
 alter table public.products add column if not exists is_available boolean not null default true;
 alter table public.products add column if not exists is_visible   boolean not null default true;
 
+-- يتعرض آه/لا للتصنيفات والفريق والفيديوهات
+alter table public.categories      add column if not exists is_visible boolean not null default true;
+alter table public.team_members    add column if not exists is_visible boolean not null default true;
+alter table public.portfolio_items add column if not exists is_visible boolean not null default true;
+
 -- ============================================================
 -- ⚡ تحديث لحظي: أي تعديل من الأدمن يوصل للزوار فورًا (Supabase Realtime)
 -- ============================================================

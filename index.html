@@ -1573,11 +1573,13 @@
       if (supabaseClient) {
         try {
           const [{ data: catData, error: catError }, { data: prodData, error: prodError }] = await Promise.all([
-            supabaseClient.from("categories").select("id, name, image_url, sort_order").order("sort_order", { ascending: true }),
+            supabaseClient.from("categories").select("*").order("sort_order", { ascending: true }),
             supabaseClient.from("products").select("*").order("sort_order", { ascending: true }),
           ]);
-          if (!catError && catData && catData.length > 0) categories = catData;
-          if (!prodError && prodData && (prodData.length > 0 || categories !== DEMO_CATEGORIES)) products = prodData.filter(p => p.is_visible !== false); // "يتعرض: لا" من الأدمن
+          if (!catError && catData && catData.length > 0) categories = catData.filter(c => c.is_visible !== false);
+          // "يتعرض: لا" من الأدمن: المنتج نفسه أو التصنيف بتاعه
+          const hiddenCats = new Set((catData || []).filter(c => c.is_visible === false).map(c => String(c.id)));
+          if (!prodError && prodData && (prodData.length > 0 || categories !== DEMO_CATEGORIES)) products = prodData.filter(p => p.is_visible !== false && !hiddenCats.has(String(p.category_id)));
         } catch (e) {
           console.warn("Could not connect to Supabase, showing demo data:", e);
         }
@@ -1594,19 +1596,26 @@
     // ============================================
     // الفريق والمهندسين
     // ============================================
+    // بيخفي السيكشن ولينكاته في المنيو لو مفيهوش حاجة تتعرض
+    function setSectionShown(id, show) {
+      const sec = document.getElementById(id);
+      if (sec) sec.style.display = show ? "" : "none";
+      document.querySelectorAll(`a[href="#${id}"]`).forEach(a => a.style.display = show ? "" : "none");
+    }
     async function loadTeam() {
-      let members = [];
+      let members = null; // null = مفيش اتصال، نعرض الديمو
       if (supabaseClient) {
         try {
-          const { data, error } = await supabaseClient.from("team_members").select("name, role, image_url, type").order("sort_order", { ascending: true });
-          if (!error && data) members = data;
+          const { data, error } = await supabaseClient.from("team_members").select("*").order("sort_order", { ascending: true });
+          if (!error && data) members = data.filter(m => m.is_visible !== false && m.image_url);
         } catch (e) { console.warn("team_members:", e); }
       }
       if (!changed("team", members)) return;
-      const team = members.filter(m => m.type === "team");
-      const engineers = members.filter(m => m.type === "engineer");
-      const teamSource = team.length > 0 ? team : DEMO_TEAM;
-      const engSource = engineers.length > 0 ? engineers : DEMO_ENGINEERS;
+      const teamSource = members ? members.filter(m => m.type === "team") : DEMO_TEAM;
+      const engSource = members ? members.filter(m => m.type === "engineer") : DEMO_ENGINEERS;
+      // لو مفيش صور، السيكشن بيختفي كأنه مش موجود
+      setSectionShown("team", teamSource.length > 0);
+      setSectionShown("engineering", engSource.length > 0);
 
       $("team-grid").innerHTML = teamSource.map(m => `
         <div class="team-card reveal">
@@ -1629,16 +1638,16 @@
     // الفيديوهات — بتشتغل صامتة لما تظهر، والدوس يشغّل الصوت
     // ============================================
     async function loadVideos() {
-      let items = [];
+      let items = null; // null = مفيش اتصال، نعرض الديمو
       if (supabaseClient) {
         try {
-          const { data, error } = await supabaseClient.from("portfolio_items").select("type, image_url").order("sort_order", { ascending: true });
-          if (!error && data) items = data;
+          const { data, error } = await supabaseClient.from("portfolio_items").select("*").order("sort_order", { ascending: true });
+          if (!error && data) items = data.filter(v => v.is_visible !== false && v.image_url);
         } catch (e) { console.warn("portfolio_items:", e); }
       }
       if (!changed("videos", items)) return;
-      const videos = items.filter(v => (v.type || "").toLowerCase() === "video");
-      const source = videos.length > 0 ? videos : DEMO_VIDEOS;
+      const source = items ? items.filter(v => (v.type || "").toLowerCase() === "video") : DEMO_VIDEOS;
+      setSectionShown("videos", source.length > 0);
       const grid = $("videos-grid");
       grid.innerHTML = source.map(v => `
         <div class="video-card reveal">
@@ -1656,10 +1665,12 @@
       }, { threshold: 0.35 });
       vids.forEach(v => vo.observe(v));
 
+      if (grid.dataset.bound) return; // الليسنر مرة واحدة بس حتى لو الفيديوهات اتحدثت لايف
+      grid.dataset.bound = "1";
       grid.addEventListener("click", (e) => {
         const v = e.target.closest("video");
         if (!v) return;
-        vids.forEach(o => { if (o !== v) { o.muted = true; o.controls = false; o.closest(".video-card").classList.remove("unmuted"); } });
+        grid.querySelectorAll("video").forEach(o => { if (o !== v) { o.muted = true; o.controls = false; o.closest(".video-card").classList.remove("unmuted"); } });
         v.muted = false;
         v.controls = true;
         v.closest(".video-card").classList.add("unmuted");
@@ -2271,7 +2282,7 @@
     // ============================================
     // 🚀 نسخة جديدة من الموقع؟ تتحدث لوحدها عند كل الزوار
     // ============================================
-    const BUILD_VERSION = "20261014110650";
+    const BUILD_VERSION = "20261015020724";
     (function watchNewVersion() {
       if (location.protocol === "file:") return;
       let pending = null;

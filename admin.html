@@ -297,6 +297,7 @@
   .switch.busy{opacity:.5;pointer-events:none;}
   tr.is-off .row-thumb{filter:grayscale(1);opacity:.55;}
   tr.is-off .row-title{color:var(--clr-ink-50);}
+  tr.is-off video{filter:grayscale(1);opacity:.55;}
   .avail-field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--clr-line);border-radius:var(--radius-sm);background:var(--clr-surface-2);}
   .avail-field .t{font-size:13.5px;font-weight:600;} .avail-field .d{font-size:12px;color:var(--clr-ink-50);margin-top:2px;}
 
@@ -625,8 +626,8 @@
         <div class="card">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>صورة</th><th>الاسم</th><th>عدد المنتجات</th><th>الترتيب</th><th></th></tr></thead>
-              <tbody id="cat-table-body"><tr><td colspan="5" class="state-msg">جارِ التحميل...</td></tr></tbody>
+              <thead><tr><th>صورة</th><th>الاسم</th><th>عدد المنتجات</th><th>يتعرض</th><th>الترتيب</th><th></th></tr></thead>
+              <tbody id="cat-table-body"><tr><td colspan="6" class="state-msg">جارِ التحميل...</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -665,8 +666,8 @@
         <div class="card">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>صورة</th><th>الاسم</th><th>النوع</th><th>الدور</th><th>الترتيب</th><th></th></tr></thead>
-              <tbody id="team-table-body"><tr><td colspan="6" class="state-msg">جارِ التحميل...</td></tr></tbody>
+              <thead><tr><th>صورة</th><th>الاسم</th><th>النوع</th><th>الدور</th><th>يتعرض</th><th>الترتيب</th><th></th></tr></thead>
+              <tbody id="team-table-body"><tr><td colspan="7" class="state-msg">جارِ التحميل...</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -689,8 +690,8 @@
         <div class="card">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>الفيديو</th><th>الترتيب</th><th></th></tr></thead>
-              <tbody id="video-table-body"><tr><td colspan="3" class="state-msg">جارِ التحميل...</td></tr></tbody>
+              <thead><tr><th>الفيديو</th><th>يتعرض</th><th>الترتيب</th><th></th></tr></thead>
+              <tbody id="video-table-body"><tr><td colspan="4" class="state-msg">جارِ التحميل...</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -934,7 +935,7 @@
   // ============================================
   // 🚀 نسخة جديدة من لوحة التحكم؟ تتحدث لوحدها (لو مفيش تعديل مفتوح)
   // ============================================
-  const BUILD_VERSION = "20261014110650";
+  const BUILD_VERSION = "20261015020724";
   function watchNewVersion() {
     if (location.protocol === "file:") return;
     let pending = null;
@@ -1219,14 +1220,15 @@
 
   function renderCategoriesTable() {
     const tbody = $("cat-table-body");
-    if (!categoriesCache.length) { tbody.innerHTML = `<tr><td colspan="5" class="state-msg">مفيش تصنيفات لسه.</td></tr>`; return; }
+    if (!categoriesCache.length) { tbody.innerHTML = `<tr><td colspan="6" class="state-msg">مفيش تصنيفات لسه.</td></tr>`; return; }
     tbody.innerHTML = categoriesCache.map(c => {
       const n = countInCategory(c.id);
       return `
-      <tr>
+      <tr class="${c.is_visible === false ? "is-off" : ""}">
         <td><img class="row-thumb" style="border-radius:50%;" src="${escapeHtml(c.image_url || "")}" alt=""></td>
         <td class="row-title">${escapeHtml(c.name)}</td>
         <td>${n ? `<span class="tag gold">${n} منتج</span>` : `<span class="tag warn">فاضي</span>`}</td>
+        <td><label class="switch" title="يتعرض في الموقع؟"><input type="checkbox" data-flag="is_visible" data-table="categories" data-id="${escapeHtml(c.id)}" ${c.is_visible !== false ? "checked" : ""}><span class="track"></span><span class="lbl-on">آه</span><span class="lbl-off">لا</span></label></td>
         <td>${c.sort_order ?? 0}</td>
         <td class="row-actions">
           <button class="btn btn-outline btn-sm" data-act="cat-products" data-id="${escapeHtml(c.id)}">المنتجات</button>
@@ -1421,15 +1423,30 @@
     is_available: ["المنتج بقى متوفر ✓", "المنتج بقى مش متوفر — هيتعرض وعليه Out of stock"],
     is_visible: ["المنتج بقى ظاهر في الموقع ✓", "المنتج اتخفى من الموقع"],
   };
-  async function toggleFlag(id, field, on, el) {
+  // جداول تانية بزرار "يتعرض": الكاش بتاعها + رسالة + إعادة الرسم
+  const VIS_TABLES = {
+    categories: () => [categoriesCache, ["التصنيف بقى ظاهر في الموقع ✓", "التصنيف ومنتجاته اتخفوا من الموقع"], renderCategoriesTable],
+    team_members: () => [teamCache, ["بقى ظاهر في الموقع ✓", "اتخفى من الموقع"], null],
+    portfolio_items: () => [videosCache, ["الفيديو بقى ظاهر في الموقع ✓", "الفيديو اتخفى من الموقع"], null],
+  };
+  async function toggleFlag(id, field, on, el, table = "products") {
     const wrap = el.closest(".switch");
     wrap.classList.add("busy");
-    const { error } = await supabaseClient.from("products").update({ [field]: on }).eq("id", id);
+    const { error } = await supabaseClient.from(table).update({ [field]: on }).eq("id", id);
     wrap.classList.remove("busy");
     if (error) {
       el.checked = !on;
       const missing = new RegExp(field).test(error.message || "");
       showToast(missing ? "شغّل ملف setup-inquiries.sql الجديد في Supabase الأول عشان الزرار ده يشتغل" : "حصل خطأ: " + error.message, "error");
+      return;
+    }
+    if (VIS_TABLES[table]) {
+      const [cache, msg, rerender] = VIS_TABLES[table]();
+      const row = cache.find(x => String(x.id) === String(id));
+      if (row) row[field] = on;
+      const tr = el.closest("tr"); if (tr) tr.classList.toggle("is-off", !on);
+      showToast(msg[on ? 0 : 1], "success");
+      if (rerender) rerender();
       return;
     }
     const p = productsCache.find(x => String(x.id) === String(id));
@@ -1439,7 +1456,7 @@
   }
   document.addEventListener("change", (e) => {
     const t = e.target.closest && e.target.closest("input[data-flag]");
-    if (t) toggleFlag(t.dataset.id, t.dataset.flag, t.checked, t);
+    if (t) toggleFlag(t.dataset.id, t.dataset.flag, t.checked, t, t.dataset.table || "products");
   });
 
   function renderProductsTable() {
@@ -1588,15 +1605,16 @@
   async function loadTeam() {
     const tbody = $("team-table-body");
     const { data, error } = await supabaseClient.from("team_members").select("*").order("sort_order", { ascending: true });
-    if (error) { tbody.innerHTML = `<tr><td colspan="6" class="state-msg">حصل خطأ: ${escapeHtml(error.message)}</td></tr>`; return; }
+    if (error) { tbody.innerHTML = `<tr><td colspan="7" class="state-msg">حصل خطأ: ${escapeHtml(error.message)}</td></tr>`; return; }
     teamCache = data || [];
-    if (!teamCache.length) { tbody.innerHTML = `<tr><td colspan="6" class="state-msg">مفيش أعضاء لسه.</td></tr>`; return; }
+    if (!teamCache.length) { tbody.innerHTML = `<tr><td colspan="7" class="state-msg">مفيش أعضاء لسه.</td></tr>`; return; }
     tbody.innerHTML = teamCache.map(m => `
-      <tr>
+      <tr class="${m.is_visible === false ? "is-off" : ""}">
         <td><img class="row-thumb" src="${escapeHtml(m.image_url || "")}" alt="" loading="lazy"></td>
         <td class="row-title">${escapeHtml(m.name)}</td>
         <td><span class="tag ${m.type === "engineer" ? "gold" : ""}">${m.type === "engineer" ? "Engineering" : "Our Team"}</span></td>
         <td>${escapeHtml(m.role || "—")}</td>
+        <td><label class="switch" title="يتعرض في الموقع؟"><input type="checkbox" data-flag="is_visible" data-table="team_members" data-id="${escapeHtml(m.id)}" ${m.is_visible !== false ? "checked" : ""}><span class="track"></span><span class="lbl-on">آه</span><span class="lbl-off">لا</span></label></td>
         <td><input class="sort-input" type="number" value="${m.sort_order ?? 0}" data-act="team-sort" data-id="${escapeHtml(m.id)}"></td>
         <td class="row-actions">
           <button class="btn btn-outline btn-sm" data-act="team-edit" data-id="${escapeHtml(m.id)}">تعديل</button>
@@ -1683,12 +1701,13 @@
   async function loadVideos() {
     const tbody = $("video-table-body");
     const { data, error } = await supabaseClient.from("portfolio_items").select("*").order("sort_order", { ascending: true });
-    if (error) { tbody.innerHTML = `<tr><td colspan="3" class="state-msg">حصل خطأ: ${escapeHtml(error.message)}</td></tr>`; return; }
+    if (error) { tbody.innerHTML = `<tr><td colspan="4" class="state-msg">حصل خطأ: ${escapeHtml(error.message)}</td></tr>`; return; }
     videosCache = (data || []).filter(v => (v.type || "").toLowerCase() === "video");
-    if (!videosCache.length) { tbody.innerHTML = `<tr><td colspan="3" class="state-msg">مفيش فيديوهات لسه.</td></tr>`; return; }
+    if (!videosCache.length) { tbody.innerHTML = `<tr><td colspan="4" class="state-msg">مفيش فيديوهات لسه.</td></tr>`; return; }
     tbody.innerHTML = videosCache.map(v => `
-      <tr>
+      <tr class="${v.is_visible === false ? "is-off" : ""}">
         <td><video src="${escapeHtml(v.image_url || "")}#t=0.5" style="width:70px;height:110px;object-fit:cover;border-radius:8px;background:#000;" muted preload="metadata" onmouseenter="this.play()" onmouseleave="this.pause()"></video></td>
+        <td><label class="switch" title="يتعرض في الموقع؟"><input type="checkbox" data-flag="is_visible" data-table="portfolio_items" data-id="${escapeHtml(v.id)}" ${v.is_visible !== false ? "checked" : ""}><span class="track"></span><span class="lbl-on">آه</span><span class="lbl-off">لا</span></label></td>
         <td><input class="sort-input" type="number" value="${v.sort_order ?? 0}" data-act="video-sort" data-id="${escapeHtml(v.id)}"></td>
         <td class="row-actions">
           <a class="btn btn-outline btn-sm" href="${escapeHtml(v.image_url || "")}" target="_blank" rel="noopener">فتح</a>
