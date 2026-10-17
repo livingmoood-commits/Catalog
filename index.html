@@ -1420,7 +1420,7 @@
     let activeCat = "all";
     let searchTerm = "";
     const OTHER_ID = "__other";
-    const PREVIEW_PER_SECTION = 8; // في عرض "All" بيظهر أول 8 من كل تصنيف + زرار "See all"
+    const PREVIEW_PER_SECTION = Infinity; // في عرض "All" كل منتجات التصنيف بتظهر ورا بعض (من غير See all)
 
     function catName(id) {
       const c = allCategories.find(c => String(c.id) === String(id));
@@ -2282,7 +2282,7 @@
     // ============================================
     // 🚀 نسخة جديدة من الموقع؟ تتحدث لوحدها عند كل الزوار
     // ============================================
-    const BUILD_VERSION = "20261017085647";
+    const BUILD_VERSION = "20261017085730";
     (function watchNewVersion() {
       if (location.protocol === "file:") return;
       let pending = null;
