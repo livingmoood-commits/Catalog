@@ -546,6 +546,7 @@
                 <option value="whatsapp">واتساب عام</option>
                 <option value="call">اتصال</option>
               </select>
+              <button class="btn btn-ghost-danger btn-sm" id="act-clear" type="button" title="بيمسح النشاط اللي ظاهر في الجدول (حسب الفترة والفلتر)">مسح الكل</button>
             </div>
           </div>
           <div class="table-wrap">
@@ -969,7 +970,7 @@
   // ============================================
   // 🚀 نسخة جديدة من لوحة التحكم؟ تتحدث لوحدها (لو مفيش تعديل مفتوح)
   // ============================================
-  const BUILD_VERSION = "20261017083357";
+  const BUILD_VERSION = "20261017084029";
   function watchNewVersion() {
     if (location.protocol === "file:") return;
     let pending = null;
@@ -1166,6 +1167,7 @@
   // طلب فعلي = العميل ساب رقمه (فورم أو نافذة الواتساب). الباقي نشاط عام
   function isRequest(r) { return r.type !== "view" && !!r.customer_phone; }
 
+  let shownActs = [];
   function renderInquiries() {
     const rows = inquiriesCache.filter(inRange);
     ["whatsapp", "call", "form", "view"].forEach(t => $("inq-n-" + t).textContent = rows.filter(r => r.type === t).length);
@@ -1211,6 +1213,8 @@
     const actType = $("act-type").value;
     let acts = rows.filter(r => !isRequest(r));
     if (actType) acts = acts.filter(r => r.type === actType);
+    shownActs = acts;
+    $("act-clear").disabled = !acts.length;
     $("act-count").textContent = `(${acts.length})`;
     $("act-table-body").innerHTML = acts.length ? acts.slice(0, 300).map(r => `
       <tr>
@@ -1251,6 +1255,29 @@
     if (r) r.status = sel.value;
     renderInquiries();
   });
+  // مسح كل النشاط الظاهر (المشاهدات/الواتساب العام/الاتصال) — الطلبات الفعلية مابتتمسحش من هنا
+  $("act-clear").addEventListener("click", async () => {
+    const ids = shownActs.map(r => r.id);
+    if (!ids.length) return;
+    if (!confirm(`هتمسح ${ids.length} من النشاط العام (مشاهدات وتواصل عام) نهائيًا. الطلبات الفعلية مش هتتمسح. متأكد؟`)) return;
+    const btn = $("act-clear");
+    setBusy(btn, true, "جارِ المسح...");
+    try {
+      for (let i = 0; i < ids.length; i += 200) {
+        const { error } = await supabaseClient.from("inquiries").delete().in("id", ids.slice(i, i + 200));
+        if (error) throw error;
+      }
+      const gone = new Set(ids.map(String));
+      inquiriesCache = inquiriesCache.filter(x => !gone.has(String(x.id)));
+      showToast(`اتمسح ${ids.length} ✓`, "success");
+    } catch (err) {
+      showToast("حصل خطأ: " + err.message, "error");
+    } finally {
+      setBusy(btn, false);
+      renderInquiries();
+    }
+  });
+
   document.addEventListener("click", async (e) => {
     const b = e.target.closest("[data-inq-del]");
     if (!b) return;
