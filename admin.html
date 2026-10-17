@@ -205,6 +205,9 @@
   .ov-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;}
   .bar-row{display:grid;grid-template-columns:140px 1fr 36px;gap:12px;align-items:center;padding:8px 0;font-size:13.5px;}
   .bar-row .bar-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;}
+  .bar-row[data-goto]{cursor:pointer;border-radius:8px;transition:background .15s;}
+  .bar-row[data-goto]:hover{background:var(--clr-bg-2);}
+  .bar-row .bar-name small{display:block;font-size:11px;font-weight:500;color:var(--clr-ink-50);}
   .bar{height:8px;background:var(--clr-bg-2);border-radius:10px;overflow:hidden;}
   .bar i{display:block;height:100%;background:var(--clr-ink);border-radius:10px;animation:grow .9s var(--ease) both;transform-origin:right;}
   @keyframes grow{from{transform:scaleX(0);}to{transform:scaleX(1);}}
@@ -298,6 +301,8 @@
   tr.is-off .row-thumb{filter:grayscale(1);opacity:.55;}
   tr.is-off .row-title{color:var(--clr-ink-50);}
   tr.is-off video{filter:grayscale(1);opacity:.55;}
+  .sort-hint{margin-top:6px;font-size:12px;color:var(--clr-ink-50);line-height:1.5;}
+  .sort-hint b{color:var(--clr-gold-dark);font-weight:700;}
   .avail-field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--clr-line);border-radius:var(--radius-sm);background:var(--clr-surface-2);}
   .avail-field .t{font-size:13.5px;font-weight:600;} .avail-field .d{font-size:12px;color:var(--clr-ink-50);margin-top:2px;}
 
@@ -540,7 +545,7 @@
             <div class="field"><label>اسم المنتج</label><input type="text" id="prod-name" placeholder="مثال: Royal Living Set"></div>
             <div class="field"><label>التصنيف</label><select id="prod-category"></select></div>
             <div class="field full"><label>الوصف <span class="hint">(اختياري — يظهر في الكارت وصفحة التفاصيل)</span></label><textarea id="prod-desc" dir="auto"></textarea></div>
-            <div class="field"><label>الترتيب <span class="hint">(رقم أصغر = يظهر الأول)</span></label><input type="number" id="prod-sort" value="0"></div>
+            <div class="field"><label>الترتيب <span class="hint">(رقم أصغر = يظهر الأول)</span></label><input type="number" id="prod-sort" value="1"><div class="sort-hint" id="prod-sort-hint"></div></div>
             <div class="field full">
               <div class="form-grid">
                 <div class="avail-field">
@@ -570,7 +575,8 @@
             </div>
           </div>
           <div class="form-actions">
-            <button class="btn btn-gold" id="prod-save-btn">حفظ المنتج</button>
+            <button class="btn btn-gold" id="prod-save-btn" title="Ctrl + S">حفظ المنتج</button>
+            <button class="btn btn-outline" id="prod-save-next-btn" title="بيحفظ ويفتحلك فورم فاضي في نفس التصنيف">حفظ وضيف غيره</button>
             <button class="btn btn-outline" id="prod-cancel-btn">إلغاء</button>
           </div>
         </div>
@@ -609,7 +615,7 @@
           <input type="hidden" id="cat-id">
           <div class="form-grid">
             <div class="field"><label>اسم التصنيف</label><input type="text" id="cat-name" placeholder="مثال: Living Room Sets"></div>
-            <div class="field"><label>الترتيب <span class="hint">(رقم أصغر = أول)</span></label><input type="number" id="cat-sort" value="0"></div>
+            <div class="field"><label>الترتيب <span class="hint">(رقم أصغر = أول)</span></label><input type="number" id="cat-sort" value="1"><div class="sort-hint" id="cat-sort-hint"></div></div>
             <div class="field full">
               <label>صورة التصنيف <span class="hint">(مربعة — بتظهر في دايرة)</span></label>
               <div class="upload-zone">
@@ -649,7 +655,7 @@
               </select>
             </div>
             <div class="field"><label>المنصب / الدور <span class="hint">(اختياري)</span></label><input type="text" id="team-role" placeholder="مثال: Site Engineer"></div>
-            <div class="field"><label>الترتيب</label><input type="number" id="team-sort" value="0"></div>
+            <div class="field"><label>الترتيب</label><input type="number" id="team-sort" value="1"><div class="sort-hint" id="team-sort-hint"></div></div>
             <div class="field full">
               <label>الصورة <span class="hint">(مربعة)</span></label>
               <div class="upload-zone">
@@ -679,7 +685,7 @@
         <div class="card">
           <div class="card-head"><h3>إضافة فيديو جديد</h3></div>
           <div class="form-grid">
-            <div class="field"><label>الترتيب</label><input type="number" id="video-sort" value="0"></div>
+            <div class="field"><label>الترتيب</label><input type="number" id="video-sort" value="1"><div class="sort-hint" id="video-sort-hint"></div></div>
             <div class="field full">
               <label>ملف الفيديو</label>
               <div class="upload-zone"><div><input type="file" accept="video/*" id="video-file"><div class="uz-text">الفيديو بياخد وقت أطول في الرفع حسب حجمه — يفضّل أقل من 20MB</div></div></div>
@@ -935,7 +941,7 @@
   // ============================================
   // 🚀 نسخة جديدة من لوحة التحكم؟ تتحدث لوحدها (لو مفيش تعديل مفتوح)
   // ============================================
-  const BUILD_VERSION = "20261015020724";
+  const BUILD_VERSION = "20261017083109";
   function watchNewVersion() {
     if (location.protocol === "file:") return;
     let pending = null;
@@ -994,7 +1000,10 @@
     $("ov-bars").innerHTML = categoriesCache.length
       ? categoriesCache.map(c => {
           const n = countInCategory(c.id);
-          return `<div class="bar-row"><span class="bar-name">${escapeHtml(c.name)}</span><span class="bar"><i style="width:${(n / max) * 100}%"></i></span><span class="bar-n">${n}</span></div>`;
+          const list = prodsIn(c.id);
+          const off = list.filter(p => !isOn(p)).length, hid = list.filter(p => !isShown(p)).length;
+          const extra = [off && `${off} مش متوفر`, hid && `${hid} مخفي`].filter(Boolean).join(" · ");
+          return `<div class="bar-row" data-goto="products" data-filter="${escapeHtml(c.id)}" title="افتح منتجات ${escapeHtml(c.name)}"><span class="bar-name">${escapeHtml(c.name)}${extra ? `<small>${extra}</small>` : ""}</span><span class="bar"><i style="width:${(n / max) * 100}%"></i></span><span class="bar-n">${n}</span></div>`;
         }).join("")
       : `<div class="state-msg">مفيش تصنيفات لسه.</div>`;
 
@@ -1020,6 +1029,28 @@
   });
 
   function countInCategory(id) { return productsCache.filter(p => String(p.category_id) === String(id)).length; }
+  // الترتيب الافتراضي = بعد آخر واحد
+  const nextSort = (list) => list.reduce((m, x) => Math.max(m, Number(x.sort_order) || 0), 0) + 1;
+  function prodsIn(catId) { return productsCache.filter(p => catId ? String(p.category_id) === String(catId) : !p.category_id); }
+  // لو المستخدم كتب رقم بإيده مانغيّروش
+  let prodSortTouched = false;
+  function updateProdSortDefault() {
+    const catId = $("prod-category").value;
+    const list = prodsIn(catId);
+    const next = nextSort(list);
+    const editing = !!$("prod-id").value;
+    if (!editing && !prodSortTouched) $("prod-sort").value = next;
+    const catName = catId ? ((categoriesCache.find(c => String(c.id) === String(catId)) || {}).name || "") : "بدون تصنيف";
+    $("prod-sort-hint").innerHTML = `في <b>${escapeHtml(catName)}</b> دلوقتي <b>${list.length}</b> منتج` +
+      (editing ? "" : ` · المنتج ده هيبقى رقم <b>${escapeHtml($("prod-sort").value)}</b>`);
+  }
+  ["cat-sort", "team-sort", "video-sort"].forEach(id => document.getElementById(id) && document.getElementById(id).addEventListener("input", e => { e.target.dataset.touched = "1"; }));
+  function setSimpleSortDefault(inputId, list, label) {
+    const inp = $(inputId);
+    if (!inp.dataset.touched) inp.value = nextSort(list);
+    const hint = $(inputId + "-hint");
+    if (hint) hint.innerHTML = `${label} دلوقتي <b>${list.length}</b> · الجديد هيبقى رقم <b>${escapeHtml(inp.value)}</b>`;
+  }
 
   // ============================================
   // Inquiries (الاستفسارات)
@@ -1220,6 +1251,7 @@
 
   function renderCategoriesTable() {
     const tbody = $("cat-table-body");
+    if (!$("cat-id").value) setSimpleSortDefault("cat-sort", categoriesCache, "عدد التصنيفات");
     if (!categoriesCache.length) { tbody.innerHTML = `<tr><td colspan="6" class="state-msg">مفيش تصنيفات لسه.</td></tr>`; return; }
     tbody.innerHTML = categoriesCache.map(c => {
       const n = countInCategory(c.id);
@@ -1242,20 +1274,21 @@
   function fillCategorySelects() {
     const sel = $("prod-category");
     const current = sel.value;
-    sel.innerHTML = `<option value="">— بدون تصنيف —</option>` + categoriesCache.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`).join("");
+    sel.innerHTML = `<option value="">— بدون تصنيف —</option>` + categoriesCache.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)} (${countInCategory(c.id)})</option>`).join("");
     if (current) sel.value = current;
     else if (categoriesCache[0]) sel.value = categoriesCache[0].id;
 
     const f = $("prod-filter");
     const fCur = f.value;
-    f.innerHTML = `<option value="">كل التصنيفات</option>` + categoriesCache.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`).join("") + `<option value="__none">بدون تصنيف</option>`;
+    f.innerHTML = `<option value="">كل التصنيفات</option>` + categoriesCache.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)} (${countInCategory(c.id)})</option>`).join("") + `<option value="__none">بدون تصنيف</option>`;
     f.value = fCur;
   }
 
   function resetCategoryForm() {
     $("cat-id").value = "";
     $("cat-name").value = "";
-    $("cat-sort").value = "0";
+    delete $("cat-sort").dataset.touched;
+    setSimpleSortDefault("cat-sort", categoriesCache, "عدد التصنيفات");
     $("cat-img-file").value = "";
     $("cat-img-preview").style.display = "none";
     $("cat-form-title").textContent = "إضافة تصنيف جديد";
@@ -1269,6 +1302,7 @@
     $("cat-id").value = c.id;
     $("cat-name").value = c.name || "";
     $("cat-sort").value = c.sort_order ?? 0;
+    $("cat-sort-hint").textContent = "";
     const preview = $("cat-img-preview");
     if (c.image_url) { preview.src = c.image_url; preview.style.display = "block"; }
     $("cat-form-title").textContent = "تعديل تصنيف: " + (c.name || "");
@@ -1380,7 +1414,20 @@
     productsCache = data || [];
     renderProductsTable();
     renderCategoriesTable();
+    fillCategorySelects();   // عشان أعداد المنتجات جنب كل تصنيف تتحدث
+    updateProdSortDefault();
   }
+
+  // Ctrl/Cmd + S = حفظ الفورم المفتوح
+  document.addEventListener("keydown", (e) => {
+    if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== "s") return;
+    const panel = document.querySelector(".panel.active");
+    if (!panel) return;
+    const btn = { "panel-products": $("prod-view-form").classList.contains("active") && "prod-save-btn", "panel-categories": "cat-save-btn", "panel-team": "team-save-btn" }[panel.id];
+    if (!btn) return;
+    e.preventDefault();
+    if (!$(btn).disabled) $(btn).click();
+  });
 
   // ---- تابات المنتجات: القائمة / الفورم ----
   function setProdView(v) {
@@ -1507,7 +1554,11 @@
     $("prod-id").value = "";
     $("prod-name").value = "";
     $("prod-desc").value = "";
-    $("prod-sort").value = "0";
+    // لو فاتح تاب تصنيف معيّن، المنتج الجديد يتحط فيه على طول
+    const tabCat = $("prod-filter").value;
+    if (tabCat && tabCat !== "__none" && categoriesCache.some(c => String(c.id) === String(tabCat))) $("prod-category").value = tabCat;
+    prodSortTouched = false;
+    updateProdSortDefault();
     $("prod-img-file").value = "";
     $("prod-img-preview").style.display = "none";
     $("prod-form-title").textContent = "إضافة منتج جديد";
@@ -1522,8 +1573,9 @@
     $("prod-id").value = asCopy ? "" : p.id;
     $("prod-name").value = (p.name || "") + (asCopy ? " (نسخة)" : "");
     $("prod-desc").value = p.description || "";
-    $("prod-sort").value = p.sort_order ?? 0;
     $("prod-category").value = p.category_id ?? "";
+    prodSortTouched = false;
+    if (asCopy) updateProdSortDefault(); else { $("prod-sort").value = p.sort_order ?? 0; updateProdSortDefault(); }
     currentCoverUrl = p.image_url || "";
     const preview = $("prod-img-preview");
     if (p.image_url) { preview.src = p.image_url; preview.style.display = "block"; } else preview.style.display = "none";
@@ -1540,6 +1592,10 @@
   }
 
   $("prod-cancel-btn").addEventListener("click", resetProductForm);
+  $("prod-category").addEventListener("change", updateProdSortDefault);
+  $("prod-sort").addEventListener("input", () => { prodSortTouched = true; updateProdSortDefault(); });
+  let saveAndNext = false;
+  $("prod-save-next-btn").addEventListener("click", () => { saveAndNext = true; $("prod-save-btn").click(); });
 
   $("prod-save-btn").addEventListener("click", async () => {
     const id = $("prod-id").value;
@@ -1548,6 +1604,7 @@
     const category_id = $("prod-category").value;
     const sort_order = Number($("prod-sort").value) || 0;
     const file = $("prod-img-file").files[0];
+    const wantNext = saveAndNext; saveAndNext = false;
     if (!name) { showToast("اكتب اسم المنتج الأول", "error"); return; }
     if (!file && !currentCoverUrl && !currentExtraImages.length) { showToast("اختار صورة للمنتج", "error"); return; }
 
@@ -1569,8 +1626,14 @@
         : await supabaseClient.from("products").insert(payload);
       if (error) throw error;
       showToast(id ? "اتحفظ التعديل ✓" : "اتضاف المنتج ✓", "success");
-      resetProductForm();
+      const keepCat = category_id, next = wantNext;
       await loadProducts();
+      if (next) {
+        resetProductForm(true);
+        $("prod-category").value = keepCat;
+        updateProdSortDefault();
+        $("prod-name").focus();
+      } else resetProductForm();
       renderOverview();
     } catch (e) {
       showToast("حصل خطأ: " + e.message, "error");
@@ -1607,6 +1670,7 @@
     const { data, error } = await supabaseClient.from("team_members").select("*").order("sort_order", { ascending: true });
     if (error) { tbody.innerHTML = `<tr><td colspan="7" class="state-msg">حصل خطأ: ${escapeHtml(error.message)}</td></tr>`; return; }
     teamCache = data || [];
+    if (!$("team-id").value) teamSortDefault();
     if (!teamCache.length) { tbody.innerHTML = `<tr><td colspan="7" class="state-msg">مفيش أعضاء لسه.</td></tr>`; return; }
     tbody.innerHTML = teamCache.map(m => `
       <tr class="${m.is_visible === false ? "is-off" : ""}">
@@ -1624,12 +1688,18 @@
     `).join("");
   }
 
+  function teamSortDefault() {
+    const type = $("team-type").value;
+    setSimpleSortDefault("team-sort", teamCache.filter(m => (m.type || "team") === type), type === "engineer" ? "عدد المهندسين" : "عدد أعضاء الفريق");
+  }
+  $("team-type").addEventListener("change", () => { if (!$("team-id").value) teamSortDefault(); });
   function resetTeamForm() {
     $("team-id").value = "";
     $("team-name").value = "";
     $("team-role").value = "";
     $("team-type").value = "team";
-    $("team-sort").value = "0";
+    delete $("team-sort").dataset.touched;
+    teamSortDefault();
     $("team-img-file").value = "";
     $("team-img-preview").style.display = "none";
     $("team-form-title").textContent = "إضافة عضو جديد";
@@ -1645,6 +1715,7 @@
     $("team-role").value = m.role || "";
     $("team-type").value = m.type || "team";
     $("team-sort").value = m.sort_order ?? 0;
+    $("team-sort-hint").textContent = "";
     const preview = $("team-img-preview");
     if (m.image_url) { preview.src = m.image_url; preview.style.display = "block"; }
     $("team-form-title").textContent = "تعديل: " + (m.name || "");
@@ -1703,6 +1774,7 @@
     const { data, error } = await supabaseClient.from("portfolio_items").select("*").order("sort_order", { ascending: true });
     if (error) { tbody.innerHTML = `<tr><td colspan="4" class="state-msg">حصل خطأ: ${escapeHtml(error.message)}</td></tr>`; return; }
     videosCache = (data || []).filter(v => (v.type || "").toLowerCase() === "video");
+    setSimpleSortDefault("video-sort", videosCache, "عدد الفيديوهات");
     if (!videosCache.length) { tbody.innerHTML = `<tr><td colspan="4" class="state-msg">مفيش فيديوهات لسه.</td></tr>`; return; }
     tbody.innerHTML = videosCache.map(v => `
       <tr class="${v.is_visible === false ? "is-off" : ""}">
@@ -1731,7 +1803,7 @@
       if (error) throw error;
       showToast("اتحفظ بنجاح", "success");
       $("video-file").value = "";
-      $("video-sort").value = "0";
+      delete $("video-sort").dataset.touched;
       await loadVideos();
       renderOverview();
     } catch (e) {
