@@ -157,7 +157,12 @@
   .gallery-list{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px;}
   .gallery-list:empty{display:none;}
   .extra-thumb{position:relative;width:96px;}
-  .extra-thumb img{width:96px;height:96px;object-fit:cover;border-radius:12px;border:1px solid var(--clr-line);}
+  .extra-thumb img{width:96px;height:96px;object-fit:cover;border-radius:12px;border:1px solid var(--clr-line);cursor:grab;touch-action:none;user-select:none;-webkit-user-drag:none;}
+  .extra-thumb.is-cover img{border:2px solid var(--clr-gold);}
+  .extra-thumb .cover-tag{position:absolute;bottom:34px;right:6px;background:var(--clr-gold);color:#fff;font-size:10px;font-weight:700;border-radius:20px;padding:1px 7px;}
+  .gallery-list.sorting .extra-thumb{transition:transform .15s;}
+  .extra-thumb.dragging{opacity:.55;transform:scale(.94);}
+  .extra-thumb.dragging img{cursor:grabbing;}
   .extra-thumb .x{position:absolute;top:-7px;left:-7px;width:22px;height:22px;border-radius:50%;background:var(--clr-danger);color:#fff;border:2px solid var(--clr-surface);font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;}
   .extra-thumb .pos{position:absolute;top:6px;right:6px;background:rgba(23,21,15,.75);color:#fff;font-size:11px;font-weight:700;border-radius:20px;padding:0 7px;}
   .extra-thumb .thumb-tools{display:flex;justify-content:space-between;gap:4px;margin-top:5px;}
@@ -598,7 +603,7 @@
               <label>معرض الصور <span class="hint">(بيظهر في صفحة التفاصيل بنفس الترتيب — تقدر تختار كذا صورة مرة واحدة)</span></label>
               <div class="gallery-list" id="prod-extra-list"></div>
               <div class="upload-zone">
-                <div><input type="file" accept="image/*" id="prod-extra-file" multiple><div class="uz-text">اسحب الصور هنا أو اختارها — تقدر ترتّبهم بالأسهم وتخلي أي واحدة غلاف</div></div>
+                <div><input type="file" accept="image/*" id="prod-extra-file" multiple><div class="uz-text">اسحب الصور هنا أو اختارها — اسحب أي صورة لمكانها عشان ترتبهم (أو بالأسهم)، وتقدر تخلي أي واحدة غلاف</div></div>
               </div>
               <div class="progress-note" id="prod-extra-progress"></div>
             </div>
@@ -970,7 +975,7 @@
   // ============================================
   // 🚀 نسخة جديدة من لوحة التحكم؟ تتحدث لوحدها (لو مفيش تعديل مفتوح)
   // ============================================
-  const BUILD_VERSION = "20261017084029";
+  const BUILD_VERSION = "20261017084415";
   function watchNewVersion() {
     if (location.protocol === "file:") return;
     let pending = null;
@@ -1426,9 +1431,10 @@
 
   function renderExtraList() {
     $("prod-extra-list").innerHTML = currentExtraImages.map((url, i) => `
-      <div class="extra-thumb">
-        <img src="${escapeHtml(url)}" alt="">
+      <div class="extra-thumb ${url === currentCoverUrl ? "is-cover" : ""}" data-url="${escapeHtml(url)}">
+        <img src="${escapeHtml(url)}" alt="" draggable="false" title="اسحبها لأي مكان عشان ترتبها">
         <span class="pos">${i + 1}</span>
+        ${url === currentCoverUrl ? `<span class="cover-tag">الغلاف</span>` : ""}
         <button type="button" class="x" data-act="extra-remove" data-i="${i}" aria-label="حذف">✕</button>
         <div class="thumb-tools">
           <button type="button" data-act="extra-right" data-i="${i}" title="قدّمها">→</button>
@@ -1438,6 +1444,45 @@
       </div>
     `).join("");
   }
+
+  // ترتيب الصور بالسحب (ماوس أو صباع)
+  (function enableGalleryDrag() {
+    const list = $("prod-extra-list");
+    let drag = null;
+    list.addEventListener("pointerdown", (e) => {
+      const img = e.target.closest(".extra-thumb img");
+      if (!img || e.button > 0) return;
+      e.preventDefault();
+      const el = img.closest(".extra-thumb");
+      drag = { el, id: e.pointerId, moved: false, x: e.clientX, y: e.clientY };
+      list.setPointerCapture(e.pointerId);
+    });
+    list.addEventListener("pointermove", (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) return;
+      if (!drag.moved) { drag.moved = true; drag.el.classList.add("dragging"); list.classList.add("sorting"); }
+      const over = [...list.querySelectorAll(".extra-thumb")].find(t => {
+        if (t === drag.el) return false;
+        const b = t.getBoundingClientRect();
+        return e.clientX >= b.left && e.clientX <= b.right && e.clientY >= b.top && e.clientY <= b.bottom;
+      });
+      if (!over) return;
+      const kids = [...list.children];
+      list.insertBefore(drag.el, kids.indexOf(over) > kids.indexOf(drag.el) ? over.nextSibling : over);
+    });
+    const end = (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const moved = drag.moved;
+      drag.el.classList.remove("dragging"); list.classList.remove("sorting");
+      drag = null;
+      if (!moved) return;
+      currentExtraImages = [...list.querySelectorAll(".extra-thumb")].map(t => t.dataset.url);
+      renderExtraList();
+      showToast("اتغير الترتيب — دوس حفظ المنتج", "success");
+    };
+    list.addEventListener("pointerup", end);
+    list.addEventListener("pointercancel", end);
+  })();
 
   $("prod-extra-file").addEventListener("change", async (e) => {
     const files = Array.from(e.target.files || []);
@@ -1905,6 +1950,7 @@
         $("prod-img-file").value = "";
         $("prod-img-preview").src = currentCoverUrl;
         $("prod-img-preview").style.display = "block";
+        renderExtraList();
         showToast("بقت صورة الغلاف — دوس حفظ المنتج", "success");
         break;
     }
